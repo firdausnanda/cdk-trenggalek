@@ -3,6 +3,8 @@
 use App\Http\Controllers\Backend\Auth\ForgotPasswordController;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\Auth\ResetPasswordController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +16,7 @@ use App\Http\Controllers\Backend\Auth\ResetPasswordController;
 */
 
 // Public User authentication routes.
-Auth::routes();
+Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
 
 // User authentication routes.
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'guest'], function () {
