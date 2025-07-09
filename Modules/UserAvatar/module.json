@@ -1,0 +1,12 @@
+{
+  "name": "UserAvatar",
+  "alias": "useravatar",
+  "description": "User Avatar Module",
+  "category": "core",
+  "keywords": ["user", "avatar"],
+  "priority": 10,
+  "providers": ["Modules\\UserAvatar\\Providers\\UserAvatarServiceProvider"],
+  "files": [],
+  "icon": "bi-person-fill-check",
+  "version": "1.0.0"
+}
