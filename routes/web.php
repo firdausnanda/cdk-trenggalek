@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\TermsController;
 use App\Http\Controllers\Backend\TranslationController;
 use App\Http\Controllers\Backend\UserLoginAsController;
 use App\Http\Controllers\Backend\UsersController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +31,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
-Route::get('/', 'HomeController@redirectAdmin')->name('index');
+// Route::get('/', 'HomeController@redirectAdmin')->name('index');
+Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/home', 'HomeController@index')->name('home');
 
 /**
