@@ -36,7 +36,7 @@ class PostFactory extends Factory
             // Create at and update_at would be random time between 1 year ago and now
             'created_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
             'updated_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
-            'published_at' => fake()->optional(0.5)->dateTimeBetween('-6 months', 'now'),
+            'published_at' => fake()->dateTimeBetween('-6 months', 'now'),
         ];
     }
 

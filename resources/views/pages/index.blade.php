@@ -15,7 +15,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="section-title text-center text-lg-start">Tentang Kami</h2>
+                    <h2 class="section-title text-center    ">Tentang Kami</h2>
                     <p>Cabang Dinas Kehutanan Wilayah Trenggalek berdasarkan Pergub No. 48 Tahun 2018 memiliki 4 wilayah
                         kerja
                         meliputi Kabupaten Trenggalek, Kabupaten Tulungagung, Kabupaten Kediri dan Kota Kediri. Kami
@@ -27,7 +27,7 @@
                         Bersama
                         seluruh pemangku kepentingan, kami berkomitmen mewujudkan pengelolaan hutan berkelanjutan untuk
                         kesejahteraan masyarakat.</p>
-                    <a href="#" class="btn btn-outline-success">Selengkapnya</a>
+                    <a href="{{ route('tentang-kami') }}" class="btn btn-outline-success">Selengkapnya</a>
                 </div>
                 <div class="col-lg-6">
                     <img src="{{ asset('images/background/bg-1.jpg') }}"
@@ -116,60 +116,34 @@
             <p class="text-center mb-5">Update terbaru seputar Dinas Kehutanan Wilayah Trenggalek</p>
 
             <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card news-card h-100">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8c42fcce-b7d5-4389-82af-a07adccbf3ca.png"
-                            class="card-img-top" alt="Penanaman pohon bersama masyarakat di Desa Wonocoyo">
-                        <div class="card-body">
-                            <h5 class="card-title">Penanaman 10.000 Pohon di Desa Wonocoyo</h5>
-                            <p class="card-text">Dinas Kehutanan bersama masyarakat melakukan penanaman pohon dalam
-                                rangka
-                                rehabilitasi lahan kritis...</p>
-                            <a href="#" class="btn btn-sm btn-primary">Baca Selengkapnya</a>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <small>Diposting: 12 Juni 2023</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card news-card h-100">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/80783122-2f38-4aad-9214-759d05e56fdf.png"
-                            class="card-img-top" alt="Pelatihan pengolahan hasil hutan untuk masyarakat Desa Panggul">
-                        <div class="card-body">
-                            <h5 class="card-title">Pelatihan Pengolahan Hasil Hutan untuk Masyarakat</h5>
-                            <p class="card-text">Dinas Kehutanan menyelenggarakan pelatihan pengolahan hasil hutan
-                                bukan kayu untuk
-                                meningkatkan ekonomi masyarakat...</p>
-                            <a href="#" class="btn btn-sm btn-primary">Baca Selengkapnya</a>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <small>Diposting: 28 Mei 2023</small>
+                @forelse ($posts as $post)
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card news-card h-100">
+                            <img src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
+                                class="card-img-top img-fluid" style="height: 400px; object-fit: cover; width: 100%;"
+                                alt="{{ $post->title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $post->title }}</h5>
+                                <p class="card-text">{{ $post->excerpt }}</p>
+                                <a href="{{ route('berita.show', $post->slug) }}" class="btn btn-sm btn-primary">Baca
+                                    Selengkapnya</a>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <small>Diposting: {{ $post->created_at->format('d M Y') }}</small>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-6 col-lg-4">
-                    <div class="card news-card h-100">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/60c9a1e3-2913-42ff-af01-2ccbbb0cd484.png"
-                            class="card-img-top" alt="Monitoring satwa liar di kawasan hutan Trenggalek">
-                        <div class="card-body">
-                            <h5 class="card-title">Monitoring Populasi Satwa Liar di Kawasan Hutan</h5>
-                            <p class="card-text">Tim Dinas Kehutanan melakukan monitoring rutin terhadap populasi satwa
-                                liar untuk
-                                menjaga keseimbangan ekosistem...</p>
-                            <a href="#" class="btn btn-sm btn-primary">Baca Selengkapnya</a>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <small>Diposting: 15 Mei 2023</small>
+                @empty
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <p>Tidak ada berita terkini</p>
                         </div>
                     </div>
-                </div>
+                @endforelse
             </div>
 
             <div class="text-center mt-4">
-                <a href="#" class="btn btn-outline-success">Lihat Semua Berita</a>
+                <a href="{{ route('berita') }}" class="btn btn-outline-success">Lihat Semua Berita</a>
             </div>
         </div>
     </section>
@@ -179,7 +153,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="section-title text-center text-lg-start">Lokasi Kami</h2>
+                    <h2 class="section-title text-center">Lokasi Kami</h2>
                     <p><strong>Alamat:</strong> Gg. Menak Sopal, Sukobanteng, Karangsoko, Kec. Trenggalek, Kabupaten
                         Trenggalek,
                         Jawa Timur 66319</p>
@@ -189,8 +163,8 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="map-container shadow news-card">
-                        <img src="{{ asset('images/background/gedung-cdk.jpg') }}" alt="Lokasi Cabang Dinas Kehutanan Wilayah Trenggalek"
-                            class="img-fluid w-100 h-100">
+                        <img src="{{ asset('images/background/gedung-cdk.jpg') }}"
+                            alt="Lokasi Cabang Dinas Kehutanan Wilayah Trenggalek" class="img-fluid w-100 h-100">
                     </div>
                 </div>
             </div>

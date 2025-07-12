@@ -32,8 +32,11 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
 // Route::get('/', 'HomeController@redirectAdmin')->name('index');
-Route::get('/', [HomeController::class, 'index'])->name('index');
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
+
+Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
+Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
 
 /**
  * Admin routes.
