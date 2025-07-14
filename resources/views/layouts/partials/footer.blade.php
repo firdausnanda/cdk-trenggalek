@@ -22,13 +22,11 @@
             <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
                 <h5 class="mb-4">Tautan Cepat</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Beranda</a></li>
-                    <li class="mb-2"><a href="#tentang" class="text-white text-decoration-none">Tentang
+                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white text-decoration-none">Beranda</a></li>
+                    <li class="mb-2"><a href="{{ route('tentang-kami') }}" class="text-white text-decoration-none">Tentang
                             Kami</a></li>
-                    <li class="mb-2"><a href="#layanan" class="text-white text-decoration-none">Layanan</a>
-                    </li>
-                    <li class="mb-2"><a href="#berita" class="text-white text-decoration-none">Berita</a></li>
-                    <li class="mb-2"><a href="#kontak" class="text-white text-decoration-none">Kontak</a></li>
+                    <li class="mb-2"><a href="{{ route('berita') }}" class="text-white text-decoration-none">Berita</a></li>
+                    <li class="mb-2"><a href="{{ route('kontak') }}" class="text-white text-decoration-none">Kontak</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 mb-md-0">

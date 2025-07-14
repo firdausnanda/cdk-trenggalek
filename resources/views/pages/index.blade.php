@@ -136,15 +136,18 @@
                 @empty
                     <div class="col-12">
                         <div class="alert alert-info">
-                            <p>Tidak ada berita terkini</p>
+                            <i class="fas fa-info-circle me-2"></i>
+                            Tidak ada berita terkini
                         </div>
                     </div>
                 @endforelse
             </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ route('berita') }}" class="btn btn-outline-success">Lihat Semua Berita</a>
-            </div>
+            @if ($posts->count() > 0)
+                <div class="text-center mt-4">
+                    <a href="{{ route('berita') }}" class="btn btn-outline-success">Lihat Semua Berita</a>
+                </div>
+            @endif
         </div>
     </section>
 

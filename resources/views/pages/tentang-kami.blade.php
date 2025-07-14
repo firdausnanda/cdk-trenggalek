@@ -14,7 +14,8 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="https://placehold.co/600x400/3a8c3e/white?text=Dinas+Kehutanan" class="img-fluid rounded"
+                    <img src="{{ asset('images/background/gedung-cdk.jpg') }}" class="img-fluid rounded"
+                        style="width: 600px; height: 400px;"
                         alt="Kantor Dinas Kehutanan Wilayah Trenggalek dengan tampak depan gedung yang dikelilingi pepohonan rindang">
                 </div>
                 <div class="col-lg-6">

@@ -33,8 +33,8 @@ class ContentSeeder extends Seeder
         $this->registerPostTypesAndTaxonomies();
         $this->createSampleCategories();
         $this->createSampleTags();
-        $this->createSamplePosts();
-        $this->createSamplePages();
+        // $this->createSamplePosts();
+        // $this->createSamplePages();
 
         $this->command->info('Content seeded successfully!');
     }
