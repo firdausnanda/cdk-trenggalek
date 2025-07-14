@@ -189,6 +189,7 @@ return [
          * Package Service Providers...
          */
         Spatie\Permission\PermissionServiceProvider::class,
+        Jorenvh\Share\Providers\ShareServiceProvider::class,
         TorMorten\Eventy\EventServiceProvider::class,
         TorMorten\Eventy\EventBladeServiceProvider::class,
 
@@ -252,6 +253,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Share' => Jorenvh\Share\ShareFacade::class,
 
         /**
          * Package Aliases

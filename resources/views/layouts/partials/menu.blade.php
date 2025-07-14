@@ -46,11 +46,6 @@
                             Berita
                         </a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="#">
-                            Galeri
-                        </a>
-                    </li>
 
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="#">

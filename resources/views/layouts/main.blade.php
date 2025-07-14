@@ -11,11 +11,11 @@
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     <meta name="google" content="notranslate">
-    
+
     <link rel="icon" href="{{ config('settings.site_icon') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ config('settings.site_icon') }}">
     <link rel="manifest" href="{{ config('settings.site_icon') }}">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -46,7 +46,10 @@
     @include('layouts.partials.footer')
 
     <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/share.js') }}"></script>
 
     <script src="{{ asset('js/landing.js') }}"></script>
 </body>

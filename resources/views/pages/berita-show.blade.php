@@ -16,9 +16,11 @@
                 <!-- Breadcrumb -->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a class="text-success text-decoration-none" href="#">Beranda</a>
+                        <li class="breadcrumb-item"><a class="text-success text-decoration-none"
+                                href="{{ route('home') }}">Beranda</a>
                         </li>
-                        <li class="breadcrumb-item"><a class="text-success text-decoration-none" href="#">Berita</a>
+                        <li class="breadcrumb-item"><a class="text-success text-decoration-none"
+                                href="{{ route('berita') }}">Berita</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($post->title, 60, '...') }}
                         </li>
@@ -33,7 +35,7 @@
                         <span class="me-3"><i class="far fa-calendar-alt me-1"></i>
                             {{ $post->published_at?->format('d M Y') }}</span>
                         <span class="me-3"><i class="far fa-user me-1"></i> Admin</span>
-                        <span class="me-3"><i class="far fa-eye me-1"></i> 100 Kali Dilihat</span>
+                        <span class="me-3"><i class="far fa-eye me-1"></i> {{ $post->views()->count() }} Kali Dilihat</span>
                     </div>
 
                     <div class="post-image">
@@ -48,13 +50,31 @@
                     <div class="post-tags mt-5">
                         <h5 class="mb-3">Tag:</h5>
                         @foreach ($post->tags as $tag)
-                            <span class="badge bg-success me-1">{{ $tag->name }}</span>
+                            <span class="badge bg-secondary me-1">{{ $tag->name }}</span>
                         @endforeach
+                    </div>
+                    <div class="post-tags share-section mt-5">
+                        <h5 class="share-title"><i class="fas fa-share-alt me-2"></i>Bagikan Artikel Ini</h5>
+
+                        <div class="row">
+                            @foreach ($share as $item => $value)
+                                <div class="col-lg-2">
+                                    <a class="share-btn btn-{{ $item }} text-decoration-none social-button d-flex align-items-center justify-content-center"
+                                        target="_blank" href="{{ $value }}">
+                                        <i class="fab fa-{{ $item }} me-2"></i>{{ Str::title($item) }}
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="share-divider">
+                            <span class="share-divider-text"></span>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Comments Section -->
-                <div class="comment-section mt-5 p-4">
+                {{-- <div class="comment-section mt-5 p-4">
                     <h5 class="mb-4"><i class="far fa-comments me-2"></i>Komentar (3)</h5>
 
                     <!-- Comment List -->
@@ -115,7 +135,7 @@
                             <button type="submit" class="btn btn-primary">Kirim Komentar</button>
                         </form>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <!-- Sidebar -->
@@ -137,7 +157,7 @@
                     <h5 class="sidebar-title">Kategori</h5>
                     <ul class="list-unstyled mt-3">
                         @foreach ($kategori as $item)
-                            <li class="mb-2"><a href="#"
+                            <li class="mb-2"><a href="{{ route('berita', ['kategori' => $item->slug]) }}"
                                     class="text-decoration-none text-success text-end">{{ $item->name }}</a></li>
                         @endforeach
                     </ul>

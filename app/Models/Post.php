@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Services\Content\ContentService;
 use App\Services\Content\PostType;
 use App\Traits\QueryBuilderTrait;
+use CyrildeWit\EloquentViewable\Contracts\Viewable;
+use CyrildeWit\EloquentViewable\InteractsWithViews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,10 +17,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
-class Post extends Model
+class Post extends Model implements Viewable
 {
     use HasFactory;
     use QueryBuilderTrait;
+    use InteractsWithViews;
 
     protected $fillable = [
         'user_id',

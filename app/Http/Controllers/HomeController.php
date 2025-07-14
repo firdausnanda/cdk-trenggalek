@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Term;
 use Illuminate\Http\Request;
+use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
 {
@@ -41,11 +42,21 @@ class HomeController extends Controller
     public function berita(Request $request)
     {
         $datas = $request->search;
+
+        $searchableColumns = Post::getSearchableColumns();
         $posts = Post::type('post')
             ->orderBy('published_at', 'desc')
             ->published()
-            ->where('title', 'like', '%' . $datas . '%')
-            ->orWhere('content', 'like', '%' . $datas . '%')
+            ->when($request->kategori, function ($query) use ($request) {
+                $query->whereHas('categories', function ($query) use ($request) {
+                    $query->where('slug', $request->kategori);
+                });
+            })
+            ->where(function ($query) use ($datas, $searchableColumns) {
+                foreach ($searchableColumns as $column) {
+                    $query->orWhere($column, 'like', '%' . $datas . '%');
+                }
+            })
             ->take(100)
             ->paginate(9);
 
@@ -66,6 +77,17 @@ class HomeController extends Controller
 
         $kategori = Term::where('taxonomy', 'category')->take(5)->get();
 
-        return view('pages.berita-show', compact('post', 'kategori', 'posts'));
+        $share = Share::page(url()->current(), $post->title)
+                            ->facebook()
+                            ->twitter()
+                            ->linkedin()
+                            ->whatsapp()
+                            ->telegram()
+                            ->reddit()
+                            ->getRawLinks();
+        
+        views($post)->cooldown(5)->record();
+
+        return view('pages.berita-show', compact('post', 'kategori', 'posts', 'share'));
     }
 }
