@@ -113,7 +113,7 @@ class HomeController extends Controller
         // Kirim email
         // Mail::to('cdkwilayahtrenggalek@jatimprov.go.id')->send(new ContactFormMail($validated));
 
-        return back()->with('success', 'Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.');
+        return back()->with('success', '<div class="fw-bold">Pesan Anda telah terkirim! <br><span class="fw-normal">Kami akan segera menghubungi Anda.</span></div>');
     }
 
 
