@@ -54,10 +54,10 @@
                         <p class="mb-3">Pelayanan perizinan pemanfaatan hasil hutan kayu dan bukan kayu sesuai
                             peraturan yang
                             berlaku.</p>
-                        <button class="btn btn-outline-success btn-sm">
+                        <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-phone me-2"></i>
                             Hubungi Kami
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -69,10 +69,10 @@
                         <h4>Rehabilitasi Kawasan Hutan</h4>
                         <p class="mb-3">Program rehabilitasi kawasan hutan dan lahan kritis untuk pemulihan ekosistem.
                         </p>
-                        <button class="btn btn-outline-success btn-sm">
+                        <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-phone me-2"></i>
                             Hubungi Kami
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -84,10 +84,10 @@
                         <h4>Pengawasan & Pengendalian</h4>
                         <p class="mb-3">Pengawasan dan pengendalian terhadap pemanfaatan hutan secara berkelanjutan.
                         </p>
-                        <button class="btn btn-outline-success btn-sm">
+                        <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-phone me-2"></i>
                             Hubungi Kami
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -99,10 +99,10 @@
                         <h4>Pemberdayaan Masyarakat</h4>
                         <p class="mb-3">Program pemberdayaan masyarakat sekitar hutan untuk kesejahteraan bersama.
                         </p>
-                        <button class="btn btn-outline-success btn-sm">
+                        <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
                             <i class="fas fa-phone me-2"></i>
                             Hubungi Kami
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

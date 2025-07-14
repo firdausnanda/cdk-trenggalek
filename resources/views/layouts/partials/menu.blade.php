@@ -48,7 +48,7 @@
                     </li>
 
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {{ request()->routeIs('kontak') ? 'active' : '' }}" href="{{ route('kontak') }}">
                             Kontak
                         </a>
                     </li>

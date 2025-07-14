@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactFormMail;
+use App\Models\ContactMessage;
 use App\Models\Post;
 use App\Models\Term;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
@@ -90,4 +93,28 @@ class HomeController extends Controller
 
         return view('pages.berita-show', compact('post', 'kategori', 'posts', 'share'));
     }
+
+    public function kontak() 
+    {
+        return view('pages.kontak');
+    }
+    
+    public function kontak_store(Request $request) 
+    {
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'message' => 'required',
+        ]);
+
+        // Jika ingin menyimpan ke database
+        ContactMessage::create($validated);
+
+        // Kirim email
+        // Mail::to('cdkwilayahtrenggalek@jatimprov.go.id')->send(new ContactFormMail($validated));
+
+        return back()->with('success', 'Pesan Anda telah terkirim! Kami akan segera menghubungi Anda.');
+    }
+
+
 }

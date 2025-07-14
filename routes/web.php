@@ -31,12 +31,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
-// Route::get('/', 'HomeController@redirectAdmin')->name('index');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
-
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
 Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
+Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
+Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_store');
 
 /**
  * Admin routes.
