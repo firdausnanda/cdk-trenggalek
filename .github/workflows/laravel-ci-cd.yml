@@ -72,32 +72,8 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
       
-    - name: Validate and apply patches
-      run: |
-        sudo apt-get install -y patch jq
-        if [ -f composer-patches.json ]; then
-          # Create temporary vendor directory for dry-run
-          mkdir -p vendor/opis/closure/src
-          touch vendor/opis/closure/src/SerializableClosure.php
-          
-          for patch in $(jq -r '.patches[][]' composer-patches.json); do
-            echo "Testing patch: $patch"
-            
-            # Try different patch strip levels
-            if ! patch --dry-run -p1 < "$patch"; then
-              echo "::warning::Trying with -p0..."
-              if ! patch --dry-run -p0 < "$patch"; then
-                echo "::error::Patch application failed for: $patch"
-                echo "::warning::Patch content:"
-                cat "$patch"
-                exit 1
-              fi
-            fi
-          done
-          
-          # Clean up
-          rm -rf vendor
-        fi
+    - name: Update opis/closure
+      run: composer require opis/closure:^3.8.0
 
     - name: Build and push Docker image
       env:
