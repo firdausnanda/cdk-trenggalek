@@ -76,10 +76,11 @@ jobs:
       run: |
         docker build \
           --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN \
-          -t ${{ env.IMAGE_NAME }}:latest \
-          -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
-        docker push ${{ env.IMAGE_NAME }}:latest
-        docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          -t ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:latest \
+          -t ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:${{ github.sha }} .
+
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:${{ github.sha }}
 
     - name: SSH and deploy
       uses: appleboy/ssh-action@v1

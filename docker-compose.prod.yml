@@ -7,7 +7,7 @@ services:
       args:
         - GITHUB_TOKEN=${GITHUB_TOKEN}
       dockerfile: Dockerfile
-    image: firdausnanda/laravel-app:latest
+    image: firdausnanda/cdk-trenggalek:latest
     restart: always
     environment:
       - APP_ENV=production
