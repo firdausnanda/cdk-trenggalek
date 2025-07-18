@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN composer install --no-dev --no-interaction --no-plugins --optimize-autoloader
+# Sebelum RUN composer install, tambahkan:
+RUN chown -R www-data:www-data /var/www/html \
+&& su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
 
 # Production stage
 FROM php:8.4-fpm
