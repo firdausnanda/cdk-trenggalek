@@ -73,8 +73,10 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
     - name: Build and push Docker image
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        docker build \
+        DOCKER_BUILDKIT=1 docker build \
           --secret id=GITHUB_TOKEN,env=GITHUB_TOKEN \
           -t ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:latest \
           -t ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek:${{ github.sha }} .
