@@ -1,6 +1,10 @@
 # Build stage
 FROM php:8.4-fpm as builder
 
+# Install git first
+RUN apt-get update && apt-get install -y git
+
+# Then configure git
 ARG GITHUB_TOKEN
 RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
@@ -9,7 +13,6 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN apt-get update && apt-get install -y \
-    git \
     curl \
     libpng-dev \
     libonig-dev \
