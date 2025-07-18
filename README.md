@@ -42,7 +42,6 @@ Aplikasi ini dibangun untuk mendukung operasional Cabang Dinas Kehutanan Wilayah
 - Laravel Comments untuk sistem komentar
 - Laravel Pulse untuk monitoring
 - Log Viewer untuk manajemen log
-- Eventy untuk sistem event
 - Laravel Dashboard CMS untuk manajemen konten
 
 ## Persyaratan Sistem
