@@ -30,19 +30,24 @@ COPY --chown=www-data:www-data composer.json composer.lock ./
 
 # 6. Create patches file if missing
 RUN su www-data -s /bin/sh -c " \
-    if [ -f composer-patches.json ]; then \
-        echo 'Validating patches...'; \
-        for patch in $(jq -r '.patches[][],.extra.patches[][]' composer-patches.json 2>/dev/null); do \
-            if [ ! -f \"$patch\" ]; then \
-                echo \"ERROR: Patch file not found: $patch\"; \
-                exit 1; \
+    echo 'Validating patches...'; \
+    for package in $(jq -r '.patches | keys[]' composer-patches.json); do \
+        patchfile=$(jq -r \".patches.$package[]\" composer-patches.json); \
+        echo \"Validating patch for $package: $patchfile\"; \
+        if [ ! -f \"$patchfile\" ]; then \
+            echo \"ERROR: Patch file not found: $patchfile\"; \
+            exit 1; \
+        fi; \
+        if ! patch --dry-run -p1 < \"$patchfile\"; then \
+            echo \"ERROR: Invalid patch file: $patchfile\"; \
+            echo \"Trying with different strip levels...\"; \
+            if ! patch --dry-run -p0 < \"$patchfile\"; then \
+                if ! patch --dry-run -p2 < \"$patchfile\"; then \
+                    exit 1; \
+                fi; \
             fi; \
-            if ! patch --dry-run -p1 < \"$patch\" >/dev/null 2>&1; then \
-                echo \"ERROR: Invalid patch file: $patch\"; \
-                exit 1; \
-            fi; \
-        done; \
-    fi"
+        fi; \
+    done"
 
 # 7. Install dependencies as www-data
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
