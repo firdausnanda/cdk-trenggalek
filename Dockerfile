@@ -1,5 +1,5 @@
 # Build stage
-FROM php:8.2-fpm as builder
+FROM php:8.4-fpm as builder
 
 WORKDIR /var/www/html
 
