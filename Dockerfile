@@ -1,5 +1,5 @@
 # Build stage
-FROM php:8.4-fpm as builder
+FROM php:8.3-fpm as builder
 
 WORKDIR /var/www/html
 
@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    libzip-dev
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
@@ -21,7 +22,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
 # Production stage
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 COPY --from=builder /var/www/html /var/www/html
 
