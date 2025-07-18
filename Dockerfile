@@ -1,10 +1,7 @@
 # Build stage
-FROM php:8.3-fpm as builder
+FROM php:8.4-fpm as builder
 
 WORKDIR /var/www/html
-
-# Fix git ownership
-RUN git config --global --add safe.directory /var/www/html
 
 COPY . .
 
@@ -25,7 +22,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
 # Production stage
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 
 COPY --from=builder /var/www/html /var/www/html
 
