@@ -1,12 +1,12 @@
 # Build stage
-FROM php:8.4-fpm as builder
+FROM php:8.4-fpm AS builder
 
-# Install git first
+# Install git terlebih dahulu
 RUN apt-get update && apt-get install -y git
 
-# Then configure git
-ARG GITHUB_TOKEN
-RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+# Konfigurasi GitHub token menggunakan secrets (aman)
+RUN --mount=type=secret,id=GITHUB_TOKEN \
+    git config --global url."https://$(cat /run/secrets/GITHUB_TOKEN):x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 WORKDIR /var/www/html
 
