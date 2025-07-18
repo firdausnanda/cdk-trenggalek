@@ -27,27 +27,8 @@ WORKDIR /var/www/html
 
 # 5. Copy only what's needed for composer install
 COPY --chown=www-data:www-data composer.json composer.lock ./
-
-# 6. Create patches file if missing
-RUN su www-data -s /bin/sh -c " \
-    echo 'Validating patches...'; \
-    for package in $(jq -r '.patches | keys[]' composer-patches.json); do \
-        patchfile=$(jq -r \".patches.$package[]\" composer-patches.json); \
-        echo \"Validating patch for $package: $patchfile\"; \
-        if [ ! -f \"$patchfile\" ]; then \
-            echo \"ERROR: Patch file not found: $patchfile\"; \
-            exit 1; \
-        fi; \
-        if ! patch --dry-run -p1 < \"$patchfile\"; then \
-            echo \"ERROR: Invalid patch file: $patchfile\"; \
-            echo \"Trying with different strip levels...\"; \
-            if ! patch --dry-run -p0 < \"$patchfile\"; then \
-                if ! patch --dry-run -p2 < \"$patchfile\"; then \
-                    exit 1; \
-                fi; \
-            fi; \
-        fi; \
-    done"
+COPY --chown=www-data:www-data composer-patches.json ./
+COPY --chown=www-data:www-data patches/ ./patches/
 
 # 7. Install dependencies as www-data
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
