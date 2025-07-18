@@ -24,6 +24,9 @@ RUN composer install --no-dev --optimize-autoloader
 # Production stage
 FROM php:8.4-fpm
 
+ARG GITHUB_TOKEN
+RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+
 COPY --from=builder /var/www/html /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html/storage

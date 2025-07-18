@@ -4,6 +4,8 @@ services:
   app:
     build:
       context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
       dockerfile: Dockerfile
     image: firdausnanda/laravel-app:latest
     restart: always
