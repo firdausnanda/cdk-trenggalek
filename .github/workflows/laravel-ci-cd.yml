@@ -80,7 +80,7 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /path/to/your/project
+          cd /home/kda/cdk-trenggalek
           git pull origin main
           docker-compose down
           docker-compose pull
