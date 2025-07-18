@@ -33,7 +33,7 @@
                                     <i class="fas fa-tree"></i>
                                 </div>
                                 <h4>Luas Kawasan</h4>
-                                <p class="mb-0">Lebih dari 50.000 hektar hutan lindung dan produksi</p>
+                                <p class="mb-0">Lebih dari 100.000 hektar hutan lindung dan produksi</p>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -139,7 +139,7 @@
             <div class="row text-center g-4">
                 <div class="col-md-4">
                     <div class="p-4 bg-white rounded shadow-sm">
-                        <h1 class="text-success display-4 fw-bold">42.000</h1>
+                        <h1 class="text-success display-4 fw-bold">125.299</h1>
                         <p>Hektar kawasan hutan dikelola</p>
                     </div>
                 </div>
@@ -151,13 +151,13 @@
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 bg-white rounded shadow-sm">
-                        <h1 class="text-success display-4 fw-bold">4.500+</h1>
+                        <h1 class="text-success display-4 fw-bold">5.000+</h1>
                         <p>Masyarakat yang terlibat dalam program pemberdayaan</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 bg-white rounded shadow-sm">
-                        <h1 class="text-success display-4 fw-bold">12</h1>
+                        <h1 class="text-success display-4 fw-bold">4.448</h1>
                         <p>Kelompok Tani Hutan yang dibina</p>
                     </div>
                 </div>

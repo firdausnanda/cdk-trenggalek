@@ -201,6 +201,13 @@ class AdminMenuService
                     'priority' => 10,
                     'permissions' => 'pulse.view',
                 ],
+                [
+                    'label' => __('Log Viewer'),
+                    'route' => route('log-viewer.index'),
+                    'active' => false,
+                    'target' => '_blank',
+                    'priority' => 10,
+                ],
             ],
         ]);
 
