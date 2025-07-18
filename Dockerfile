@@ -28,13 +28,21 @@ WORKDIR /var/www/html
 # 5. Copy only what's needed for composer install
 COPY --chown=www-data:www-data composer.json composer.lock ./
 
-# 6. Install dependencies as www-data
+# 6. Create patches file if missing
+RUN if [ -f composer-patches.json ]; then \
+        chown www-data:www-data composer-patches.json; \
+    else \
+        echo '{}' > composer-patches.json && \
+        chown www-data:www-data composer-patches.json; \
+    fi
+
+# 7. Install dependencies as www-data
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
 
-# 7. Copy the rest of the application
+# 8. Copy the rest of the application
 COPY --chown=www-data:www-data . .
 
-# 8. Install PHP extensions
+# 9. Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
