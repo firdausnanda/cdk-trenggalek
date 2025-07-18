@@ -1,1 +1,0 @@
-console.log('UserAvatar module loaded');
