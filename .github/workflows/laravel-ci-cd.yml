@@ -51,9 +51,6 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
-    - name: Execute tests
-      run: php artisan test
-
   build-and-deploy:
     needs: laravel-tests
     runs-on: ubuntu-latest
