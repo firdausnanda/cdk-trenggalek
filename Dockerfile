@@ -5,33 +5,36 @@
 # ------------------------
 FROM php:8.4-fpm AS builder
 
-# 1. Install system dependencies including Git
+# 1. Install system dependencies
 RUN apt-get update && apt-get install -y \
     git unzip libzip-dev \
     curl libpng-dev libonig-dev libxml2-dev
 
-# 2. Install Composer FIRST
+# 2. Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 3. Configure GitHub authentication
+# 3. Configure proper Composer cache permissions
+RUN mkdir -p /var/www/.composer/cache && \
+    chown -R www-data:www-data /var/www/.composer
+
+# 4. Configure GitHub authentication
 ARG GITHUB_TOKEN
 RUN --mount=type=secret,id=GITHUB_TOKEN \
     git config --global url."https://x-access-token:$(cat /run/secrets/GITHUB_TOKEN)@github.com/".insteadOf "https://github.com/" && \
-    composer config -g github-oauth.github.com $(cat /run/secrets/GITHUB_TOKEN)
+    su www-data -s /bin/sh -c "composer config -g github-oauth.github.com $(cat /run/secrets/GITHUB_TOKEN)"
 
 WORKDIR /var/www/html
 
-# 4. Copy only what's needed for composer install first
-COPY composer.json composer.lock ./
+# 5. Copy only what's needed for composer install
+COPY --chown=www-data:www-data composer.json composer.lock ./
 
-# 5. Install dependencies as www-data
-RUN chown -R www-data:www-data /var/www/html \
-    && su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
+# 6. Install dependencies as www-data
+RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
 
-# 6. Copy the rest of the application
-COPY . .
+# 7. Copy the rest of the application
+COPY --chown=www-data:www-data . .
 
-# 7. Install PHP extensions
+# 8. Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -50,8 +53,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-# Copy from builder
+# Copy from builder with proper ownership
 COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
+COPY --from=builder --chown=www-data:www-data /var/www/.composer /var/www/.composer
 
-# Set permissions
+# Set directory permissions
 RUN chmod -R 775 storage bootstrap/cache
