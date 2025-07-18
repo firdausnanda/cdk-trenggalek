@@ -3,6 +3,9 @@ FROM php:8.3-fpm as builder
 
 WORKDIR /var/www/html
 
+# Fix git ownership
+RUN git config --global --add safe.directory /var/www/html
+
 COPY . .
 
 RUN apt-get update && apt-get install -y \
@@ -15,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev
 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
