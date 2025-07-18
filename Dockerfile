@@ -5,8 +5,10 @@ FROM php:8.4-fpm AS builder
 RUN apt-get update && apt-get install -y git
 
 # Konfigurasi GitHub token menggunakan secrets (aman)
+ARG GITHUB_TOKEN
 RUN --mount=type=secret,id=GITHUB_TOKEN \
-    git config --global url."https://$(cat /run/secrets/GITHUB_TOKEN):x-oauth-basic@github.com/".insteadOf "https://github.com/"
+    git config --global url."https://x-access-token:$(cat /run/secrets/GITHUB_TOKEN)@github.com/".insteadOf "https://github.com/" && \
+    composer config -g github-oauth.github.com $(cat /run/secrets/GITHUB_TOKEN)
 
 WORKDIR /var/www/html
 
