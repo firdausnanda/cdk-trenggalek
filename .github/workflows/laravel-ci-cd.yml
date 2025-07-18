@@ -72,8 +72,8 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
       
-    - name: Update opis/closure
-      run: composer require opis/closure:^3.8.0
+    - name: Install dependencies
+      run: composer install --no-dev --no-interaction --optimize-autoloader --no-plugins
 
     - name: Build and push Docker image
       env:
