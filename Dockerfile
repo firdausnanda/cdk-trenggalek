@@ -29,12 +29,20 @@ WORKDIR /var/www/html
 COPY --chown=www-data:www-data composer.json composer.lock ./
 
 # 6. Create patches file if missing
-RUN if [ -f composer-patches.json ]; then \
-        chown www-data:www-data composer-patches.json; \
-    else \
-        echo '{}' > composer-patches.json && \
-        chown www-data:www-data composer-patches.json; \
-    fi
+RUN su www-data -s /bin/sh -c " \
+    if [ -f composer-patches.json ]; then \
+        echo 'Validating patches...'; \
+        for patch in $(jq -r '.patches[][],.extra.patches[][]' composer-patches.json 2>/dev/null); do \
+            if [ ! -f \"$patch\" ]; then \
+                echo \"ERROR: Patch file not found: $patch\"; \
+                exit 1; \
+            fi; \
+            if ! patch --dry-run -p1 < \"$patch\" >/dev/null 2>&1; then \
+                echo \"ERROR: Invalid patch file: $patch\"; \
+                exit 1; \
+            fi; \
+        done; \
+    fi"
 
 # 7. Install dependencies as www-data
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
