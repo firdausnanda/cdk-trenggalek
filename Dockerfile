@@ -31,7 +31,7 @@ COPY --chown=www-data:www-data composer-patches.json ./
 COPY --chown=www-data:www-data patches/ ./patches/
 
 # 7. Install dependencies as www-data
-RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader"
+RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader --no-plugins"
 
 # 8. Copy the rest of the application
 COPY --chown=www-data:www-data . .
