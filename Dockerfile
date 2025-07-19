@@ -31,7 +31,7 @@ COPY --chown=www-data:www-data composer-patches.json ./
 COPY --chown=www-data:www-data patches/ ./patches/
 
 # 5. Update opis/closure to PHP 8.4 compatible version before install
-RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.8.0 --no-update"
+RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.7.0 --no-update"
 
 # 6. Install dependencies (skip plugins to avoid patch issues)
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader --no-plugins"
