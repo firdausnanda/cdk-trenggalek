@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/cdk-trenggalek
+
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
@@ -97,12 +100,18 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
             mkdir -p ~/.ssh
+            chmod 700 ~/.ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
+            chmod 600 ~/.ssh/known_hosts
+
+            git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes"
             git config --global --add safe.directory /home/kda/cdk-trenggalek
-            
+                
             cd /home/kda/cdk-trenggalek
-            git config --global url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             
             docker-compose down --remove-orphans
             if ! docker-compose pull; then
