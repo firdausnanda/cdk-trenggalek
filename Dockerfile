@@ -38,7 +38,7 @@ RUN if [ -n "$GITHUB_TOKEN" ]; then \
     fi
 
 # 7. Update opis/closure to PHP 8.4 compatible version
-RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.8.0 --no-update"
+RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.7.0 --no-update"
 
 # 8. Install dependencies (without running post-install scripts)
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --no-scripts --no-plugins"
