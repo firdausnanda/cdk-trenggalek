@@ -7,7 +7,7 @@ FROM php:8.4-fpm AS builder
 
 # 1. Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev \
+    git unzip libzip-dev patch \
     curl libpng-dev libonig-dev libxml2-dev
 
 # 2. Install Composer
@@ -25,16 +25,22 @@ RUN --mount=type=secret,id=GITHUB_TOKEN \
 
 WORKDIR /var/www/html
 
-# 5. Copy only what's needed for composer install
+# 4. Copy only what's needed for composer install
 COPY --chown=www-data:www-data composer.json composer.lock ./
 COPY --chown=www-data:www-data composer-patches.json ./
 COPY --chown=www-data:www-data patches/ ./patches/
 
-# 7. Install dependencies as www-data
+# 5. Update opis/closure to PHP 8.4 compatible version before install
+RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.8.0 --no-update"
+
+# 6. Install dependencies (skip plugins to avoid patch issues)
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader --no-plugins"
 
-# 8. Copy the rest of the application
+# 7. Copy the rest of the application
 COPY --chown=www-data:www-data . .
+
+# 8. Rebuild autoloader after all files are copied
+RUN su www-data -s /bin/sh -c "composer dump-autoload --optimize"
 
 # 9. Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
@@ -57,7 +63,6 @@ WORKDIR /var/www/html
 
 # Copy from builder with proper ownership
 COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
-COPY --from=builder --chown=www-data:www-data /var/www/.composer /var/www/.composer
 
 # Set directory permissions
 RUN chmod -R 775 storage bootstrap/cache
