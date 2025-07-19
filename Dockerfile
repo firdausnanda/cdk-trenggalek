@@ -34,6 +34,11 @@ COPY --chown=www-data:www-data patches/ ./patches/
 RUN su www-data -s /bin/sh -c "composer require opis/closure:^3.7.0 --no-update"
 
 RUN mkdir -p app/Helper && touch app/Helper/common.php
+RUN if [ ! -f app/Helper/database.php ]; then \
+        mkdir -p app/Helper && \
+        echo "<?php // Temporary empty file" > app/Helper/database.php && \
+        chown www-data:www-data app/Helper/database.php; \
+    fi
 
 # 6. Install dependencies (skip plugins to avoid patch issues)
 RUN su www-data -s /bin/sh -c "composer install --no-dev --no-interaction --optimize-autoloader --no-plugins"
