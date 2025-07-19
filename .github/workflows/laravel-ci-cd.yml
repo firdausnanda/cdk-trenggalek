@@ -94,14 +94,16 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/kda/cdk-trenggalek
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
-          git pull origin main
-          docker-compose down --remove-orphans
-          docker-compose pull
-          docker-compose up -d --build
-          docker-compose exec -T app composer install --no-interaction --optimize-autoloader --no-dev
-          docker-compose exec -T app php artisan migrate --force
-          docker-compose exec -T app php artisan cache:clear
-          docker-compose exec -T app php artisan view:clear
-          docker-compose exec -T app php artisan config:cache
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            
+            cd /home/kda/cdk-trenggalek
+            docker-compose down --remove-orphans
+            docker-compose pull || docker-compose build
+            docker-compose up -d
+            
+            docker-compose exec -T app composer install --no-interaction --optimize-autoloader --no-dev
+            docker-compose exec -T app php artisan migrate --force
+            docker-compose exec -T app php artisan cache:clear
+            docker-compose exec -T app php artisan view:clear
+            docker-compose exec -T app php artisan config:cache
