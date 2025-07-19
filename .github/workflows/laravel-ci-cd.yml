@@ -106,8 +106,8 @@ jobs:
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             chmod 600 ~/.ssh/known_hosts
 
-            git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes"
-            git config --global --add safe.directory /home/kda/cdk-trenggalek
+            git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -F /dev/null"
+            git config --global url."https://${{ secrets.GH_TOKEN }}@github.com/".insteadOf "https://github.com/"
                 
             cd /home/kda/cdk-trenggalek
             git fetch origin main
