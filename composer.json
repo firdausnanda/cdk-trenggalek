@@ -15,7 +15,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3|^8.4",
+        "php": "^8.2|^8.3|^8.4",
         "cweagans/composer-patches": "^1.7",
         "cyrildewit/eloquent-viewable": "^7.0",
         "guzzlehttp/guzzle": "^7.2",
