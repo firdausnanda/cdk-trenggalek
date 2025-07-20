@@ -31,8 +31,8 @@ RUN mkdir -p app/Helper && \
 
 # 6. Configure GitHub authentication (if needed)
 ARG GITHUB_TOKEN
-RUN if [ -n "$GITHUB_TOKEN" ]; then \
-    --mount=type=secret,id=GITHUB_TOKEN \
+RUN --mount=type=secret,id=GITHUB_TOKEN \
+    if [ -n "$GITHUB_TOKEN" ]; then \
     git config --global url."https://x-access-token:$(cat /run/secrets/GITHUB_TOKEN)@github.com/".insteadOf "https://github.com/" && \
     su www-data -s /bin/sh -c "composer config -g github-oauth.github.com $(cat /run/secrets/GITHUB_TOKEN)"; \
     fi
