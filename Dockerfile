@@ -27,7 +27,8 @@ COPY --chown=www-data:www-data patches/ ./patches/
 # 5. Create required directories and empty helper files
 RUN mkdir -p app/Helper && \
     touch app/Helper/common.php app/Helper/database.php app/Helper/hook.php && \
-    chown -R www-data:www-data app/Helper
+    mkdir -p public/storage && \
+    chown -R www-data:www-data app/Helper app/Helper public/storage
 
 # 6. Configure GitHub authentication (if needed)
 ARG GITHUB_TOKEN
