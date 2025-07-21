@@ -10,4 +10,10 @@ mkdir -p /sessions
 
 chmod 777 /sessions
 
+# Run database migrations
+php artisan migrate --force
+
+# Clear cache
+php artisan optimize:clear
+
 exec "$@"
