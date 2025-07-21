@@ -60,7 +60,7 @@ jobs:
         run: php artisan migrate:fresh --seed
 
   build-and-deploy:
-    needs: laravel-test
+    needs: laravel-tests
     runs-on: ubuntu-latest
 
     steps:
