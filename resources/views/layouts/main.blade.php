@@ -55,6 +55,22 @@
             line-height: inherit;
             /* Pertahankan line-height */
         }
+
+        .post-content img {
+            max-width: 100%;
+            /* Gambar tidak melebihi lebar parent */
+            height: auto;
+            /* Pertahankan aspect ratio */
+            display: block;
+            /* Hilangkan space bawah bawaan img inline */
+            margin: 0 auto;
+            /* Pusatkan gambar (opsional) */
+            object-fit: contain;
+            /* Pastikan gambar utuh terlihat */
+            border-radius: 4px;
+            /* Optional: rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
