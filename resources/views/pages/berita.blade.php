@@ -40,7 +40,7 @@
                             <small class="news-date"><i class="far fa-calendar-alt"></i>
                                 {{ $post->published_at?->format('d M Y') }}</small>
                             <h5 class="card-title mt-2">{{ $post->title }}</h5>
-                            <p class="card-text">{{ $post->excerpt }}</p>
+                            <p class="card-text">{!! $post->excerpt !!}</p>
                             <a href="{{ route('berita.show', $post->slug) }}" class="btn btn-primary">Baca Selengkapnya</a>
                         </div>
                     </div>

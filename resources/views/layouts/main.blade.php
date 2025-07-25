@@ -22,6 +22,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
+
+    <style>
+        .post-content {
+            width: 100%;
+            max-width: 100%;
+            /* Pastikan tidak melebihi lebar container */
+        }
+
+        .post-content p {
+            margin: 0 0 1rem 0;
+            /* Atur margin bawah saja */
+            padding: 0;
+            width: 100%;
+            hyphens: auto;
+            /* Sambungan kata otomatis dengan tanda hubung (-) */
+            word-break: break-word;
+            /* Untuk kata panjang */
+            overflow-wrap: anywhere;
+            /* Alternatif modern untuk word-wrap */
+        }
+
+        .post-content span {
+            display: inline;
+            /* Kembalikan ke default inline */
+            white-space: normal;
+            /* Pastikan teks bisa wrap */
+            background-color: inherit;
+            /* Warisi warna background */
+            color: inherit;
+            /* Warisi warna teks */
+            line-height: inherit;
+            /* Pertahankan line-height */
+        }
+    </style>
 </head>
 
 <body>

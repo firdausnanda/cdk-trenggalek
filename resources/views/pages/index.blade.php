@@ -124,7 +124,7 @@
                                 alt="{{ $post->title }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $post->title }}</h5>
-                                <p class="card-text">{{ $post->excerpt }}</p>
+                                <p class="card-text">{!! $post->excerpt !!}</p>
                                 <a href="{{ route('berita.show', $post->slug) }}" class="btn btn-sm btn-primary">Baca
                                     Selengkapnya</a>
                             </div>
