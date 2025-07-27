@@ -71,6 +71,133 @@
             /* Optional: rounded corners */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+        .org-chart {
+            position: relative;
+            margin: 50px auto;
+            width: fit-content;
+            text-align: center;
+        }
+
+        .org-chart ul {
+            padding-left: 0;
+            position: relative;
+            transition: all 0.5s;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .org-chart ul ul {
+            margin-top: 20px;
+        }
+
+        .org-chart li {
+            display: table-cell;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 40px 0 40px;
+            transition: all 0.5s;
+        }
+
+        .org-chart li::before,
+        .org-chart li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid #2E7D32;
+            width: 60%;
+            height: 20px;
+        }
+
+        .org-chart li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid #2E7D32;
+        }
+
+        .org-chart li:only-child::after,
+        .org-chart li:only-child::before {
+            display: none;
+        }
+
+        .org-chart li:only-child {
+            padding-top: 0;
+        }
+
+        .org-chart li:first-child::before,
+        .org-chart li:last-child::after {
+            border: 0 none;
+        }
+
+        .org-chart li:last-child::before {
+            border-right: 2px solid #2E7D32;
+            border-radius: 0 5px 0 0;
+        }
+
+        .org-chart li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+
+        .org-chart ul ul::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            border-left: 2px solid #2E7D32;
+            width: 0;
+            height: 20px;
+        }
+
+        .org-chart li div {
+            border: 2px solid #2E7D32;
+            padding: 15px;
+            display: inline-block;
+            border-radius: 5px;
+            background-color: white;
+            transition: all 0.3s;
+            min-width: 150px;
+            max-width: 250px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 0 15px;
+        }
+
+        .org-chart li div:hover {
+            background-color: #81C784;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .org-chart .position {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .org-chart .name {
+            font-size: 0.9em;
+        }
+
+        @media screen and (max-width: 992px) {
+            .org-chart li {
+                display: block;
+                padding: 10px 5px 0 5px;
+            }
+
+            .org-chart li::before,
+            .org-chart li::after {
+                display: none;
+            }
+
+            .org-chart ul ul::before {
+                display: none;
+            }
+
+            .org-chart li div {
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 

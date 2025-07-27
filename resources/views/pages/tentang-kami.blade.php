@@ -93,41 +93,37 @@
     <!-- Tim Kami -->
     <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title text-center">Tim Kami</h2>
-            <p class="text-center mb-5">Berikut beberapa pejabat dan staf di Cabang Dinas Kehutanan Wilayah Trenggalek</p>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <div class="text-center">
-                        <img src="https://placehold.co/400x400" class="tim-img mb-3"
-                            alt="Kepala Cabang Dinas Kehutanan Wilayah Trenggalek, seorang pria berusia 50an dengan ramban pendek rapi, mengenakan kemeja resmi">
-                        <h5>Agus Dwi Prasetyo, S.ST.</h5>
-                        <p>Kepala Cabang Dinas</p>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="text-center">
-                        <img src="https://placehold.co/400x400" class="tim-img mb-3"
-                            alt="Kepala Seksi Perlindungan, seorang wanita berusia 40an dengan rambut dikonde rapi, mengenakan kemeja resmi">
-                        <h5>Eni Handayani, S.Hut.</h5>
-                        <p>Kepala SubBag Tata Usaha</p>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="text-center">
-                        <img src="https://placehold.co/400x400" class="tim-img mb-3"
-                            alt="Kepala Seksi Pemanfaatan, seorang pria berusia 45an dengan kacamata, mengenakan kemeja resmi">
-                        <h5>Agustinus Ferry Krisbianto, S.Hut., M.Sc.</h5>
-                        <p>Kepala Seksi Tata Kelola dan Usaha Hutan</p>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="text-center">
-                        <img src="https://placehold.co/400x400" class="tim-img mb-3"
-                            alt="Kepala Seksi Rehabilitasi, seorang pria berusia 35an dengan senyum ramah, mengenakan kemeja resmi">
-                        <h5>Hartono, S.Hut.</h5>
-                        <p>Kepala Seksi RLPM</p>
-                    </div>
-                </div>
+            <h2 class="section-title text-center">Struktur Organisasi</h2>
+            <p class="text-center mb-5">Berikut adalah struktur organisasi di Cabang Dinas Kehutanan Wilayah Trenggalek</p>
+            <div class="org-chart">
+                <ul>
+                    <li>
+                        <div>
+                            <span class="position">Kepala CDK</span>
+                            <span class="name">Kepala Cabang Dinas Kehutanan Wil. Trenggalek</span>
+                        </div>
+                        <ul>
+                            <li>
+                                <div>
+                                    <span class="position">Kepala Subag TU</span>
+                                    <span class="name">Kepala Sub Bagian Tata Usaha</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="position">Kepala Seksi TKUK</span>
+                                    <span class="name">Kepala Seksi Tata Kelola dan Usaha Hutan</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <span class="position">Kepala Seksi RLPM</span>
+                                    <span class="name">Kepala Seksi Rehabilitasi Lahan dan Pemberdayaan Masyarakat</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </section>
@@ -169,7 +165,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 bg-white rounded shadow-sm">
-                        <h1 class="text-success display-4 fw-bold">98%</h1>
+                        <h1 class="text-success display-4 fw-bold">89%</h1>
                         <p>Tingkat kepuasan pelayanan publik</p>
                     </div>
                 </div>
