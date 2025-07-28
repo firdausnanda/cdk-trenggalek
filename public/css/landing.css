@@ -604,6 +604,11 @@ body.loaded #loading {
         max-width: 300px !important;
         margin: 0 auto 20px !important;
     }
+
+    #mainNavbar.navbar-expanded {
+        background-color: #0a5c36 !important;
+        transition: background-color 0.3s ease;
+    }
 }
 
 @media screen and (max-width: 768px) {

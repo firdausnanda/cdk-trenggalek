@@ -61,3 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 500);
   });
 });
+
+// Navbar Green
+document.addEventListener('DOMContentLoaded', function() {
+  const navbar = document.getElementById('mainNavbar');
+  const toggler = document.querySelector('.navbar-toggler');
+  
+  toggler.addEventListener('click', function() {
+    navbar.classList.toggle('navbar-expanded');
+  });
+});
