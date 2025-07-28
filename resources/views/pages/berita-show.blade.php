@@ -56,7 +56,7 @@
                     <div class="post-tags share-section mt-5">
                         <h5 class="share-title"><i class="fas fa-share-alt me-2"></i>Bagikan Artikel Ini</h5>
 
-                        <div class="row">
+                        <div class="row g-3">
                             @foreach ($share as $item => $value)
                                 <div class="col-lg-2">
                                     <a class="share-btn btn-{{ $item }} text-decoration-none social-button d-flex align-items-center justify-content-center"
