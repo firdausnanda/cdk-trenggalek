@@ -169,6 +169,19 @@
                         <p>Tingkat kepuasan pelayanan publik</p>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <h1 class="text-success display-4 fw-bold">X</h1>
+                        <p>Jumlah PBPHH (Mas Satria)</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <h1 class="text-success display-4 fw-bold">X</h1>
+                        <p>Perhutanan Sosial (Mas Satria)</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
