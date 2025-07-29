@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('css')
+    <link rel="stylesheet" href="{{ asset('vendor/quill/quill.min.css') }}" />
+@endpush
+
 @section('content')
     <!-- Hero Section -->
     <section class="hero-section mb-5">
@@ -35,7 +39,8 @@
                         <span class="me-3"><i class="far fa-calendar-alt me-1"></i>
                             {{ $post->published_at?->format('d M Y') }}</span>
                         <span class="me-3"><i class="far fa-user me-1"></i> Admin</span>
-                        <span class="me-3"><i class="far fa-eye me-1"></i> {{ $post->views()->count() }} Kali Dilihat</span>
+                        <span class="me-3"><i class="far fa-eye me-1"></i> {{ $post->views()->count() }} Kali
+                            Dilihat</span>
                     </div>
 
                     <div class="post-image">
@@ -43,7 +48,7 @@
                             alt="{{ $post->title }}" class="img-fluid w-100">
                     </div>
 
-                    <div class="post-content mt-4">
+                    <div class="post-content mt-4 ql-editor" style="white-space: normal!important">
                         {!! $post->content !!}
                     </div>
 
