@@ -48,7 +48,7 @@
                             alt="{{ $post->title }}" class="img-fluid w-100">
                     </div>
 
-                    <div class="post-content mt-4 ql-editor" style="white-space: normal!important">
+                    <div class="post-content mt-4 ql-editor p-0" style="white-space: normal!important">
                         {!! $post->content !!}
                     </div>
 
