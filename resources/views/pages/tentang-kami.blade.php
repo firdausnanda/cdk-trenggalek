@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('vendor/datatables/dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/datatables/datatables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
 @endpush
 
