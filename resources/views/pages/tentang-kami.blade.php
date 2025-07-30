@@ -186,7 +186,7 @@
 
     <!-- Modal KTH -->
     <div class="modal fade" id="modal-kth" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" >
+        role="dialog" aria-labelledby="modalTitleId">
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -217,7 +217,7 @@
 
     <!-- Modal Masy. Terlibat -->
     <div class="modal fade" id="modal-masy-terlibat" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" >
+        role="dialog" aria-labelledby="modalTitleId">
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -239,7 +239,7 @@
 
     <!-- Modal Kepuasan Masy. -->
     <div class="modal fade" id="modal-kepuasan-masy" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" >
+        role="dialog" aria-labelledby="modalTitleId">
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -258,7 +258,7 @@
 
     <!-- Modal PBPHH -->
     <div class="modal fade" id="modal-pbphh" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" >
+        role="dialog" aria-labelledby="modalTitleId">
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -290,7 +290,7 @@
 
     <!-- Modal PS -->
     <div class="modal fade" id="modal-ps" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" >
+        role="dialog" aria-labelledby="modalTitleId">
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -444,14 +444,16 @@
             });
 
             // Masy. Terlibat
-            let pieChart
+            let pieChart;
             $('#masy').click(function(e) {
                 e.preventDefault();
 
+                // Destroy existing chart
                 if (pieChart) {
                     pieChart.destroy();
                 }
 
+                // Initialize with empty data
                 const ctx = document.getElementById('pieChart').getContext('2d');
                 pieChart = new Chart(ctx, {
                     type: 'pie',
@@ -466,33 +468,39 @@
                     options: {
                         responsive: true,
                         animation: {
+                            duration: 2000,
+                            easing: 'easeOutBack',
                             animateScale: true,
                             animateRotate: true
                         },
                         plugins: {
                             legend: {
-                                position: 'bottom',
+                                position: 'bottom'
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
-                                        return `Wilker ${context.label}: ${context.raw.toLocaleString('id-ID')} Orang`;
-                                    }
+                                    label: (ctx) =>
+                                        `Wilker ${ctx.label}: ${ctx.raw.toLocaleString('id-ID')} Orang`
                                 }
                             }
                         }
                     }
                 });
 
+                // Load data
                 $.ajax({
-                    type: "GET",
                     url: "{{ route('masyarakat.index') }}",
-                    dataType: "JSON",
                     success: function(data) {
                         pieChart.data.labels = data.labels;
                         pieChart.data.datasets[0].data = data.values;
                         pieChart.data.datasets[0].backgroundColor = data.colors;
-                        pieChart.update();
+
+                        // Force animation restart
+                        setTimeout(() => {
+                            pieChart.update();
+                            pieChart.resetAnimation();
+                            pieChart.update();
+                        }, 300);
                     }
                 });
 
