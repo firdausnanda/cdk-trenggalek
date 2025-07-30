@@ -2,7 +2,7 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('vendor/datatables/dataTables.min.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
 @endpush
 
 @section('content')
@@ -325,7 +325,7 @@
 
 @push('js')
     <script src="{{ asset('vendor/datatables/dataTables.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('vendor/chartjs/chart.js') }}"></script>
     <script>
         $(document).ready(function() {
 
