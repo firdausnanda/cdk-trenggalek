@@ -186,7 +186,7 @@
 
     <!-- Modal KTH -->
     <div class="modal fade" id="modal-kth" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        role="dialog" aria-labelledby="modalTitleId" >
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -217,7 +217,7 @@
 
     <!-- Modal Masy. Terlibat -->
     <div class="modal fade" id="modal-masy-terlibat" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        role="dialog" aria-labelledby="modalTitleId" >
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -239,7 +239,7 @@
 
     <!-- Modal Kepuasan Masy. -->
     <div class="modal fade" id="modal-kepuasan-masy" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        role="dialog" aria-labelledby="modalTitleId" >
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -258,7 +258,7 @@
 
     <!-- Modal PBPHH -->
     <div class="modal fade" id="modal-pbphh" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        role="dialog" aria-labelledby="modalTitleId" >
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -290,7 +290,7 @@
 
     <!-- Modal PS -->
     <div class="modal fade" id="modal-ps" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        role="dialog" aria-labelledby="modalTitleId" >
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
