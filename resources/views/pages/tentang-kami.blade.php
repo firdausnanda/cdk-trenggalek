@@ -552,7 +552,7 @@
                         action: function(e, dt, node, config) {
                             window.currentWilayahFilter = null;
                             table2.ajax.reload()
-                            $('#kth_title').text('')
+                            $('#pbphh_title').text('')
                         }
                     }],
                     columnDefs: [{
@@ -671,7 +671,7 @@
                         action: function(e, dt, node, config) {
                             window.currentWilayahFilter = null;
                             table3.ajax.reload()
-                            $('#kth_title').text('')
+                            $('#ps_title').text('')
                         }
                     }],
                     columnDefs: [{
