@@ -38,6 +38,11 @@ Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('ber
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_store');
 
+Route::get('/kth', [HomeController::class, 'kth'])->name('kth.index');
+Route::get('/masyarakat', [HomeController::class, 'masyarakat'])->name('masyarakat.index');
+Route::get('/pbphh', [HomeController::class, 'pbphh'])->name('pbphh.index');
+Route::get('/ps', [HomeController::class, 'ps'])->name('ps.index');
+
 /**
  * Admin routes.
  */

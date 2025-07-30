@@ -3,6 +3,11 @@
     --secondary-green: #228b22;
     --light-green: #e8f5e9;
     --dark-green: #1b5e20;
+    --hijau-muda: #8ba888;
+    --hijau-tua: #476847;
+    --coklat-muda: #b9936c;
+    --coklat-tua: #6b4226;
+    --krem: #f5f5dc;
 }
 
 body {
@@ -635,4 +640,90 @@ body.loaded #loading {
     .org-chart {
         margin: 20px auto;
     }
+}
+
+.stats-button {
+    transition: all 0.3s ease;
+}
+
+.stats-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    background-color: #f8f9fa !important;
+}
+
+.stats-button:active {
+    transform: translateY(0);
+}
+
+.table thead th {
+    background-color: var(--hijau-tua);
+    color: white;
+    font-weight: 600;
+    border-bottom-width: 2px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(139, 168, 136, 0.1);
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination .paginate_button {
+    color: var(--hijau-tua) !important;
+    border-radius: 4px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination {
+    --bs-pagination-color: var(--hijau-muda) !important;
+    --bs-pagination-hover-color: linear-gradient(
+        135deg,
+        var(--hijau-muda),
+        var(--hijau-tua)
+    ) !important;
+    --bs-pagination-active-border-color: var(--hijau-muda) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.active {
+    --bs-pagination-active-bg: var(--hijau-tua) !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: linear-gradient(
+        135deg,
+        var(--hijau-muda),
+        var(--hijau-tua)
+    ) !important;
+    color: white !important;
+    border: 1px solid transparent !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: var(--krem) !important;
+    border: 1px solid var(--hijau-muda) !important;
+}
+
+.dataTables_filter label {
+    font-weight: 600;
+    color: var(--hijau-tua);
+}
+
+.dataTables_filter input {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-left: 10px;
+}
+
+.dataTables_length label {
+    font-weight: 600;
+    color: var(--hijau-tua);
+}
+
+.dataTables_length select {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 0 5px;
 }

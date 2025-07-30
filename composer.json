@@ -72,7 +72,8 @@
         "files": [
             "app/Helper/common.php",
             "app/Helper/database.php",
-            "app/Helper/hooks.php"
+            "app/Helper/hooks.php",
+            "app/Helper/ResponseFormatter.php"
         ]
     },
     "autoload-dev": {
