@@ -469,7 +469,6 @@
                         responsive: true,
                         animation: {
                             duration: 2000,
-                            easing: 'easeOutBack',
                             animateScale: true,
                             animateRotate: true
                         },
