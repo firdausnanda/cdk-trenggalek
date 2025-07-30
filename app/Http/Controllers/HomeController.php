@@ -105,6 +105,10 @@ class HomeController extends Controller
             ->where('slug', $slug)
             ->first();
 
+        if (!$post) {
+            abort(404);
+        }
+
         $posts = Post::type('post')
             ->orderBy('published_at', 'desc')
             ->published()
