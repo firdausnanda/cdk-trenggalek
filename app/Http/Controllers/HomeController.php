@@ -21,6 +21,7 @@ class HomeController extends Controller
     public function index()
     {
         $posts = Post::type('post')
+            ->published()
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->get()
@@ -66,7 +67,7 @@ class HomeController extends Controller
         $filePath = public_path('data/pbphh.csv');
         $lines = file($filePath);
         $pbphh = count($lines) - 1;
-        
+
         // PS
         $filePath = public_path('data/ps.csv');
         $lines = file($filePath);
