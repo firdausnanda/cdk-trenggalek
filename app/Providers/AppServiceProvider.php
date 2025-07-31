@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -56,6 +58,11 @@ class AppServiceProvider extends ServiceProvider
         // Only allowed people can view the pulse.
         Gate::define('viewPulse', function (User $user) {
             return $user->can('pulse.view');
+        });
+
+        // Only allowed people can view the log viewer.
+        LogViewer::auth(function ($request) {
+            return Auth::check() && Auth::user()->hasRole('Superadmin');
         });
     }
 }
