@@ -64,10 +64,5 @@ class AppServiceProvider extends ServiceProvider
         LogViewer::auth(function ($request) {
             return Auth::check() && Auth::user()->hasRole('Superadmin');
         });
-
-        // Only allowed people can view the settings.
-        Gate::define('viewLogViewer', function (User $user) {
-            return $user->hasRole('Superadmin');
-        });
     }
 }
