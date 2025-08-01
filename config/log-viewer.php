@@ -101,7 +101,7 @@ return [
     */
 
     'api_middleware' => [
-        'auth:sanctum',
+        'auth:api',
         \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         // \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
