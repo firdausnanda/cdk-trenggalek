@@ -38,7 +38,7 @@ class TranslationController extends Controller
 
         $languages = $this->languages;
         $groups = $this->translationService->getGroups();
-        $selectedLang = request()->get('lang', 'bn');
+        $selectedLang = request()->get('lang', 'id');
         $selectedGroup = request()->get('group', 'json');
 
         // Get base English translations for the selected group
