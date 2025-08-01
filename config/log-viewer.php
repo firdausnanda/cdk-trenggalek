@@ -101,7 +101,7 @@ return [
     */
 
     'api_middleware' => [
-        'auth:api',
+        'auth:web',
         \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         // \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
