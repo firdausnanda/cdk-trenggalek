@@ -30,7 +30,7 @@
                     <a href="{{ route('tentang-kami') }}" class="btn btn-outline-success">Selengkapnya</a>
                 </div>
                 <div class="col-lg-6">
-                    <img src="{{ asset('images/background/bg-1.jpg') }}"
+                    <img src="{{ asset('images/background/bg-1.webp') }}"
                         alt="Team Dinas Kehutanan Wilayah Trenggalek sedang bekerja di lapangan"
                         class="img-fluid rounded shadow news-card">
                 </div>
@@ -168,7 +168,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="map-container shadow news-card">
-                        <img src="{{ asset('images/background/gedung-cdk.jpg') }}"
+                        <img src="{{ asset('images/background/gedung-cdk.webp') }}"
                             alt="Lokasi Cabang Dinas Kehutanan Wilayah Trenggalek" class="img-fluid w-100 h-100">
                     </div>
                 </div>
