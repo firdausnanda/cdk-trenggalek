@@ -212,7 +212,7 @@ class LanguageService
     {
         // Get all the languages inside /resources/lang folder as key.
         // The key is the language code (e.g., 'en', 'bn').
-        $languages = array_diff(scandir(resource_path('lang')), ['..', '.', '.DS_Store']);
+        $languages = array_diff(scandir(resource_path('lang')), ['..', '.', '.DS_Store', 'vendor']);
 
         // Process languages to get unique keys
         $uniqueLanguages = [];
