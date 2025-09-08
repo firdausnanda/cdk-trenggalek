@@ -116,7 +116,11 @@ class HomeController extends Controller
             ->take(4)
             ->get(['title', 'slug', 'published_at']);
 
-        $kategori = Term::where('taxonomy', 'category')->take(5)->get();
+        $kategori = Term::withCount('posts')
+            ->where('taxonomy', 'category')
+            ->orderByDesc('posts_count')
+            ->take(5)
+            ->get();
 
         $share = Share::page(url()->current(), $post->title)
             ->facebook()

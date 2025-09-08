@@ -163,7 +163,7 @@
                     <ul class="list-unstyled mt-3">
                         @foreach ($kategori as $item)
                             <li class="mb-2"><a href="{{ route('berita', ['kategori' => $item->slug]) }}"
-                                    class="text-decoration-none text-success text-end">{{ $item->name }}</a></li>
+                                    class="text-decoration-none text-success text-end">{{ $item->name }} ({{ $item->posts_count }})</a></li>
                         @endforeach
                     </ul>
                 </div>
