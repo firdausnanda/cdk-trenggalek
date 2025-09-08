@@ -38,7 +38,7 @@
                         </div>
                         <div class="card-body">
                             <small class="news-date"><i class="far fa-calendar-alt"></i>
-                                {{ $post->published_at?->format('d M Y') }}</small>
+                                {{ $post->published_at?->translatedFormat('d F Y') }}</small>
                             <a href="{{ route('berita.show', $post->slug) }}" class="text-decoration-none text-dark">
                                 <h5 class="card-title mt-2">{{ $post->title }}</h5>
                             </a>

@@ -131,7 +131,7 @@
                                     Selengkapnya</a>
                             </div>
                             <div class="card-footer text-muted">
-                                <small>Diposting: {{ $post->created_at->format('d M Y') }}</small>
+                                <small>Diposting: {{ $post->published_at?->translatedFormat('d F Y') }}</small>
                             </div>
                         </div>
                     </div>

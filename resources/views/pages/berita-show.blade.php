@@ -37,7 +37,7 @@
 
                     <div class="post-meta mb-4">
                         <span class="me-3"><i class="far fa-calendar-alt me-1"></i>
-                            {{ $post->published_at?->format('d M Y') }}</span>
+                            {{ $post->published_at?->translatedFormat('d F Y') }}</span>
                         <span class="me-3"><i class="far fa-user me-1"></i> Admin</span>
                         <span class="me-3"><i class="far fa-eye me-1"></i> {{ $post->views()->count() }} Kali
                             Dilihat</span>
@@ -152,7 +152,7 @@
                             <li class="mb-3 pb-2 border-bottom">
                                 <a href="{{ route('berita.show', $item->slug) }}"
                                     class="text-decoration-none text-success">{{ $item->title }}</a>
-                                <div class="text-muted small">{{ $item->published_at?->format('d M Y') }}</div>
+                                <div class="text-muted small">{{ $item->published_at?->translatedFormat('d F Y') }}</div>
                             </li>
                         @endforeach
                     </ul>
