@@ -63,11 +63,37 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Navbar Green
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const navbar = document.getElementById('mainNavbar');
   const toggler = document.querySelector('.navbar-toggler');
-  
-  toggler.addEventListener('click', function() {
+
+  toggler.addEventListener('click', function () {
     navbar.classList.toggle('navbar-expanded');
   });
 });
+
+// Animasi Loading Screen
+let progress = 0;
+const progressBar = document.getElementById('progress-bar');
+const interval = setInterval(() => {
+  progress += Math.random() * 5;
+  if (progress >= 100) {
+    progress = 100;
+    clearInterval(interval);
+    const loadingScreen = document.getElementById('loading-screen');
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+      loadingScreen.style.display = 'none';
+    }, 600);
+  }
+  progressBar.style.width = progress + '%';
+}, 50);
+
+// Animasi titik-titik
+const dots = document.getElementById('dots');
+let dotCount = 2;
+
+setInterval(() => {
+  dotCount = (dotCount + 1) % 4; // 0 to 3 dots
+  dots.textContent = '.'.repeat(dotCount);
+}, 500);

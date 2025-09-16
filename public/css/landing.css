@@ -727,3 +727,78 @@ body.loaded #loading {
     padding: 5px;
     margin: 0 5px;
 }
+
+.swal-custom-popup {
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.swal-custom-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+}
+
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(to bottom, #e8f5e9, #ffffff);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease;
+}
+
+#loading-logo {
+    width: 200px;
+    margin-bottom: 20px;
+    animation: sway 2.5s infinite ease-in-out;
+}
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+    color: #1b5e20;
+    margin-bottom: 10px;
+}
+
+#loading-text {
+    font-size: 1.1rem;
+    color: #2e7d32;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#tagline {
+    font-size: 0.9rem;
+    color: #4e342e;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+@keyframes sway {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(8deg);
+    }
+}
+
+.progress {
+    width: 40%;
+    height: 20px;
+    background-color: #c8e6c9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background-color: #2e7d32;
+}
