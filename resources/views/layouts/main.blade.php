@@ -20,6 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
     <!-- Custom CSS -->
     @stack('css')
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
@@ -28,14 +29,15 @@
 <body>
 
     <!-- Loading -->
-    <div id="loading">
+    @include('components.loading-screen')
+    {{-- <div id="loading">
         <div class="spinner-container">
             <div class="spinner-border text-success" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <div class="loading-text">Memuat...</div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Menu -->
     @include('layouts.partials.menu')
@@ -49,6 +51,7 @@
     <!-- Bootstrap JS -->
     <script src="{{ asset('vendor/jquery/jquery-3.7.1.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/share.js') }}"></script>
 
     <script src="{{ asset('js/landing.js') }}"></script>
