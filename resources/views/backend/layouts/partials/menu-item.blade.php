@@ -15,17 +15,20 @@
     @endphp
 
     <li class="hover:menu-item-active menu-item-{{ $item->id }}" style="{!! $item->itemStyles !!}">
-        <button :style="`color: ${textColor}`" class="menu-item group w-full text-left {{ $isActive }}" type="button" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.menu-item-arrow').classList.toggle('rotate-180')">
+        <button :style="`color: ${textColor}`" class="menu-item group w-full text-left {{ $isActive }}" type="button"
+            onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.menu-item-arrow').classList.toggle('rotate-180')">
             @if (!empty($item->icon))
-                <img src="{{ asset('images/icons/' . $item->icon) }}" alt="{!! $item->label !!}" class="menu-item-icon dark:invert w-5">
+                <img src="{{ asset('images/icons/' . $item->icon) }}" alt="{!! $item->label !!}"
+                    class="menu-item-icon dark:invert w-5">
             @elseif (!empty($item->iconClass))
                 <i class="{{ $item->iconClass }} menu-item-icon"></i>
             @endif
             <span class="menu-item-text">{!! $item->label !!}</span>
-            <img src="{{ asset('images/icons/chevron-down.svg') }}" alt="Arrow" class="menu-item-arrow dark:invert transition-transform duration-300 {{ $rotateClass }}">
+            <img src="{{ asset('images/icons/chevron-down.svg') }}" alt="Arrow"
+                class="menu-item-arrow dark:invert transition-transform duration-300 {{ $rotateClass }}">
         </button>
         <ul id="{{ $submenuId }}" class="submenu pl-12 mt-2 overflow-hidden {{ $showSubmenu ? '' : 'hidden' }}">
-            @foreach($item->children as $child)
+            @foreach ($item->children as $child)
                 @include('backend.layouts.partials.menu-item', ['item' => $child])
             @endforeach
         </ul>
@@ -37,17 +40,22 @@
     @endphp
 
     <li class="hover:menu-item-active menu-item-{{ $item->id }}" style="{!! $item->itemStyles !!}">
-        <a :style="`color: ${textColor}`" href="{{ $item->route ?? '#' }}" class="menu-item group {{ $isActive }}" {!! $target !!}>
+        <a :style="`color: ${textColor}`" href="{{ $item->route ?? '#' }}" class="menu-item group {{ $isActive }}"
+            {!! $target !!}>
             @if (!empty($item->icon))
-                <img src="{{ asset('images/icons/' . $item->icon) }}" alt="{!! $item->label !!}" class="menu-item-icon dark:invert">
+                <img src="{{ asset('images/icons/' . $item->icon) }}" alt="{!! $item->label !!}"
+                    class="menu-item-icon dark:invert">
             @elseif (!empty($item->iconClass))
                 <i class="{{ $item->iconClass }} menu-item-icon"></i>
             @endif
             <span class="menu-item-text">{!! $item->label !!}</span>
+            @if (!empty($item->badge) && $item->badge > 0)
+                <span class="menu-item-badge">{{ $item->badge }}</span>
+            @endif
         </a>
     </li>
 @endif
 
-@if(isset($item->id))
+@if (isset($item->id))
     {!! ld_apply_filters('sidebar_menu_item_after_' . strtolower($item->id), '') !!}
 @endif

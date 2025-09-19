@@ -260,4 +260,9 @@ class Post extends Model implements Viewable
     {
         return ['content', 'excerpt', 'meta'];
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

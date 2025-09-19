@@ -33,6 +33,8 @@ class AdminMenuItem
 
     public string $title = '';
 
+    public ?string $badge = null;
+
     public function setLabel(string $label): self
     {
         $this->label = $label;
@@ -180,6 +182,13 @@ class AdminMenuItem
         return $this;
     }
 
+    public function setBadge(?string $badge): self
+    {
+        $this->badge = $badge;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -194,6 +203,7 @@ class AdminMenuItem
             'permissions' => $this->permissions,
             'priority' => $this->priority,
             'htmlData' => $this->htmlData,
+            'badge' => $this->badge,
             'children' => array_map(function ($child) {
                 return $child->toArray();
             }, $this->children),

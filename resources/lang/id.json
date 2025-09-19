@@ -269,5 +269,6 @@
     "Demo Mode": "Mode Demo",
     "Demo Mode Active": "Mode Demo Aktif",
     "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.": "Mode demo saat ini diaktifkan untuk situs ini. Banyak fitur dinonaktifkan untuk mencegah perubahan pada data demo.",
-    "Parent": "Induk"
+    "Parent": "Induk",
+    "Comment": "Komentar"
 }

@@ -324,5 +324,6 @@
     "Demo Mode": "Demo Mode",
     "Demo Mode Active": "Demo Mode Active",
     "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.": "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.",
-    "Parent": "Parent"
+    "Parent": "Parent",
+    "Comment": "Comment"
 }

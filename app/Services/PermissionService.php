@@ -104,6 +104,10 @@ class PermissionService
                     'term.view',
                     'term.edit',
                     'term.delete',
+                    'comment.create',
+                    'comment.view',
+                    'comment.edit',
+                    'comment.delete'
                 ],
             ],
         ];

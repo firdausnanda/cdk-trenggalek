@@ -78,69 +78,100 @@
                     </div>
                 </article>
 
+                @if (session('success'))
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '<span style="font-size: 1.4rem; font-weight: 600;">Komentar Terkirim</span>',
+                                html: '<p style="font-size: 1rem; color: #555;">{{ session('success') }}</p>',
+                                confirmButtonText: 'Tutup',
+                                confirmButtonColor: '#3085d6',
+                                background: '#fefefe',
+                                customClass: {
+                                    popup: 'swal-custom-popup',
+                                    confirmButton: 'swal-custom-button'
+                                },
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                showClass: {
+                                    popup: 'animate__animated animate__fadeInDown'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__fadeOutUp'
+                                }
+                            });
+                        });
+                    </script>
+                @endif
+
                 <!-- Comments Section -->
-                {{-- <div class="comment-section mt-5 p-4">
-                    <h5 class="mb-4"><i class="far fa-comments me-2"></i>Komentar (3)</h5>
+                <div class="comment-section mt-5 p-4">
+                    <h5 class="mb-4"><i class="far fa-comments me-2"></i>Komentar ({{ $comment->count() }})</h5>
 
                     <!-- Comment List -->
                     <div class="comment-list">
-                        <!-- Comment 1 -->
-                        <div class="comment mb-4 pb-4 border-bottom">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="comment-author">Supriyadi</span>
-                                <span class="comment-date">12 Juni 2023 - 14:30</span>
+                        @forelse ($comment as $c)
+                            <div class="comment mb-4 pb-4 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="comment-author">{{ Str::ucfirst($c->name) }}</span>
+                                    <span class="comment-date">{{ $c->created_at->translatedFormat('d F Y') }} -
+                                        {{ $c->created_at->translatedFormat('H:i') }}</span>
+                                </div>
+                                <div class="comment-text">
+                                    {!! $c->content !!}
+                                </div>
                             </div>
-                            <div class="comment-text">
-                                Program yang sangat bermanfaat untuk lingkungan kita. Kapan akan dilakukan lagi di daerah
-                                lain?
-                            </div>
-                        </div>
-
-                        <!-- Comment 2 -->
-                        <div class="comment mb-4 pb-4 border-bottom">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="comment-author">Karyono</span>
-                                <span class="comment-date">13 Juni 2023 - 09:15</span>
-                            </div>
-                            <div class="comment-text">
-                                Saya sebagai warga Pule sangat mendukung kegiatan ini. Semoga bisa berkelanjutan dan
-                                memberikan dampak positif bagi lingkungan kami.
-                            </div>
-                        </div>
-
-                        <!-- Comment 3 -->
-                        <div class="comment mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="comment-author">Rahayu</span>
-                                <span class="comment-date">14 Juni 2023 - 16:45</span>
-                            </div>
-                            <div class="comment-text">
-                                Apakah ada program untuk adopsi pohon? Saya ingin ikut berkontribusi dalam perawatan pohon
-                                yang telah ditanam.
-                            </div>
-                        </div>
+                        @empty
+                            <span class="text-secondary">
+                                Postingan ini belum memiliki komentar
+                            </span>
+                        @endforelse
                     </div>
 
                     <!-- Comment Form -->
-                    <div class="comment-form mt-5">
+                    <div class="comment-form mt-5" id="comment-form">
                         <h5 class="mb-3">Tinggalkan Komentar</h5>
-                        <form>
+                        <form method="POST" action="{{ route('comments.store') }}">
+                            @csrf
+
                             <div class="mb-3">
-                                <label for="name" class="form-label">Nama</label>
-                                <input type="text" class="form-control" id="name" required>
+                                <label for="name" class="form-label">Nama <span class="text-danger">*</span></label>
+                                <input type="text" name="name"
+                                    class="form-control @error('name') is-invalid @enderror" id="name"
+                                    value="{{ old('name') }}">
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" required>
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email"
+                                    class="form-control @error('email') is-invalid @enderror" id="email"
+                                    value="{{ old('email') }}">
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <div class="mb-3">
-                                <label for="comment" class="form-label">Komentar</label>
-                                <textarea class="form-control" id="comment" rows="3" required></textarea>
+                                <label for="comment" class="form-label">Komentar <span class="text-danger">*</span></label>
+                                <div class="form-control @error('comment') is-invalid @enderror" id="comment"
+                                    style="height: 150px;"></div>
+                                <input type="hidden" name="comment" id="comment-content" value="{{ old('comment') }}">
+                                @error('comment')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                             </div>
+
+                            <input type="hidden" name="post_id" value="{{ $post->id }}">
+
                             <button type="submit" class="btn btn-primary">Kirim Komentar</button>
                         </form>
                     </div>
-                </div> --}}
+
+                </div>
             </div>
 
             <!-- Sidebar -->
@@ -163,7 +194,9 @@
                     <ul class="list-unstyled mt-3">
                         @foreach ($kategori as $item)
                             <li class="mb-2"><a href="{{ route('berita', ['kategori' => $item->slug]) }}"
-                                    class="text-decoration-none text-success text-end">{{ $item->name }} ({{ $item->posts_count }})</a></li>
+                                    class="text-decoration-none text-success text-end">{{ $item->name }}
+                                    ({{ $item->posts_count }})
+                                </a></li>
                         @endforeach
                     </ul>
                 </div>
@@ -181,3 +214,33 @@
         </div>
     </div>
 @endsection
+
+@push('css')
+    <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" />
+    <link href="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.css" rel="stylesheet">
+@endpush
+
+@push('js')
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-emoji@0.1.7/dist/quill-emoji.js"></script>
+
+    <script>
+        var quill = new Quill('#comment', {
+            theme: 'bubble',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    ['emoji']
+                ],
+                'emoji-toolbar': true,
+                'emoji-textarea': false,
+                'emoji-shortname': true
+            }
+        });
+
+        // Kirim isi komentar ke input hidden saat submit
+        document.querySelector('form').addEventListener('submit', function() {
+            document.querySelector('#comment-content').value = quill.root.innerHTML;
+        });
+    </script>
+@endpush

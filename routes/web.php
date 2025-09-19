@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Backend\ActionLogController;
+use App\Http\Controllers\Backend\CommentController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\LocaleController;
 use App\Http\Controllers\Backend\ModulesController;
@@ -35,6 +36,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
 Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
+Route::post('/berita/comments', [HomeController::class, 'commentStore'])->name('comments.store');
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_store');
 
@@ -101,6 +103,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
 
     // Editor Upload Route
     Route::post('/editor/upload', [App\Http\Controllers\Backend\EditorController::class, 'upload'])->name('editor.upload');
+
+    // Comments Route
+    Route::resource('comment', CommentController::class);
+    Route::post('comment/{comment}/approve', [CommentController::class, 'approve'])->name('comment.approve');
+    Route::post('comment/{comment}/unapprove', [CommentController::class, 'unapprove'])->name('comment.unapprove');
+    Route::delete('comment/delete/bulk-delete', [CommentController::class, 'bulkDelete'])->name('comment.bulk-delete');
 });
 
 /**

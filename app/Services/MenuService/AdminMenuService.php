@@ -2,6 +2,7 @@
 
 namespace App\Services\MenuService;
 
+use App\Models\Comment;
 use App\Services\Content\ContentService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -102,6 +103,7 @@ class AdminMenuService
             'id' => 'dashboard',
             'priority' => 1,
             'permissions' => 'dashboard.view',
+            'badge' => null,
         ]);
 
         // Content Management Menu from registered post types
@@ -112,12 +114,24 @@ class AdminMenuService
         }
 
         $this->addMenuItem([
+            'label' => __('Comment'),
+            'icon' => 'comment-icon.svg',
+            'route' => route('admin.comment.index'),
+            'active' => Route::is('admin.comment.index'),
+            'id' => 'comment',
+            'priority' => 90,
+            'permissions' => 'comment.view',
+            'badge' => Comment::where('is_approved', false)->count(),
+        ], 'Content');
+
+        $this->addMenuItem([
             'label' => __('Roles & Permissions'),
             'icon' => 'key.svg',
             'id' => 'roles-submenu',
             'active' => Route::is('admin.roles.*') || Route::is('admin.permissions.*'),
             'priority' => 20,
             'permissions' => ['role.create', 'role.view', 'role.edit', 'role.delete'],
+            'badge' => null,
             'children' => [
                 [
                     'label' => __('Roles'),
@@ -150,6 +164,7 @@ class AdminMenuService
             'active' => Route::is('admin.users.*'),
             'priority' => 20,
             'permissions' => ['user.create', 'user.view', 'user.edit', 'user.delete'],
+            'badge' => null,
             'children' => [
                 [
                     'label' => __('Users'),
@@ -176,6 +191,7 @@ class AdminMenuService
             'id' => 'modules',
             'priority' => 30,
             'permissions' => 'module.view',
+            'badge' => null,
         ]);
 
         $this->addMenuItem([
@@ -185,6 +201,7 @@ class AdminMenuService
             'active' => Route::is('admin.actionlog.*'),
             'priority' => 40,
             'permissions' => ['pulse.view', 'actionlog.view'],
+            'badge' => null,
             'children' => [
                 [
                     'label' => __('Action Logs'),
@@ -218,6 +235,7 @@ class AdminMenuService
             'active' => Route::is('admin.settings.*') || Route::is('admin.translations.*'),
             'priority' => 1,
             'permissions' => ['settings.edit', 'translations.view'],
+            'badge' => null,
             'children' => [
                 [
                     'label' => __('General Settings'),
@@ -243,13 +261,14 @@ class AdminMenuService
             'active' => false,
             'id' => 'logout',
             'priority' => 1,
+            'badge' => null,
             'html' => '
                 <li class="hover:menu-item-active">
-                    <form method="POST" action="'.route('logout').'">
-                        '.csrf_field().'
+                    <form method="POST" action="' . route('logout') . '">
+                        ' . csrf_field() . '
                         <button type="submit" class="menu-item group w-full text-left menu-item-inactive text-black dark:text-white hover:text-black">
-                            <img src="'.asset('images/icons/logout.svg').'" alt="Logout" class="menu-item-icon dark:invert">
-                            <span class="menu-item-text">'.__('Logout').'</span>
+                            <img src="' . asset('images/icons/logout.svg') . '" alt="Logout" class="menu-item-icon dark:invert">
+                            <span class="menu-item-text">' . __('Logout') . '</span>
                         </button>
                     </form>
                 </li>
@@ -287,8 +306,8 @@ class AdminMenuService
                     'title' => __("All {$type->label}"),
                     'route' => 'admin.posts.index',
                     'params' => $typeName,
-                    'active' => request()->is('admin/posts/'.$typeName) ||
-                        (request()->is('admin/posts/'.$typeName.'/*') && ! request()->is('admin/posts/'.$typeName.'/create')),
+                    'active' => request()->is('admin/posts/' . $typeName) ||
+                        (request()->is('admin/posts/' . $typeName . '/*') && ! request()->is('admin/posts/' . $typeName . '/create')),
                     'priority' => 10,
                     'permissions' => 'post.view',
                 ],
@@ -296,7 +315,7 @@ class AdminMenuService
                     'title' => __('Add New'),
                     'route' => 'admin.posts.create',
                     'params' => $typeName,
-                    'active' => request()->is('admin/posts/'.$typeName.'/create'),
+                    'active' => request()->is('admin/posts/' . $typeName . '/create'),
                     'priority' => 20,
                     'permissions' => 'post.create',
                 ],
@@ -312,7 +331,7 @@ class AdminMenuService
                         'title' => __($taxonomy->label),
                         'route' => 'admin.terms.index',
                         'params' => $taxonomy->name,
-                        'active' => request()->is('admin/terms/'.$taxonomy->name.'*'),
+                        'active' => request()->is('admin/terms/' . $taxonomy->name . '*'),
                         'priority' => 30 + $taxonomy->id, // Prioritize after standard items
                         'permissions' => 'term.view',
                     ];
@@ -323,8 +342,8 @@ class AdminMenuService
             $menuItem = [
                 'title' => __($type->label),
                 'iconClass' => get_post_type_icon($typeName),
-                'id' => 'post-type-'.$typeName,
-                'active' => request()->is('admin/posts/'.$typeName.'*') ||
+                'id' => 'post-type-' . $typeName,
+                'active' => request()->is('admin/posts/' . $typeName . '*') ||
                     (! empty($type->taxonomies) && $this->isCurrentTermBelongsToPostType($type->taxonomies)),
                 'priority' => 10,
                 'permissions' => 'post.view',
@@ -369,7 +388,7 @@ class AdminMenuService
             });
 
             // Apply filters that might add/modify menu items.
-            $filteredItems = ld_apply_filters('sidebar_menu_'.strtolower($group), $filteredItems);
+            $filteredItems = ld_apply_filters('sidebar_menu_' . strtolower($group), $filteredItems);
 
             // Only add the group if it has items after filtering.
             if (! empty($filteredItems)) {
@@ -402,13 +421,13 @@ class AdminMenuService
         $html = '';
         foreach ($groupItems as $menuItem) {
             $filterKey = $menuItem->id ?? Str::slug($menuItem->label) ?? '';
-            $html .= ld_apply_filters('sidebar_menu_before_'.$filterKey, '');
+            $html .= ld_apply_filters('sidebar_menu_before_' . $filterKey, '');
 
             $html .= view('backend.layouts.partials.menu-item', [
                 'item' => $menuItem,
             ])->render();
 
-            $html .= ld_apply_filters('sidebar_menu_after_'.$filterKey, '');
+            $html .= ld_apply_filters('sidebar_menu_after_' . $filterKey, '');
         }
 
         return $html;

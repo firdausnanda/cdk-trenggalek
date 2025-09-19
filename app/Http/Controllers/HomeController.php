@@ -6,11 +6,14 @@ namespace App\Http\Controllers;
 
 use App\Helper\ResponseFormatter;
 use App\Mail\ContactFormMail;
+use App\Models\Comment;
 use App\Models\ContactMessage;
 use App\Models\Post;
 use App\Models\Term;
+use App\Rules\NotEmptyHtml;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Jorenvh\Share\ShareFacade as Share;
 
 use function PHPSTORM_META\map;
@@ -131,9 +134,13 @@ class HomeController extends Controller
             ->reddit()
             ->getRawLinks();
 
+        $comment = Comment::where('is_approved', true)
+            ->where('post_id', $post->id)
+            ->get();
+
         views($post)->cooldown(5)->record();
 
-        return view('pages.berita-show', compact('post', 'kategori', 'posts', 'share'));
+        return view('pages.berita-show', compact('post', 'kategori', 'posts', 'share', 'comment'));
     }
 
     public function kontak()
@@ -320,5 +327,42 @@ class HomeController extends Controller
         }
 
         return ResponseFormatter::success($datas, 'Data berhasil diambil');
+    }
+
+    public function commentStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml],
+            'post_id' => 'required|exists:posts,id',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'comment.required' => 'Komentar tidak boleh kosong.',
+            'post_id.exists' => 'Postingan tidak ditemukan.',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->withFragment('comment-form');
+        }
+
+        $validated = $validator->validated();
+
+        Comment::create([
+            'post_id' => $validated['post_id'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'content' => $validated['comment'],
+            'is_approved' => false,
+        ]);
+
+        return back()
+            ->with('success', 'Komentar berhasil dikirim dan menunggu persetujuan.')
+            ->withFragment('comment-form');
     }
 }
