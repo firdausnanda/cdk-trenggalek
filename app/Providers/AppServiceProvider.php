@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
+use Illuminate\Support\Facades\File;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -51,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
             if (Schema::hasTable('settings')) {
                 $settings = Setting::pluck('option_value', 'option_name')->toArray();
                 foreach ($settings as $key => $value) {
-                    config(['settings.'.$key => $value]);
+                    config(['settings.' . $key => $value]);
                 }
             }
         } catch (\Exception $e) {
@@ -68,5 +69,11 @@ class AppServiceProvider extends ServiceProvider
         LogViewer::auth(function ($request) {
             return Auth::check() && Auth::user()->hasRole('Superadmin');
         });
+
+        // Create Modules folder if it doesn't exist
+        $path = base_path('Modules'); 
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true, true);
+        }
     }
 }
