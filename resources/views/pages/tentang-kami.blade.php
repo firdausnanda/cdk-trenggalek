@@ -152,7 +152,7 @@
                 </div>
                 <div class="col-md-4">
                     <button class="w-100 h-100 p-4 bg-white rounded shadow-sm border-0 stats-button" id="kep-masy">
-                        <h1 class="text-success display-4 fw-bold">93.96%</h1>
+                        <h1 class="text-success display-4 fw-bold">93.17%</h1>
                         <p class="mb-0">Tingkat kepuasan pelayanan publik</p>
                     </button>
                 </div>
