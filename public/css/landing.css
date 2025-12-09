@@ -802,3 +802,85 @@ body.loaded #loading {
 .progress-bar {
     background-color: #2e7d32;
 }
+
+.heros-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-slide {
+    height: 75vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero-slide::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    animation: fadeUp 1s ease-in-out both;
+}
+
+/* Custom animation: fade + slide-up combo */
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtle delays for better rhythm */
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    animation: fadeUp 1s ease forwards;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards;
+    animation-delay: 0.4s;
+}
+
+.hero-btn {
+    opacity: 0;
+    animation: fadeUp 1.4s ease forwards;
+    animation-delay: 0.8s;
+}
+
+/* Bullets and controls */
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    margin: 0 6px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicators .active {
+    background-color: #fff;
+}

@@ -1,12 +1,51 @@
 @extends('layouts.main')
 
 @section('content')
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="display-3 fw-bold mb-4">Cabang Dinas Kehutanan Wilayah Trenggalek</h1>
-            <p class="lead mb-5">Melindungi, Mengelola, dan Melestarikan Hutan untuk Masa Depan</p>
-            <a href="#layanan" class="btn btn-primary btn-lg px-4">Pelayanan Kami</a>
+    <section id="hero" class="heros-section position-relative overflow-hidden">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500"
+            data-bs-pause="false">
+            <div class="carousel-inner">
+
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                        style="background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        <div class="content">
+                            <h1 class="hero-title">Cabang Dinas Kehutanan Wilayah Trenggalek</h1>
+                            <p class="hero-subtitle">Melindungi, Mengelola, dan Melestarikan Hutan untuk Masa Depan</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                        style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1950&q=80');">
+                        <div class="content">
+                            <h1 class="hero-title">Bersama Menjaga Alam</h1>
+                            <p class="hero-subtitle">Menumbuhkan kepedulian lingkungan untuk generasi hijau</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="carousel-item">
+                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                        style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        <div class="content">
+                            <h1 class="hero-title">Reboisasi & Harapan</h1>
+                            <p class="hero-subtitle">Menanam pohon, menanam masa depan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
         </div>
     </section>
 

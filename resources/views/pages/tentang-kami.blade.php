@@ -7,7 +7,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="hero-section mb-5">
+    <section class="hero-section mb-5 h-100">
         <div class="container">
             <h1 class="display-4 fw-bold mb-4">Tentang Kami</h1>
             <p class="lead">Cabang Dinas Kehutanan Wilayah Trenggalek</p>
@@ -105,25 +105,25 @@
                     <li>
                         <div>
                             <span class="position">Kepala CDK</span>
-                            <span class="name">Kepala Cabang Dinas Kehutanan Wil. Trenggalek</span>
+                            <span class="name">Cabang Dinas Kehutanan Wilayah Trenggalek</span>
                         </div>
                         <ul>
                             <li>
                                 <div>
                                     <span class="position">Kepala Subag TU</span>
-                                    <span class="name">Kepala Sub Bagian Tata Usaha</span>
+                                    <span class="name">Sub Bagian Tata Usaha</span>
                                 </div>
                             </li>
                             <li>
                                 <div>
                                     <span class="position">Kepala Seksi TKUK</span>
-                                    <span class="name">Kepala Seksi Tata Kelola dan Usaha Hutan</span>
+                                    <span class="name">Seksi Tata Kelola dan Usaha Hutan</span>
                                 </div>
                             </li>
                             <li>
                                 <div>
                                     <span class="position">Kepala Seksi RLPM</span>
-                                    <span class="name">Kepala Seksi Rehabilitasi Lahan dan Pemberdayaan Masyarakat</span>
+                                    <span class="name">Seksi Rehabilitasi Lahan dan Pemberdayaan Masyarakat</span>
                                 </div>
                             </li>
                         </ul>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="col-md-4">
                     <button class="w-100 h-100 p-4 bg-white rounded shadow-sm border-0 stats-button" id="kep-masy">
-                        <h1 class="text-success display-4 fw-bold">93.17%</h1>
+                        <h1 class="text-success display-4 fw-bold">93.48%</h1>
                         <p class="mb-0">Tingkat kepuasan pelayanan publik</p>
                     </button>
                 </div>

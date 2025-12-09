@@ -55,6 +55,18 @@
     <script src="{{ asset('js/share.js') }}"></script>
 
     <script src="{{ asset('js/landing.js') }}"></script>
+    <script>
+        // Re-trigger animation when slide changes
+        const heroCarousel = document.getElementById('heroCarousel');
+        heroCarousel.addEventListener('slide.bs.carousel', (e) => {
+            const next = e.relatedTarget;
+            const content = next.querySelector('.content');
+            content.style.animation = 'none';
+            setTimeout(() => {
+                content.style.animation = '';
+            }, 10);
+        });
+    </script>
 
     @stack('js')
 </body>
