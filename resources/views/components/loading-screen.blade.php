@@ -1,6 +1,6 @@
 <!-- Loading Screen -->
 <div id="loading-screen">
-    <img id="loading-logo" src="{{ asset('images/logo/cdk.png') }}" alt="Logo Dinas">
+    <img id="loading-logo" src="{{ asset('images/logo/cdk.webp') }}" alt="Logo Dinas">
     <div class="spinner-border" role="status" aria-hidden="true"></div>
     <div id="loading-text">Memuat informasi CDK Trenggalek<span id="dots">......</span></div>
     <div id="tagline">“Lestari hutan, sejahtera masyarakat”</div>
