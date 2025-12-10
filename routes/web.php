@@ -44,6 +44,7 @@ Route::get('/kth', [HomeController::class, 'kth'])->name('kth.index');
 Route::get('/masyarakat', [HomeController::class, 'masyarakat'])->name('masyarakat.index');
 Route::get('/pbphh', [HomeController::class, 'pbphh'])->name('pbphh.index');
 Route::get('/ps', [HomeController::class, 'ps'])->name('ps.index');
+Route::get('/prestasi', [HomeController::class, 'prestasi'])->name('prestasi.index');
 
 /**
  * Admin routes.

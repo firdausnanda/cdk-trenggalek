@@ -76,7 +76,12 @@ class HomeController extends Controller
         $lines = file($filePath);
         $ps = count($lines) - 1;
 
-        return view('pages.tentang-kami', compact('posts', 'kth', 'totalAnggota', 'pbphh', 'ps'));
+        // Prestasi
+        $filePath = public_path('data/prestasi.csv');
+        $lines = file($filePath);
+        $prestasi = count($lines) - 1;
+
+        return view('pages.tentang-kami', compact('posts', 'kth', 'totalAnggota', 'pbphh', 'ps', 'prestasi'));
     }
 
     public function berita(Request $request)
@@ -287,6 +292,33 @@ class HomeController extends Controller
             $datas = array_values(array_filter($datas, function ($item) use ($request) {
                 return $item['wilayah'] == $request->wilayah_filter;
             }));
+        }
+
+        return ResponseFormatter::success($datas, 'Data berhasil diambil');
+    }
+
+    public function prestasi(Request $request)
+    {
+        $csv = file_get_contents(public_path('data/prestasi.csv'));
+        $lines = explode("\n", $csv);
+        $lines = array_reverse($lines);
+        $datas = [];
+
+        foreach ($lines as $key => $row) {
+            if ($key === count($lines)-1 || trim($row) === '') {
+                continue;
+            }
+
+            $columns = str_getcsv($row);
+
+            if (count($columns) >= 5) {
+                $datas[] = [
+                    'nama' => $columns[1] ?? '',
+                    'tahun' => $columns[2] ?? '',
+                    'keterangan' => $columns[3] ?? '',
+                    'juara' => $columns[4] ?? ''
+                ];
+            }
         }
 
         return ResponseFormatter::success($datas, 'Data berhasil diambil');

@@ -163,9 +163,9 @@
                     </button>
                 </div>
                 <div class="col-md-4">
-                    <button class="w-100 h-100 p-4 bg-white rounded shadow-sm border-0 stats-button">
-                        <h1 class="text-success display-4 fw-bold">4</h1>
-                        <p class="mb-0">Penghargaan tingkat Provinsi</p>
+                    <button class="w-100 h-100 p-4 bg-white rounded shadow-sm border-0 stats-button" id="prestasi">
+                        <h1 class="text-success display-4 fw-bold">{{ $prestasi }}</h1>
+                        <p class="mb-0">Prestasi</p>
                     </button>
                 </div>
                 <div class="col-md-4">
@@ -312,6 +312,34 @@
                                 <th class="text-center">Jumlah KK</th>
                                 <th class="text-center">Luas</th>
                                 <th class="text-center">Ketua</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Prestasi -->
+    <div class="modal fade" id="modal-prestasi" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        role="dialog" aria-labelledby="modalTitleId">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">
+                        Data Prestasi <span class="fw-bold" id="prestasi_title"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered w-100" id="table-prestasi">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No</th>
+                                <th>Nama Prestasi</th>
+                                <th class="text-center">Tahun</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -756,6 +784,75 @@
                 }
 
                 $('#modal-ps').modal('show');
+            });
+
+            // Prestasi
+            $('#prestasi').click(function() {
+                const table4 = $('#table-prestasi').DataTable({
+                    ajax: {
+                        url: "{{ route('prestasi.index') }}",
+                        type: "GET",
+                        data: function(d) {
+                            d.wilayah_filter = window
+                                .currentWilayahFilter;
+                        }
+                    },
+                    lengthChange: false,
+                    info: true,
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: 'tr'
+                        }
+                    },
+                    columnDefs: [{
+                            targets: 0,
+                            width: '10%',
+                            className: 'align-middle text-center',
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                        {
+                            targets: 1,
+                            className: 'align-middle',
+                            data: 'nama',
+                            render: function(data, type, row, meta) {
+                                return `
+                                <div style="font-size:14px;">
+                                    <span>${data}</span>
+                                    <div class="text-muted" style="font-size:12px;">${row.juara}</div>
+                                    <div class="text-muted" style="font-size:12px;">${row.keterangan}</div>
+                                </div>`;
+                            }
+                        },
+                        {
+                            targets: 2,
+                            className: 'align-middle text-center',
+                            data: 'tahun'
+                        }
+                    ],
+                    language: {
+                        info: "Menampilkan _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data tersedia",
+                        infoFiltered: "(disaring dari _MAX_ total data)",
+                        emptyTable: "Tidak ada data tersedia dalam tabel",
+                        zeroRecords: "Tidak ditemukan data yang sesuai",
+                        paginate: {
+                            first: '<i class="fas fa-angle-double-left"></i>',
+                            previous: '<i class="fas fa-angle-left"></i>',
+                            next: '<i class="fas fa-angle-right"></i>',
+                            last: '<i class="fas fa-angle-double-right"></i>',
+                        },
+                    },
+                    destroy: true,
+                    processing: true,
+                    initComplete: function() {
+                        $('#table-prestasi').DataTable().buttons().container().appendTo(
+                            '#table-prestasi_wrapper .col-md-6:eq(0)');
+                    }
+                });
+                $('#modal-prestasi').modal('show');
             });
 
         });
