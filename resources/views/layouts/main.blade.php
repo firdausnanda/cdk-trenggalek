@@ -17,10 +17,10 @@
     <link rel="manifest" href="{{ config('settings.site_icon') }}">
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/animate/animate.min.css') }}">
     <!-- Custom CSS -->
     @stack('css')
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
@@ -50,8 +50,8 @@
 
     <!-- Bootstrap JS -->
     <script src="{{ asset('vendor/jquery/jquery-3.7.1.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/sweetalert/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('js/share.js') }}"></script>
 
     <script src="{{ asset('js/landing.js') }}"></script>

@@ -57,10 +57,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add('loaded');
 
     setTimeout(function () {
-      document.getElementById('loading').remove();
+      const loadingEl = document.getElementById('loading');
+      if (loadingEl) loadingEl.remove();
     }, 500);
   });
 });
+
 
 // Navbar Green
 document.addEventListener('DOMContentLoaded', function () {
