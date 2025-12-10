@@ -62,3 +62,28 @@
         {{ $posts->links('pagination::bootstrap-5') }}
     </div>
 @endsection
+
+@push('css')
+    <style>
+        .pagination .page-link {
+            color: #0a5c36;
+            /* warna teks */
+        }
+
+        .pagination .page-link:hover {
+            color: white;
+            background-color: #0a5c36;
+            /* warna hover */
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #0a5c36;
+            border-color: #0a5c36;
+            color: white;
+        }
+
+        .pagination .page-link:focus {
+            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, .25);
+        }
+    </style>
+@endpush
