@@ -9,24 +9,40 @@
                     sumber daya
                     hutan secara berkelanjutan.</p>
                 <div class="social-icons">
-                    <a href="https://www.facebook.com/cdktrenggalekprogram" target="_blank" class="text-white me-2"><i
-                            class="fab fa-facebook-f"></i></a>
-                    <a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id" target="_blank" class="text-white me-2"><i
-                            class="fas fa-envelope"></i></a>
-                    <a href="https://www.instagram.com/cdktrenggalek/" target="_blank" class="text-white me-2"><i
-                            class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/cdktrenggalekprogram" target="_blank" rel="noopener noreferrer"
+                        aria-label="Facebook CDK Trenggalek" class="text-white me-2">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+
+                    <a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id" aria-label="Kirim email ke CDK Trenggalek"
+                        class="text-white me-2">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                    </a>
+
+                    <a href="https://www.instagram.com/cdktrenggalek/" target="_blank" rel="noopener noreferrer"
+                        aria-label="Instagram CDK Trenggalek" class="text-white me-2">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                    </a>
+
                     <a href="https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg" target="_blank"
-                        class="text-white"><i class="fab fa-youtube"></i></a>
+                        rel="noopener noreferrer" aria-label="YouTube CDK Trenggalek" class="text-white">
+                        <i class="fab fa-youtube" aria-hidden="true"></i>
+                    </a>
                 </div>
+
             </div>
             <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
                 <h5 class="mb-4">Tautan Cepat</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white text-decoration-none">Beranda</a></li>
-                    <li class="mb-2"><a href="{{ route('tentang-kami') }}" class="text-white text-decoration-none">Tentang
+                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white text-decoration-none">Beranda</a>
+                    </li>
+                    <li class="mb-2"><a href="{{ route('tentang-kami') }}"
+                            class="text-white text-decoration-none">Tentang
                             Kami</a></li>
-                    <li class="mb-2"><a href="{{ route('berita') }}" class="text-white text-decoration-none">Berita</a></li>
-                    <li class="mb-2"><a href="{{ route('kontak') }}" class="text-white text-decoration-none">Kontak</a></li>
+                    <li class="mb-2"><a href="{{ route('berita') }}"
+                            class="text-white text-decoration-none">Berita</a></li>
+                    <li class="mb-2"><a href="{{ route('kontak') }}"
+                            class="text-white text-decoration-none">Kontak</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
@@ -38,7 +54,8 @@
                         </a>
                     </li>
                     <li class="mb-2">
-                        <a href="https://dishut.jatimprov.go.id/" target="_blank" class="text-decoration-none text-white">
+                        <a href="https://dishut.jatimprov.go.id/" target="_blank"
+                            class="text-decoration-none text-white">
                             Dinas Kehutanan Provinsi Jawa Timur
                         </a>
                     </li>

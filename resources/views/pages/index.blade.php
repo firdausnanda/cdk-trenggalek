@@ -8,7 +8,8 @@
 
                 <!-- Slide 1 -->
                 <div class="carousel-item active">
-                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                    <div loading="lazy"
+                        class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
                         style="background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=70&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Cabang Dinas Kehutanan Wilayah Trenggalek</h1>
@@ -19,7 +20,8 @@
 
                 <!-- Slide 2 -->
                 <div class="carousel-item">
-                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                    <div loading="lazy"
+                        class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
                         style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=900&q=70');">
                         <div class="content">
                             <h1 class="hero-title">Bersama Menjaga Alam</h1>
@@ -30,8 +32,9 @@
 
                 <!-- Slide 3 -->
                 <div class="carousel-item">
-                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
-                        style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=70&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                    <div loading="lazy"
+                        class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                        style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=90&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Reboisasi & Harapan</h1>
                             <p class="hero-subtitle">Menanam pohon, menanam masa depan</p>
@@ -42,10 +45,12 @@
 
             <!-- Indicators -->
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
+
         </div>
     </section>
 
@@ -89,7 +94,7 @@
                         <div class="service-icon">
                             <i class="fas fa-tree"></i>
                         </div>
-                        <h4>Izin Pemanfaatan Hutan</h4>
+                        <h3>Izin Pemanfaatan Hutan</h3>
                         <p class="mb-3">Pelayanan perizinan pemanfaatan hasil hutan kayu dan bukan kayu sesuai
                             peraturan yang
                             berlaku.</p>
@@ -105,7 +110,7 @@
                         <div class="service-icon">
                             <i class="fas fa-seedling"></i>
                         </div>
-                        <h4>Rehabilitasi Kawasan Hutan</h4>
+                        <h3>Rehabilitasi Kawasan Hutan</h3>
                         <p class="mb-3">Program rehabilitasi kawasan hutan dan lahan kritis untuk pemulihan ekosistem.
                         </p>
                         <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
@@ -120,7 +125,7 @@
                         <div class="service-icon">
                             <i class="fas fa-shield-alt"></i>
                         </div>
-                        <h4>Pengawasan & Pengendalian</h4>
+                        <h3>Pengawasan & Pengendalian</h3>
                         <p class="mb-3">Pengawasan dan pengendalian terhadap pemanfaatan hutan secara berkelanjutan.
                         </p>
                         <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
@@ -135,7 +140,7 @@
                         <div class="service-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h4>Pemberdayaan Masyarakat</h4>
+                        <h3>Pemberdayaan Masyarakat</h3>
                         <p class="mb-3">Program pemberdayaan masyarakat sekitar hutan untuk kesejahteraan bersama.
                         </p>
                         <a href="{{ route('kontak') }}" class="btn btn-outline-success btn-sm">
