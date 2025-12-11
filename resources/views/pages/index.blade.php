@@ -9,7 +9,7 @@
                 <!-- Slide 1 -->
                 <div class="carousel-item active">
                     <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
-                        style="background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        style="background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=70&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Cabang Dinas Kehutanan Wilayah Trenggalek</h1>
                             <p class="hero-subtitle">Melindungi, Mengelola, dan Melestarikan Hutan untuk Masa Depan</p>
@@ -20,7 +20,7 @@
                 <!-- Slide 2 -->
                 <div class="carousel-item">
                     <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
-                        style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1950&q=80');">
+                        style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=900&q=70');">
                         <div class="content">
                             <h1 class="hero-title">Bersama Menjaga Alam</h1>
                             <p class="hero-subtitle">Menumbuhkan kepedulian lingkungan untuk generasi hijau</p>
@@ -31,7 +31,7 @@
                 <!-- Slide 3 -->
                 <div class="carousel-item">
                     <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
-                        style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                        style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=70&w=900&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Reboisasi & Harapan</h1>
                             <p class="hero-subtitle">Menanam pohon, menanam masa depan</p>

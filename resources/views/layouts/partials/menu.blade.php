@@ -3,7 +3,7 @@
         <div class="container gap-3">
             <!-- Brand/Logo -->
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-                <img src="{{ config('settings.site_icon') }}" alt="Logo Dinas Kehutanan Wilayah Trenggalek" class="me-2"
+                <img loading="lazy" src="{{ config('settings.site_icon') }}" alt="Logo Dinas Kehutanan Wilayah Trenggalek" class="me-2"
                     style="width: 50px; height: 50px;">
                 <span class="lh-1 d-none d-sm-block">
                     <div class="fw-bold">Cabang Dinas Kehutanan</div>
