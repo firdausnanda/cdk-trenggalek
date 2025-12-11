@@ -19,7 +19,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{{ asset('images/background/gedung-cdk.webp') }}" class="img-fluid rounded"
+                    <img loading="lazy" src="{{ asset('images/background/gedung-cdk.webp') }}" class="img-fluid rounded"
                         style="width: 600px; height: 400px;"
                         alt="Kantor Dinas Kehutanan Wilayah Trenggalek dengan tampak depan gedung yang dikelilingi pepohonan rindang">
                 </div>

@@ -8,7 +8,7 @@
 
                 <!-- Slide 1 -->
                 <div class="carousel-item active">
-                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
                         style="background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Cabang Dinas Kehutanan Wilayah Trenggalek</h1>
@@ -19,7 +19,7 @@
 
                 <!-- Slide 2 -->
                 <div class="carousel-item">
-                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
                         style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1950&q=80');">
                         <div class="content">
                             <h1 class="hero-title">Bersama Menjaga Alam</h1>
@@ -30,7 +30,7 @@
 
                 <!-- Slide 3 -->
                 <div class="carousel-item">
-                    <div class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
+                    <div loading="lazy" class="hero-slide d-flex align-items-center justify-content-center text-center text-white"
                         style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
                         <div class="content">
                             <h1 class="hero-title">Reboisasi & Harapan</h1>
@@ -69,7 +69,7 @@
                     <a href="{{ route('tentang-kami') }}" class="btn btn-outline-success">Selengkapnya</a>
                 </div>
                 <div class="col-lg-6">
-                    <img src="{{ asset('images/background/bg-1.webp') }}"
+                    <img loading="lazy" src="{{ asset('images/background/bg-1.webp') }}"
                         alt="Team Dinas Kehutanan Wilayah Trenggalek sedang bekerja di lapangan"
                         class="img-fluid rounded shadow news-card">
                 </div>
@@ -158,7 +158,7 @@
                 @forelse ($posts as $post)
                     <div class="col-md-6 col-lg-4">
                         <div class="card news-card h-100">
-                            <img src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
+                            <img loading="lazy" src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
                                 class="card-img-top img-fluid" style="height: 400px; object-fit: cover; width: 100%;"
                                 alt="{{ $post->title }}">
                             <div class="card-body">
@@ -207,7 +207,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="map-container shadow news-card">
-                        <img src="{{ asset('images/background/gedung-cdk.webp') }}"
+                        <img loading="lazy" src="{{ asset('images/background/gedung-cdk.webp') }}"
                             alt="Lokasi Cabang Dinas Kehutanan Wilayah Trenggalek" class="img-fluid w-100 h-100">
                     </div>
                 </div>

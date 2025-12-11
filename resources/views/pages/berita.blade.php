@@ -32,7 +32,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card card-news h-100">
                         <div class="position-relative">
-                            <img src="{{ $post->featured_image ? $post->featured_image : asset('images/not-found/image.jpeg') }}"
+                            <img loading="lazy" src="{{ $post->featured_image ? $post->featured_image : asset('images/not-found/image.jpeg') }}"
                                 class="card-img-top news-img" alt="{{ $post->title }}">
                             <span class="news-category">{{ $post->categories?->first()?->name ?? 'Uncategorized' }}</span>
                         </div>

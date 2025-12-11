@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="post-image">
-                        <img src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
+                        <img loading="lazy" src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
                             alt="{{ $post->title }}" class="img-fluid w-100">
                     </div>
 
