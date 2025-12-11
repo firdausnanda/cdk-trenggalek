@@ -168,7 +168,7 @@
                                 alt="{{ $post->title }}">
                             <div class="card-body">
                                 <a href="{{ route('berita.show', $post->slug) }}" class="text-decoration-none text-dark">
-                                    <h5 class="card-title">{{ $post->title }}</h5>
+                                    <h3 class="card-title h5">{{ $post->title }}</h3>
                                 </a>
                                 <p class="card-text">{!! $post->excerpt !!}</p>
                                 <a href="{{ route('berita.show', $post->slug) }}" class="btn btn-sm btn-primary">Baca
