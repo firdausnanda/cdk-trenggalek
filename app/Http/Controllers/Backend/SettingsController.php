@@ -39,6 +39,22 @@ class SettingsController extends Controller
 
     public function store(Request $request)
     {
+        // Build validation rules for all uploaded files (only images allowed)
+        $rules = [];
+        $messages = [];
+
+        foreach ($request->allFiles() as $fieldName => $file) {
+            $rules[$fieldName] = 'image|mimes:jpg,jpeg,png,gif,webp,svg|max:2048';
+            $label = ucwords(str_replace('_', ' ', $fieldName));
+            $messages["{$fieldName}.image"] = "{$label} harus berupa file gambar.";
+            $messages["{$fieldName}.mimes"] = "{$label} harus berformat: jpg, jpeg, png, gif, webp, atau svg.";
+            $messages["{$fieldName}.max"] = "Ukuran {$label} maksimal 2MB.";
+        }
+
+        if (!empty($rules)) {
+            $request->validate($rules, $messages);
+        }
+
         // Restrict specific fields in demo mode.
         if (config('app.demo_mode', false)) {
             $restrictedFields = ld_apply_filters('settings_restricted_fields', ['app_name', 'google_analytics_script']);

@@ -38,8 +38,20 @@ class ProfilesController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$user->id,
-            'password' => 'nullable|min:8|confirmed',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => [
+                'nullable',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',      // at least one lowercase
+                'regex:/[A-Z]/',      // at least one uppercase
+                'regex:/[0-9]/',      // at least one digit
+                'regex:/[@$!%*#?&^_\-]/', // at least one symbol
+            ],
+        ], [
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $requestInputs = ld_apply_filters('user_profile_update_data_before', [

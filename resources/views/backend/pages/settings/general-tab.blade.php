@@ -30,6 +30,7 @@
                         name="site_logo_lite" 
                         id="site_logo_lite"
                         label="{{ __('Site Logo Full (Lite Version)') }}"
+                        accept="image/*"
                         :existingAttachment="config('settings.site_logo_lite') !== '' && !empty(config('settings.site_logo_lite')) ? config('settings.site_logo_lite') : null"
                         :existingAltText="''"
                     />
@@ -40,6 +41,7 @@
                         name="site_logo_dark" 
                         id="site_logo_dark"
                         label="{{ __('Site Logo Full (Dark Version)') }}"
+                        accept="image/*"
                         :existingAttachment="config('settings.site_logo_dark') !== '' && !empty(config('settings.site_logo_dark')) ? config('settings.site_logo_dark') : null"
                         :existingAltText="''"
                     />
@@ -53,6 +55,7 @@
                         name="site_icon" 
                         id="site_icon"
                         label="{{ __('Site Icon') }}"
+                        accept="image/*"
                         :existingAttachment="config('settings.site_icon') !== '' && !empty(config('settings.site_icon')) ? config('settings.site_icon') : null"
                         :existingAltText="''"
                     />
@@ -63,6 +66,7 @@
                         name="site_favicon" 
                         id="site_favicon"
                         label="{{ __('Site Favicon') }}"
+                        accept="image/*"
                         :existingAttachment="config('settings.site_favicon') !== '' && !empty(config('settings.site_favicon')) ? config('settings.site_favicon') : null"
                         :existingAltText="''"
                     />

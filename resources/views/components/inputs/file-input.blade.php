@@ -3,6 +3,7 @@
     'name' => 'file',
     'id' => null,
     'multiple' => false,
+    'accept' => null,
     'existingAttachment' => null,
     'existingAltText' => '',
     'removeCheckboxName' => 'remove_featured_image',
@@ -33,6 +34,7 @@
         </div>
     @endif
     <input type="file" name="{{ $name }}" id="{{ $id }}" {{ $multiple ? 'multiple' : '' }}
+        {{ $accept ? 'accept=' . $accept : '' }}
         class="form-control-file">
     {{ $slot }}
 </div>
