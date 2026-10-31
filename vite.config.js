@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite'
 import collectModuleAssetsPaths from "./vite-module-loader";
 
@@ -25,11 +24,6 @@ export default defineConfig({
             input: allPaths,
             refresh: true,
         }),
-        react(),
         tailwindcss(),
     ],
-    esbuild: {
-        jsx: 'automatic',
-        // drop: ['console', 'debugger'],
-    },
 });

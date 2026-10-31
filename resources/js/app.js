@@ -1,5 +1,4 @@
 import './bootstrap';
-import "jsvectormap/dist/jsvectormap.min.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "dropzone/dist/dropzone.css";
 
@@ -10,12 +9,7 @@ import flatpickr from "flatpickr";
 import Dropzone from "dropzone";
 import 'flowbite';
 
-import chart01 from "./components/charts/chart-01";
-import chart02 from "./components/charts/chart-02";
-import chart03 from "./components/charts/chart-03";
 import userGrowthChart from "./components/charts/user-growth-chart.js";
-import map01 from "./components/map-01";
-import "./components/calendar-init.js";
 import "./components/image-resize";
 import SlugGenerator from "./components/slug-generator";
 import * as Popper from '@popperjs/core';
@@ -124,11 +118,7 @@ if (dropzoneArea.length) {
 
 // Document Loaded
 document.addEventListener("DOMContentLoaded", () => {
-    chart01();
-    chart02();
-    chart03();
     userGrowthChart();
-    map01();
 });
 
 // Get the current year
