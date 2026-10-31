@@ -30,12 +30,43 @@ tidak berubah, jadi pengguna yang sedang login tidak ter-logout.
 
 ## Prasyarat server
 
-- PHP **>= 8.3** dengan ekstensi: pdo_mysql, mbstring, openssl, tokenizer, xml, ctype, fileinfo,
-  gd, intl, zip, curl, bcmath
+- PHP **8.4** direkomendasikan (minimal 8.3) dengan ekstensi: pdo_mysql, mbstring, openssl,
+  tokenizer, xml, ctype, fileinfo, gd, intl, zip, curl, bcmath
 - Composer >= 2.8
 - Node **>= 20.19 atau >= 22.12** (hanya jika build aset dilakukan di server)
 
+## Docker (pengganti Laradock)
+
+Laradock (submodule) sudah dihapus dan diganti setup ringan di repo ini:
+
+- `docker/php/Dockerfile` — `php:8.4.27-fpm-alpine` + bcmath, gd, intl, opcache, pdo_mysql, zip, Composer
+- `docker/php/php.ini` — memory 256M, upload 20M, opcache
+- `docker/nginx/default.conf` — konfigurasi Laravel standar
+- `docker-compose.yml` — service `app`, `scheduler` (`schedule:work`), `nginx` (port 8081),
+  `mysql` 8.4 (port 3307), dan `node` (profil `tools`, untuk build aset)
+
+Port dan nama service sama dengan Laradock (`mysql`, 8081, 3307), jadi `.env` di server
+tidak perlu diubah selama `DB_HOST=mysql`. Variabel compose dibaca dari `.env` Laravel.
+
+### Pindah dari Laradock di server (sekali saja)
+
+1. Backup database: `docker exec <container mysql laradock> mysqldump -uroot -p --all-databases > backup.sql`
+2. Catat isi `laradock/.env` (password MySQL, port). `MYSQL_ROOT_PASSWORD` hanya dipakai saat
+   database pertama kali dibuat; data lama tetap memakai user/password yang sudah ada.
+3. Matikan Laradock: `cd laradock && docker compose down` (data di `~/.laradock/data/mysql` tetap ada)
+4. Matikan cron `schedule:run` lama jika ada di host (scheduler kini jalan di service `scheduler`).
+5. Dari root proyek: `git pull`. Folder `laradock/` akan tersisa sebagai folder biasa; pindahkan
+   ke luar proyek (simpan `.env`-nya) lalu jalankan `rm -rf .git/modules/laradock`.
+6. Jika user host bukan UID/GID 1000, set `DOCKER_UID`/`DOCKER_GID` di `.env`.
+7. `docker compose up -d --build` — MySQL otomatis memakai data lama dari
+   `~/.laradock/data/mysql` (ubah lewat `DOCKER_MYSQL_DATA` bila lokasinya lain).
+8. Cek: `docker compose ps` dan buka `http://<server>:8081`.
+
 ## Langkah deploy (staging dulu, lalu production)
+
+Di Docker, jalankan perintah `php`/`composer` lewat `docker compose exec app ...` dan build aset
+dengan `docker compose run --rm node sh -c "npm ci && npm run build"`. Setelah update, jalankan
+`docker compose restart app scheduler` (pengganti restart PHP-FPM).
 
 1. Backup database dan folder `storage/app`.
 2. Aktifkan maintenance mode: `php artisan down`
@@ -50,7 +81,8 @@ tidak berubah, jadi pengguna yang sedang login tidak ter-logout.
 9. Restart PHP-FPM (agar opcache baru) dan queue worker jika ada: `php artisan queue:restart`
 10. Matikan maintenance mode: `php artisan up`
 
-Cron scheduler tidak berubah (`* * * * * php artisan schedule:run`).
+Tanpa Docker, cron scheduler tetap `* * * * * php artisan schedule:run`. Dengan Docker,
+service `scheduler` sudah menjalankannya — jangan pasang cron kedua.
 
 ## Smoke test setelah deploy
 
