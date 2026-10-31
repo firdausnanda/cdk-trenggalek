@@ -107,8 +107,9 @@ Tidak ada perubahan skema database, jadi rollback cukup dengan kode:
 
 ## Catatan lanjutan (bukan bagian upgrade)
 
-- Pint 1.32 menandai ~39 file karena aturan gaya baru (`method_argument_space`, dll.);
-  jalankan `composer format` dalam commit terpisah bila ingin dirapikan.
+- Gaya kode sudah dirapikan dengan Pint + Rector, dan `.gitattributes` memaksa line ending LF.
+  Di Windows, set `git config core.autocrlf input` agar `composer pint` tidak gagal karena CRLF,
+  dan `git config blame.ignoreRevsFile .git-blame-ignore-revs` agar blame melewati commit format.
 - `npm run lint` butuh file `eslint.config.js` (belum ada sejak sebelum upgrade).
 - Test memakai SQLite: aktifkan `extension=pdo_sqlite` di php.ini lokal.
 - Login dengan username tidak jalan karena `LoginRequest` mewajibkan format email.
