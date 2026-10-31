@@ -82,6 +82,32 @@ class ImageServiceTest extends TestCase
     }
 
     #[Test]
+    public function it_builds_srcset_only_for_images_with_variants(): void
+    {
+        $service = app(ImageService::class);
+        $withVariants = $service->store(UploadedFile::fake()->image('photo.jpg', 2000, 1000), 'uploads/posts', ImageService::FEATURED_VARIANTS);
+        $withoutVariants = $service->store(UploadedFile::fake()->image('photo.jpg', 2000, 1000));
+        $base = substr($withVariants, 0, -strlen('.webp'));
+
+        $this->assertSame("{$base}-400.webp 400w, {$base}-800.webp 800w, {$withVariants} 1600w", $service->srcset($withVariants));
+        $this->assertNull($service->srcset($withoutVariants));
+        $this->assertNull($service->srcset('http://localhost/uploads/posts/old.jpg'));
+        $this->assertNull($service->srcset(null));
+    }
+
+    #[Test]
+    public function it_adds_lazy_loading_to_content_images(): void
+    {
+        $html = '<p><img src="a.webp"></p><img loading="eager" src="b.webp"><IMG alt="c" src="c.webp">';
+
+        $this->assertSame(
+            '<p><img loading="lazy" decoding="async" src="a.webp"></p><img loading="eager" src="b.webp"><img loading="lazy" decoding="async" alt="c" src="c.webp">',
+            app(ImageService::class)->withLazyLoading($html)
+        );
+        $this->assertSame('<p>No images</p>', app(ImageService::class)->withLazyLoading('<p>No images</p>'));
+    }
+
+    #[Test]
     public function it_deletes_an_image_with_its_variants(): void
     {
         $service = app(ImageService::class);

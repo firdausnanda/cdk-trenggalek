@@ -91,6 +91,53 @@ class ImageService
     }
 
     /**
+     * Build a srcset value for an image stored with variants, or null when it has none.
+     */
+    public function srcset(?string $url): ?string
+    {
+        if (empty($url) || ! str_ends_with($url, '.webp')) {
+            return null;
+        }
+
+        $absolute = public_path(ltrim((string) parse_url($url, PHP_URL_PATH), '/'));
+        $size = File::exists($absolute) ? @getimagesize($absolute) : false;
+
+        if ($size === false) {
+            return null;
+        }
+
+        $baseUrl = substr($url, 0, -strlen('.webp'));
+        $baseFile = substr($absolute, 0, -strlen('.webp'));
+        $sources = [];
+
+        foreach (array_reverse(self::FEATURED_VARIANTS) as $width) {
+            if ($width < $size[0] && File::exists("{$baseFile}-{$width}.webp")) {
+                $sources[] = "{$baseUrl}-{$width}.webp {$width}w";
+            }
+        }
+
+        if ($sources === []) {
+            return null;
+        }
+
+        $sources[] = "{$url} {$size[0]}w";
+
+        return implode(', ', $sources);
+    }
+
+    /**
+     * Add native lazy loading to images in HTML content that do not set it already.
+     */
+    public function withLazyLoading(?string $html): ?string
+    {
+        if ($html === null || ! str_contains($html, '<img')) {
+            return $html;
+        }
+
+        return preg_replace('/<img\b(?![^>]*\bloading=)/i', '<img loading="lazy" decoding="async"', $html);
+    }
+
+    /**
      * Delete an image stored under public/ together with its generated variants.
      */
     public function delete(?string $url): void

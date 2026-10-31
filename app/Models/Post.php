@@ -178,7 +178,7 @@ class Post extends Model implements Viewable
     /**
      * Get categories for the post
      */
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->terms()->where('taxonomy', 'category');
     }
@@ -186,7 +186,7 @@ class Post extends Model implements Viewable
     /**
      * Get tags for the post
      */
-    public function tags()
+    public function tags(): BelongsToMany
     {
         return $this->terms()->where('taxonomy', 'tag');
     }

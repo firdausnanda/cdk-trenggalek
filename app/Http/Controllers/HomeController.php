@@ -18,31 +18,22 @@ use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
 {
+    /** Columns needed to render post cards; leaves out the (large) content column. */
+    private const CARD_COLUMNS = ['id', 'title', 'slug', 'excerpt', 'featured_image', 'published_at', 'created_at'];
+
     public function index()
     {
         $posts = Post::type('post')
             ->published()
             ->orderBy('created_at', 'desc')
             ->limit(3)
-            ->get()
-            ->map(function ($post) {
-                $post->image = $post->featured_image;
-                return $post;
-            });
+            ->get(self::CARD_COLUMNS);
+
         return view('pages.index', compact('posts'));
     }
 
     public function tentangKami()
     {
-        $posts = Post::type('post')
-            ->orderBy('created_at', 'desc')
-            ->limit(3)
-            ->get()
-            ->map(function ($post) {
-                $post->image = $post->featured_image;
-                return $post;
-            });
-
         // KTH
         $filePath = public_path('data/kth.csv');
         $lines = file($filePath);
@@ -78,7 +69,7 @@ class HomeController extends Controller
         $lines = file($filePath);
         $prestasi = count($lines) - 1;
 
-        return view('pages.tentang-kami', compact('posts', 'kth', 'totalAnggota', 'pbphh', 'ps', 'prestasi'));
+        return view('pages.tentang-kami', compact('kth', 'totalAnggota', 'pbphh', 'ps', 'prestasi'));
     }
 
     public function berita(Request $request)
@@ -87,6 +78,8 @@ class HomeController extends Controller
 
         $searchableColumns = Post::getSearchableColumns();
         $posts = Post::type('post')
+            ->select(self::CARD_COLUMNS)
+            ->with('categories:terms.id,terms.name')
             ->orderBy('published_at', 'desc')
             ->published()
             ->when($request->kategori, function ($query) use ($request) {

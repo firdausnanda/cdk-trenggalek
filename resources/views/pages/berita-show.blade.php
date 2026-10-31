@@ -44,12 +44,13 @@
                     </div>
 
                     <div class="post-image">
-                        <img loading="lazy" src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
+                        <img fetchpriority="high" src="{{ $post->featured_image ?? asset('images/not-found/image.jpeg') }}"
+                            @if ($srcset = image_srcset($post->featured_image)) srcset="{{ $srcset }}" sizes="(min-width: 992px) 66vw, 100vw" @endif
                             alt="{{ $post->title }}" class="img-fluid w-100">
                     </div>
 
                     <div class="post-content mt-4 ql-editor p-0" style="white-space: normal!important">
-                        {!! $post->content !!}
+                        {!! lazy_images($post->content) !!}
                     </div>
 
                     <div class="post-tags mt-5">

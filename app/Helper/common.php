@@ -106,6 +106,26 @@ if (! function_exists('deleteImageFromPublic')) {
     }
 }
 
+if (! function_exists('image_srcset')) {
+    /**
+     * Get the srcset for an optimized image, or null when it has no size variants.
+     */
+    function image_srcset(?string $url): ?string
+    {
+        return app(\App\Services\ImageService::class)->srcset($url);
+    }
+}
+
+if (! function_exists('lazy_images')) {
+    /**
+     * Add native lazy loading to images inside rendered HTML content.
+     */
+    function lazy_images(?string $html): ?string
+    {
+        return app(\App\Services\ImageService::class)->withLazyLoading($html);
+    }
+}
+
 if (! function_exists('module_vite_compile')) {
     /**
      * support for vite hot reload overriding manifest file.

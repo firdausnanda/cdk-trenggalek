@@ -33,6 +33,7 @@
                     <div class="card card-news h-100">
                         <div class="position-relative">
                             <img loading="lazy" src="{{ $post->featured_image ? $post->featured_image : asset('images/not-found/image.jpeg') }}"
+                                @if ($srcset = image_srcset($post->featured_image)) srcset="{{ $srcset }}" sizes="(min-width: 992px) 33vw, (min-width: 768px) 50vw, 100vw" @endif
                                 class="card-img-top news-img" alt="{{ $post->title }}">
                             <span class="news-category">{{ $post->categories?->first()?->name ?? 'Uncategorized' }}</span>
                         </div>
