@@ -15,7 +15,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2|^8.3|^8.4",
+        "php": "^8.3",
         "cyrildewit/eloquent-viewable": "^7.0",
         "guzzlehttp/guzzle": "^7.2",
         "jorenvanhocht/laravel-share": "^4.2",
@@ -45,6 +45,9 @@
         "sort-packages": true,
         "allow-plugins": {
             "wikimedia/composer-merge-plugin": true
+        },
+        "platform": {
+            "php": "8.3.0"
         }
     },
     "extra": {
