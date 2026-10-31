@@ -1,0 +1,5 @@
+# Formatting-only commits, skipped by git blame.
+# Enable locally with: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# [STYLE] Apply Pint and Rector
+5404e03e8e74c7d19b7a0370e74c114d7175db29
