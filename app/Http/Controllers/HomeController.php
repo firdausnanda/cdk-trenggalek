@@ -18,7 +18,6 @@ use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
 {
-
     public function index()
     {
         $posts = Post::type('post')
@@ -112,7 +111,7 @@ class HomeController extends Controller
             ->where('slug', $slug)
             ->first();
 
-        if (!$post) {
+        if (! $post) {
             abort(404);
         }
 
@@ -188,7 +187,7 @@ class HomeController extends Controller
                     'ketua' => $columns[3] ?? '',
                     'jenis_usaha' => $columns[4] ?? '',
                     'no_registrasi' => $columns[5] ?? '',
-                    'wilayah' => $columns[7] ?? ''
+                    'wilayah' => $columns[7] ?? '',
                 ];
             }
         }
@@ -207,7 +206,7 @@ class HomeController extends Controller
         $data = [
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr'],
             'values' => [65, 59, 80, 81],
-            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
         ];
 
         // Jumlah Anggota terlibat
@@ -245,7 +244,7 @@ class HomeController extends Controller
 
                 $wilayahBaru = $mappingWilayah[$wilayahAsli] ?? $mappingWilayah['default'] ?? $wilayahAsli;
 
-                if (!isset($anggotaPerWilayah[$wilayahBaru])) {
+                if (! isset($anggotaPerWilayah[$wilayahBaru])) {
                     $anggotaPerWilayah[$wilayahBaru] = 0;
                 }
 
@@ -256,7 +255,7 @@ class HomeController extends Controller
         return response()->json([
             'labels' => array_keys($anggotaPerWilayah),
             'values' => array_values($anggotaPerWilayah),
-            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
         ]);
     }
 
@@ -281,7 +280,7 @@ class HomeController extends Controller
                     'no_izin' => $columns[4] ?? '',
                     'direktur' => $columns[5] ?? '',
                     'skala' => $columns[6] ?? '',
-                    'wilayah' => $columns[7] ?? ''
+                    'wilayah' => $columns[7] ?? '',
                 ];
             }
         }
@@ -303,7 +302,7 @@ class HomeController extends Controller
         $datas = [];
 
         foreach ($lines as $key => $row) {
-            if ($key === count($lines)-1 || trim($row) === '') {
+            if ($key === count($lines) - 1 || trim($row) === '') {
                 continue;
             }
 
@@ -314,7 +313,7 @@ class HomeController extends Controller
                     'nama' => $columns[1] ?? '',
                     'tahun' => $columns[2] ?? '',
                     'keterangan' => $columns[3] ?? '',
-                    'juara' => $columns[4] ?? ''
+                    'juara' => $columns[4] ?? '',
                 ];
             }
         }
@@ -345,7 +344,7 @@ class HomeController extends Controller
                     'jumlah_kk' => $columns[6] ?? '',
                     'luas' => $columns[7] ?? '',
                     'ketua' => $columns[8] ?? '',
-                    'wilayah' => $columns[9] ?? ''
+                    'wilayah' => $columns[9] ?? '',
                 ];
             }
         }
@@ -364,7 +363,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml],
+            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml()],
             'post_id' => 'required|exists:posts,id',
         ], [
             'name.required' => 'Nama wajib diisi.',
