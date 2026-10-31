@@ -25,8 +25,7 @@
         "laravel/ui": "^4.5",
         "nwidart/laravel-modules": "^13.0",
         "opcodesio/log-viewer": "^3.18",
-        "spatie/laravel-permission": "^6.4",
-        "spatie/laravel-query-builder": "^6.3",
+        "spatie/laravel-permission": "^8.0",
         "tormjens/eventy": "^0.9.5"
     },
     "require-dev": {

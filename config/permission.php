@@ -26,6 +26,22 @@ return [
 
         'role' => Spatie\Permission\Models\Role::class,
 
+        /*
+         * When using the "Teams" feature from this package, we need to know which
+         * Eloquent model should be used to retrieve your teams. Of course, it
+         * is often just the "Team" model but you may use whatever you like.
+         */
+
+        'team' => null,
+
+        /*
+         * When using the "HasModels" trait and passing raw IDs to syncModels,
+         * attachModels, or detachModels, this model class will be used to
+         * resolve those IDs. If null, defaults to the guard's model.
+         */
+
+        'default_model' => null,
+
     ],
 
     'table_names' => [
@@ -74,6 +90,13 @@ return [
     'column_names' => [
 
         /*
+         * Change this if you want to name the related pivots other than defaults
+         */
+
+        'role_pivot_key' => null, // default 'role_id',
+        'permission_pivot_key' => null, // default 'permission_id',
+
+        /*
          * Change this if you want to name the related model primary key other than
          * `model_id`.
          *
@@ -82,6 +105,13 @@ return [
          */
 
         'model_morph_key' => 'model_id',
+
+        /*
+         * Change this if you want to use the teams feature and your related model's
+         * foreign key is other than `team_id`.
+         */
+
+        'team_foreign_key' => 'team_id',
     ],
 
     /*
