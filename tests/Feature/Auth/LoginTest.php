@@ -14,10 +14,10 @@ class LoginTest extends TestCase
     #[Test]
     public function user_can_view_login_form(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route('admin.login'));
 
         $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
+        $response->assertViewIs('backend.auth.login');
     }
 
     #[Test]
@@ -28,43 +28,43 @@ class LoginTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('admin.login.submit'), [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect('/home');
+        $response->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 
     #[Test]
     public function user_cannot_login_with_incorrect_password(): void
     {
-        $user = User::factory()->create([
+        User::factory()->create([
             'email' => 'test@example.com',
             'password' => bcrypt('password123'),
         ]);
 
-        $response = $this->from('/login')->post('/login', [
+        $response = $this->from(route('admin.login'))->post(route('admin.login.submit'), [
             'email' => 'test@example.com',
             'password' => 'wrong-password',
         ]);
 
-        $response->assertRedirect('/login');
-        $response->assertSessionHasErrors('email');
+        $response->assertRedirect(route('admin.login'));
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
     #[Test]
     public function user_cannot_login_with_email_that_does_not_exist(): void
     {
-        $response = $this->from('/login')->post('/login', [
+        $response = $this->from(route('admin.login'))->post(route('admin.login.submit'), [
             'email' => 'nobody@example.com',
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/login');
-        $response->assertSessionHasErrors('email');
+        $response->assertRedirect(route('admin.login'));
+        $response->assertSessionHas('error');
         $this->assertGuest();
     }
 
@@ -76,13 +76,13 @@ class LoginTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('admin.login.submit'), [
             'email' => 'test@example.com',
             'password' => 'password123',
             'remember' => 'on',
         ]);
 
-        $response->assertRedirect('/home');
+        $response->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticatedAs($user);
 
         // Check for the remember cookie
@@ -97,5 +97,16 @@ class LoginTest extends TestCase
         }
 
         $this->assertTrue($hasRememberCookie);
+    }
+
+    #[Test]
+    public function authenticated_user_can_logout(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('admin.logout.submit'));
+
+        $response->assertRedirect(route('admin.login'));
+        $this->assertGuest();
     }
 }
