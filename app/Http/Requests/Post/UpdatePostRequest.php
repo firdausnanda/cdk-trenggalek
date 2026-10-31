@@ -51,7 +51,7 @@ class UpdatePostRequest extends FormRequest
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string',
             'status' => 'required|in:draft,publish,pending,future,private',
-            'featured_image' => 'nullable|file|image|max:5120',
+            'featured_image' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif|max:10240',
             'parent_id' => 'nullable|exists:posts,id',
             'published_at' => 'nullable|date',
             'remove_featured_image' => 'nullable',

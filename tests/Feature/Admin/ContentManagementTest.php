@@ -7,6 +7,8 @@ use App\Models\Term;
 use App\Models\Taxonomy;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\View;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -172,6 +174,37 @@ class ContentManagementTest extends TestCase
         // Check if the post has the category and tag attached
         $this->assertTrue($post->terms()->where('taxonomy', 'category')->exists());
         $this->assertTrue($post->terms()->where('taxonomy', 'tag')->exists());
+    }
+
+    #[Test]
+    public function saving_post_stores_inline_and_featured_images_as_webp_files(): void
+    {
+        $publicPath = sys_get_temp_dir().'/content-images-test-'.uniqid();
+        File::ensureDirectoryExists($publicPath);
+        $this->app->usePublicPath($publicPath);
+
+        $inline = base64_encode(UploadedFile::fake()->image('inline.jpg', 2000, 1000)->get());
+
+        $response = $this->actingAs($this->admin)
+            ->post("/admin/posts/{$this->postType}", [
+                'title' => 'Post With Images',
+                'slug' => 'post-with-images',
+                'content' => '<p>Intro</p><p><img src="data:image/jpeg;base64,'.$inline.'"></p>',
+                'status' => 'publish',
+                'featured_image' => UploadedFile::fake()->image('cover.jpg', 3000, 2000),
+            ]);
+
+        $response->assertRedirect();
+        $post = Post::where('slug', 'post-with-images')->firstOrFail();
+
+        $this->assertStringNotContainsString('data:image/', $post->content);
+        $this->assertMatchesRegularExpression('#<img src="[^"]+/uploads/posts/\d{4}/\d{2}/[0-9a-f-]+\.webp">#', $post->content);
+
+        $featuredPath = public_path(ltrim(parse_url($post->featured_image, PHP_URL_PATH), '/'));
+        $this->assertSame(1600, getimagesize($featuredPath)[0]);
+        $this->assertFileExists(str_replace('.webp', '-400.webp', $featuredPath));
+
+        File::deleteDirectory($publicPath);
     }
 
     #[Test]
