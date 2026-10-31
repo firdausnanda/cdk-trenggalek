@@ -16,8 +16,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Jorenvh\Share\ShareFacade as Share;
 
-use function PHPSTORM_META\map;
-
 class HomeController extends Controller
 {
 
