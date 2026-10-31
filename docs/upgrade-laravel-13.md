@@ -84,6 +84,23 @@ dengan `docker compose run --rm node sh -c "npm ci && npm run build"`. Setelah u
 Tanpa Docker, cron scheduler tetap `* * * * * php artisan schedule:run`. Dengan Docker,
 service `scheduler` sudah menjalankannya — jangan pasang cron kedua.
 
+## Optimasi gambar artikel (sekali jalan, setelah deploy branch `feature/image-optimization`)
+
+Gambar lama di isi artikel tersimpan sebagai base64 di kolom `posts.content`. Command berikut
+memindahkannya ke file WebP (maks. 1600 px) di `public/uploads/posts/YYYY/MM/`.
+
+1. Pastikan `APP_URL` di `.env` benar (tanpa path tambahan): URL gambar yang dihasilkan memakai nilai ini.
+2. Backup database (command juga menulis backup sendiri ke `storage/backups/posts-images-*.json`).
+3. Lihat dulu tanpa mengubah apa pun: `php artisan posts:optimize-images --dry-run --featured`
+4. Jalankan: `php artisan posts:optimize-images --featured`
+   (`--featured` juga mengubah gambar utama lama ke WebP + varian 800/400 px; file asli tetap disimpan.)
+5. Kecilkan tabel: `OPTIMIZE TABLE posts;` di MySQL.
+6. Cek beberapa halaman berita. Jika ada masalah, kembalikan isi lama:
+   `php artisan posts:optimize-images --restore=storage/backups/posts-images-<waktu>.json`
+
+Hasil di salinan database lokal: 14 artikel, 39 gambar; kolom `content` 38,3 MB → 34 KB, tabel
+`posts` 39,6 MB → 0,13 MB, file gambar total 7,5 MB, halaman berita terbesar 12,5 MB → 27 KB HTML.
+
 ## Smoke test setelah deploy
 
 - Halaman publik: `/`, `/berita`, satu detail berita (cek tombol share), `/kontak`, `/prestasi`
