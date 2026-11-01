@@ -18,6 +18,7 @@ use App\Http\Controllers\Backend\UserLoginAsController;
 use App\Http\Controllers\Backend\UsersController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CookieConsentController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -34,8 +35,12 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
+Route::get('/berita/kategori/{slug}', [HomeController::class, 'beritaKategori'])->name('berita.kategori');
+Route::get('/berita/tag/{slug}', [HomeController::class, 'beritaTag'])->name('berita.tag');
 Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
 Route::post('/berita/comments', [HomeController::class, 'commentStore'])->name('comments.store');
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');

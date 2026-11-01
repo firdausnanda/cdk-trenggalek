@@ -2,8 +2,14 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Tentang Kami · ' . config('settings.app_name'))
+@section('title', judul_halaman('Tentang Kami'))
 @section('description', 'Profil, tugas dan fungsi, serta struktur organisasi Cabang Dinas Kehutanan Wilayah Trenggalek, Dinas Kehutanan Provinsi Jawa Timur.')
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Tentang Kami', route('tentang-kami')]]),
+    ) !!}</script>
+@endpush
 
 @php
     $fakta = [

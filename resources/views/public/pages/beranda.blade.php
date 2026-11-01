@@ -1,6 +1,8 @@
 @extends('public.layouts.app')
 
 @section('nav-overlay', true)
+@section('title', 'Cabang Dinas Kehutanan Wilayah Trenggalek, Jawa Timur')
+@section('description', 'Layanan, data kehutanan, dan berita kegiatan Cabang Dinas Kehutanan Wilayah Trenggalek di Kabupaten Trenggalek, Tulungagung, Kediri, dan Kota Kediri.')
 
 @php
     // Forestry figures from SMART-HUT (see App\Services\SmartHutService).

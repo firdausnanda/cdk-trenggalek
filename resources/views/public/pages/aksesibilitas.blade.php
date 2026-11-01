@@ -2,8 +2,14 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Pernyataan Aksesibilitas · ' . config('settings.app_name'))
+@section('title', judul_halaman('Pernyataan Aksesibilitas'))
 @section('description', 'Komitmen Cabang Dinas Kehutanan Wilayah Trenggalek terhadap aksesibilitas situs web sesuai WCAG 2.2 dan ISO/IEC 40500.')
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Pernyataan Aksesibilitas', route('aksesibilitas')]]),
+    ) !!}</script>
+@endpush
 
 @php
     $fitur = [

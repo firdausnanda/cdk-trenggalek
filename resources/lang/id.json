@@ -270,5 +270,11 @@
     "Demo Mode Active": "Mode Demo Aktif",
     "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.": "Mode demo saat ini diaktifkan untuk situs ini. Banyak fitur dinonaktifkan untuk mencegah perubahan pada data demo.",
     "Parent": "Induk",
-    "Comment": "Komentar"
+    "Comment": "Komentar",
+    "Search engine (SEO)": "Mesin pencari (SEO)",
+    "Optional. Leave empty to use the title and excerpt.": "Opsional. Kosongkan untuk memakai judul dan kutipan.",
+    "SEO title": "Judul SEO",
+    "SEO description": "Deskripsi SEO",
+    "Shown under the title in search results. About 120–160 characters.": "Tampil di bawah judul pada hasil pencarian. Sekitar 120–160 karakter.",
+    "Hide from search engines (noindex)": "Sembunyikan dari mesin pencari (noindex)"
 }

@@ -145,13 +145,49 @@ if (! function_exists('komentar_teks')) {
     }
 }
 
+if (! function_exists('judul_halaman')) {
+    /**
+     * A public page's <title>: the page name plus the short site name, when that still fits the
+     * roughly 65 characters search results show. Long titles (often news headlines) go alone.
+     */
+    function judul_halaman(string $judul): string
+    {
+        $lengkap = $judul . ' · ' . config('cdk.nama_singkat');
+
+        return mb_strlen($lengkap) <= 65 ? $lengkap : $judul;
+    }
+}
+
+if (! function_exists('deskripsi_meta')) {
+    /**
+     * Plain text from HTML content, cut at a word boundary to fit a 160-character meta description.
+     */
+    function deskripsi_meta(?string $html): string
+    {
+        $teks = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string) $html), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+
+        if (mb_strlen($teks) <= 160) {
+            return $teks;
+        }
+
+        return rtrim(Str::beforeLast(mb_substr($teks, 0, 159), ' '), ' ,.;:') . '…';
+    }
+}
+
 if (! function_exists('lazy_images')) {
     /**
-     * Add native lazy loading to images inside rendered HTML content.
+     * Add native lazy loading to images inside rendered HTML content, and optionally an alt text
+     * to images that have none.
      */
-    function lazy_images(?string $html): ?string
+    function lazy_images(?string $html, ?string $altFallback = null): ?string
     {
-        return app(\App\Services\ImageService::class)->withLazyLoading($html);
+        $images = app(\App\Services\ImageService::class);
+
+        if ($altFallback !== null) {
+            $html = $images->withAltFallback($html, $altFallback);
+        }
+
+        return $images->withLazyLoading($html);
     }
 }
 

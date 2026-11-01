@@ -2,8 +2,14 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Kebijakan Privasi & Cookie · ' . config('settings.app_name'))
+@section('title', judul_halaman('Kebijakan Privasi & Cookie'))
 @section('description', 'Data pribadi dan cookie yang digunakan situs Cabang Dinas Kehutanan Wilayah Trenggalek, tujuan penggunaannya, dan hak Anda sebagai pemilik data.')
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Kebijakan Privasi & Cookie', route('kebijakan-privasi')]]),
+    ) !!}</script>
+@endpush
 
 @php
     $email = 'cdkwilayahtrenggalek@jatimprov.go.id';

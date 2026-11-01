@@ -1,8 +1,31 @@
 @extends('public.layouts.app')
 
 @section('nav-overlay', true)
-@section('title', $post->title . ' · ' . config('settings.app_name'))
-@section('description', Str::limit(trim(strip_tags($post->excerpt ?: $post->content)), 160))
+@section('title', judul_halaman($post->seo('title') ?: $post->title))
+@section('description', $post->seo('description') ?: deskripsi_meta($post->excerpt ?: $post->content))
+@if ($post->seo('noindex'))
+    @section('robots', 'noindex, follow')
+@endif
+@section('canonical', route('berita.show', $post->slug))
+@section('og_type', 'article')
+@if ($post->featured_image)
+    @section('og_image', url($post->featured_image))
+@endif
+
+@push('head')
+    @if ($post->published_at)
+        <meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">
+    @endif
+    <meta property="article:modified_time" content="{{ $post->updated_at->toIso8601String() }}">
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::newsArticle($post),
+        \App\Support\StructuredData::breadcrumb([
+            ['Beranda', route('home')],
+            ['Berita', route('berita')],
+            [$post->title, route('berita.show', $post->slug)],
+        ]),
+    ) !!}</script>
+@endpush
 
 @php
     $placeholder = asset('images/not-found/image.jpeg');
@@ -33,7 +56,7 @@
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
                     <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-white">Berita</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li aria-current="page" class="text-white">Detail berita</li>
+                    <li aria-current="page" class="text-white">{{ Str::limit($post->title, 60) }}</li>
                 </ol>
             </nav>
 
@@ -42,7 +65,7 @@
                     @if ($post->categories->isNotEmpty())
                         <ul class="flex flex-wrap gap-x-3 gap-y-1 text-sm font-semibold text-leaf">
                             @foreach ($post->categories as $item)
-                                <li><a href="{{ route('berita', ['kategori' => $item->slug]) }}" class="inline-flex min-h-11 items-center underline-offset-4 hover:underline">{{ $item->name }}</a></li>
+                                <li><a href="{{ route('berita.kategori', $item->slug) }}" class="inline-flex min-h-11 items-center underline-offset-4 hover:underline">{{ $item->name }}</a></li>
                             @endforeach
                         </ul>
                     @endif
@@ -103,14 +126,14 @@
 
         <div class="mx-auto w-full min-w-0 max-w-[45rem]">
             <div id="isi-berita" class="konten-berita">
-                {!! lazy_images($post->content) !!}
+                {!! lazy_images($post->content, 'Dokumentasi kegiatan: ' . $post->title) !!}
             </div>
 
         @if ($post->tags->isNotEmpty())
             <div class="mt-12 flex flex-wrap items-center gap-2">
                 <span class="mr-1 text-sm font-semibold text-forest-800">Topik</span>
                 @foreach ($post->tags as $tag)
-                    <span class="border-b border-forest-900/25 py-1 text-sm text-ink/80">#{{ $tag->name }}</span>
+                    <a href="{{ route('berita.tag', $tag->slug) }}" class="inline-flex min-h-11 items-center border-b border-forest-900/25 text-sm text-ink/80 hover:border-forest-700 hover:text-forest-800">#{{ $tag->name }}</a>
                 @endforeach
             </div>
         @endif

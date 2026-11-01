@@ -2,8 +2,15 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Kontak · ' . config('settings.app_name'))
+@section('title', judul_halaman('Kontak'))
 @section('description', 'Hubungi Cabang Dinas Kehutanan Wilayah Trenggalek: kirim pesan, lihat jam layanan, email, dan alamat ketiga kantor kami.')
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Kontak', route('kontak')]]),
+        ...\App\Support\StructuredData::offices(),
+    ) !!}</script>
+@endpush
 
 @php
     $email = 'cdkwilayahtrenggalek@jatimprov.go.id';

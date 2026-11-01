@@ -90,6 +90,49 @@
             </div>
         </div>
 
+        <!-- Search engine (SEO) overrides; empty fields fall back to the title and excerpt -->
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+            x-data="{ seoTitle: @js(old('seo_title', isset($post) ? $post->seo('title') : '')), seoDescription: @js(old('seo_description', isset($post) ? $post->seo('description') : '')) }">
+            <div class="px-4 py-3 sm:px-6 border-b border-gray-100 dark:border-gray-800">
+                <h3 class="text-base font-medium text-gray-800 dark:text-white/90">{{ __('Search engine (SEO)') }}</h3>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('Optional. Leave empty to use the title and excerpt.') }}</p>
+            </div>
+            <div class="p-5 space-y-4 sm:p-6">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label for="seo_title" class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('SEO title') }}</label>
+                        <span class="text-xs tabular-nums" :class="(seoTitle || '').length > 60 ? 'text-warning-600' : 'text-gray-500 dark:text-gray-400'"
+                            x-text="(seoTitle || '').length + ' / 60'"></span>
+                    </div>
+                    <input type="text" name="seo_title" id="seo_title" x-model="seoTitle" maxlength="70" class="form-control"
+                        placeholder="{{ $post->title ?? '' }}">
+                    @error('seo_title')
+                        <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label for="seo_description" class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('SEO description') }}</label>
+                        <span class="text-xs tabular-nums" :class="(seoDescription || '').length > 160 ? 'text-warning-600' : 'text-gray-500 dark:text-gray-400'"
+                            x-text="(seoDescription || '').length + ' / 160'"></span>
+                    </div>
+                    <textarea name="seo_description" id="seo_description" rows="3" x-model="seoDescription" maxlength="200"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent p-4 text-sm text-gray-800 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"></textarea>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('Shown under the title in search results. About 120–160 characters.') }}</p>
+                    @error('seo_description')
+                        <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <input type="checkbox" id="seo_noindex" name="seo_noindex" value="1" class="mr-2"
+                        @checked(old('seo_noindex', isset($post) && $post->seo('noindex')))>
+                    <label for="seo_noindex" class="text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('Hide from search engines (noindex)') }}</label>
+                </div>
+            </div>
+        </div>
+
         <x-advanced-fields :post-meta="isset($post) ? $post->getAllMeta() : []" />
     </div>
 
