@@ -116,6 +116,35 @@ if (! function_exists('image_srcset')) {
     }
 }
 
+if (! function_exists('rupiah_singkat')) {
+    /**
+     * Format a rupiah amount compactly for display, e.g. 167704808505 → "Rp167,7 M".
+     */
+    function rupiah_singkat(float|int $value): string
+    {
+        foreach ([1e12 => 'T', 1e9 => 'M', 1e6 => 'Jt'] as $unit => $suffix) {
+            if (abs($value) >= $unit) {
+                return 'Rp' . number_format($value / $unit, 1, ',', '.') . ' ' . $suffix;
+            }
+        }
+
+        return 'Rp' . number_format($value, 0, ',', '.');
+    }
+}
+
+if (! function_exists('komentar_teks')) {
+    /**
+     * Visitor comment as escaped plain text with line breaks. Older comments were stored as editor
+     * HTML, so markup is stripped before escaping; the result is safe to echo with {!! !!}.
+     */
+    function komentar_teks(?string $content): string
+    {
+        $text = html_entity_decode(strip_tags((string) $content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return nl2br(e(trim($text)));
+    }
+}
+
 if (! function_exists('lazy_images')) {
     /**
      * Add native lazy loading to images inside rendered HTML content.

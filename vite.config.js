@@ -6,6 +6,8 @@ import collectModuleAssetsPaths from "./vite-module-loader";
 let paths = [
     'resources/css/app.css',
     'resources/js/app.js',
+    'resources/css/public.css',
+    'resources/js/public.js',
 ];
 
 // Precompute all paths synchronously.

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', config('settings.app_name'))</title>
+    <meta name="description"
+        content="@yield('description', 'Cabang Dinas Kehutanan Wilayah Trenggalek — melindungi, mengelola, dan melestarikan hutan di Trenggalek, Tulungagung, dan Kediri.')">
+    <meta name="author" content="Cabang Dinas Kehutanan Wilayah Trenggalek">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0b2118">
+
+    <link rel="icon" href="{{ config('settings.site_icon') }}">
+    <link rel="apple-touch-icon" href="{{ config('settings.site_icon') }}">
+
+    @include('public.partials.head-script')
+    @stack('head')
+    @vite(['resources/css/public.css', 'resources/js/public.js'])
+</head>
+
+<body id="top" class="bg-cream font-sans text-ink antialiased">
+    <a href="#konten"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-full focus:bg-leaf focus:px-4 focus:py-2 focus:text-forest-950">
+        Langsung ke konten
+    </a>
+
+    @include('public.partials.nav')
+
+    <main id="konten">
+        @yield('content')
+    </main>
+
+    @include('public.partials.footer')
+
+    @include('public.partials.cookie-consent')
+    @include('public.partials.aksesibilitas')
+
+    @stack('scripts')
+</body>
+
+</html>

@@ -50,7 +50,7 @@ class LoginController extends Controller
         $email = app()->environment('local') ? 'superadmin@example.com' : '';
         $password = app()->environment('local') ? '12345678' : '';
 
-        return view('backend.auth.login')->with(compact('email', 'password'));
+        return view('public.auth.login')->with(compact('email', 'password'));
     }
 
     /**
@@ -76,7 +76,7 @@ class LoginController extends Controller
 
         session()->flash('error', __('auth.failed'));
 
-        return back();
+        return back()->withInput($request->only('email', 'remember'));
     }
 
     /**

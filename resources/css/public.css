@@ -1,0 +1,339 @@
+/*
+ * Public website styles (redesign). Kept separate from app.css so the public pages
+ * only ship the utilities they use; sources are limited to the public views.
+ */
+@import "tailwindcss" source(none);
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Fonts are served from this site (not Google Fonts), so visitors' IP addresses are not sent to a third party.
+   Browsers only download a face once it is used, so the Atkinson faces cost nothing until the accessibility
+   panel's readable-font option is turned on. */
+@import "@fontsource-variable/inter/opsz.css";
+@import "@fontsource-variable/inter-tight";
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+
+@source "../views/public";
+@source "../views/errors";
+@source "../js/public.js";
+
+@theme {
+    --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Inter Tight Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+    --color-forest-50: #f0f6f1;
+    --color-forest-100: #dbe9de;
+    --color-forest-600: #2f7a50;
+    --color-forest-700: #1f5f3d;
+    --color-forest-800: #174a31;
+    --color-forest-900: #123b28;
+    --color-forest-950: #0b2118;
+    --color-leaf: #b5d86a;
+    --color-clay: #8a5427;
+    --color-cream: #f7f3e8;
+    --color-sand: #ebe3cf;
+    --color-ink: #16201a;
+
+    --ease-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    --animate-kenburns: kenburns 26s ease-in-out infinite alternate;
+    @keyframes kenburns {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.12) translate(-1.5%, -1%);
+        }
+    }
+}
+
+/* Lines a horizontal scroller up with the max-w-7xl container while letting it bleed to the edge. */
+@utility bleed-x {
+    padding-inline: max(1.25rem, calc((100% - 80rem) / 2 + 2rem));
+    scroll-padding-inline: max(1.25rem, calc((100% - 80rem) / 2 + 2rem));
+}
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Break a word only when it cannot fit, so enlarged or spaced-out text never gets cut off (WCAG 1.4.4, 1.4.12). */
+    :where(h1, h2, h3, h4, p, li, dt, dd, a, span) {
+        overflow-wrap: anywhere;
+    }
+
+    ::selection {
+        background-color: var(--color-leaf);
+        color: var(--color-forest-950);
+    }
+
+    /* Focus ring with at least 3:1 contrast: dark green on light surfaces, leaf on dark ones,
+       and the text colour inside the header (white over the hero, ink once it turns solid). */
+    :focus-visible {
+        outline: 3px solid var(--color-forest-700);
+        outline-offset: 3px;
+    }
+
+    :where(.bg-forest-950, .bg-forest-900, footer) :focus-visible {
+        outline-color: var(--color-leaf);
+    }
+
+    header :focus-visible {
+        outline-color: currentColor;
+    }
+}
+
+@layer components {
+    .cookie-banner {
+        animation: cookie-banner-enter 420ms var(--ease-soft) both;
+    }
+
+    @keyframes cookie-banner-enter {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Display face defaults to bold; explicit font-* utilities still win. */
+    .font-display {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-clay uppercase;
+    }
+
+    .eyebrow::before {
+        content: "";
+        @apply h-px w-8 bg-current;
+    }
+
+    .section-title {
+        @apply mt-4 font-display text-4xl leading-[1.05] font-bold tracking-[-0.03em] text-balance sm:text-5xl lg:text-6xl;
+    }
+
+    .section-title em {
+        @apply text-forest-600 not-italic;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center gap-2 rounded-full bg-leaf px-6 py-3.5 font-semibold text-forest-950 transition duration-300 hover:bg-white;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center gap-2 rounded-full border border-current/25 px-6 py-3.5 font-semibold transition duration-300 hover:border-current/60 hover:bg-current/5;
+    }
+
+    /* Article body from the Quill editor (news detail page). */
+    .konten-berita {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: color-mix(in oklab, var(--color-ink) 85%, transparent);
+
+        & > * + * {
+            margin-top: 1.25em;
+        }
+
+        & :where(h1, h2, h3, h4) {
+            margin-top: 2em;
+            font-family: var(--font-display);
+            font-weight: 700;
+            line-height: 1.25;
+            color: var(--color-ink);
+        }
+
+        & h2 {
+            font-size: 1.6em;
+        }
+
+        & h3 {
+            font-size: 1.3em;
+        }
+
+        & strong {
+            font-weight: 700;
+            color: var(--color-ink);
+        }
+
+        & a {
+            color: var(--color-forest-700);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
+        & img {
+            height: auto;
+            max-width: 100%;
+            margin-inline: auto;
+            border-radius: 1rem;
+        }
+
+        & :where(ol, ul) {
+            padding-left: 1.5em;
+        }
+
+        & li {
+            margin-top: 0.4em;
+            padding-left: 0.25em;
+        }
+
+        /* Quill 2 writes both list kinds as <ol> with a data-list attribute. */
+        & ol > li {
+            list-style-type: decimal;
+        }
+
+        & ol > li[data-list="bullet"],
+        & ul > li {
+            list-style-type: disc;
+        }
+
+        & .ql-indent-1 {
+            margin-left: 1.5em;
+        }
+
+        & .ql-indent-2 {
+            margin-left: 3em;
+        }
+
+        & .ql-ui {
+            display: none;
+        }
+
+        & .ql-align-center {
+            text-align: center;
+        }
+
+        & .ql-align-right {
+            text-align: right;
+        }
+
+        & .ql-align-justify {
+            text-align: justify;
+        }
+
+        & blockquote {
+            padding-left: 1em;
+            border-left: 3px solid var(--color-leaf);
+            font-style: italic;
+        }
+    }
+
+    /* Scroll-reveal; only hidden when JS is running so content never stays invisible. */
+    .js [data-reveal] {
+        opacity: 0;
+        transform: translateY(28px);
+        transition:
+            opacity 0.9s var(--ease-soft),
+            transform 0.9s var(--ease-soft);
+        transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    .js [data-reveal].is-visible {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/*
+ * Accessibility panel preferences (partials/aksesibilitas), toggled as classes on <html>.
+ */
+
+/* Text size (WCAG 1.4.4): everything is sized in rem, so scaling the root scales the page. */
+html.a11y-teks-115 {
+    font-size: 115%;
+}
+
+html.a11y-teks-130 {
+    font-size: 130%;
+}
+
+/* High contrast (WCAG 1.4.6): pure black/white surfaces, and no translucent text or borders. */
+html.a11y-kontras {
+    --color-cream: #ffffff;
+    --color-sand: #ffffff;
+    --color-ink: #000000;
+    --color-forest-950: #000000;
+    --color-forest-900: #000000;
+    --color-forest-800: #0d3320;
+    --color-forest-700: #0d4a2a;
+    --color-forest-600: #0d5c31;
+    --color-clay: #5c3412;
+    --color-leaf: #d9ff8a;
+
+    & [class*="text-white/"] {
+        color: #ffffff !important;
+    }
+
+    & [class*="text-ink/"] {
+        color: #000000 !important;
+    }
+
+    & [class*="border-white/"] {
+        border-color: rgb(255 255 255 / 0.7) !important;
+    }
+
+    & [class*="border-forest-900/"] {
+        border-color: #000000 !important;
+    }
+}
+
+/* Text spacing (WCAG 1.4.12): the spacing values the criterion asks content to survive. */
+html.a11y-spasi :where(p, li, dd, dt, a, button, span, h1, h2, h3, label) {
+    line-height: 1.6 !important;
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
+}
+
+/* Underlined links (WCAG 1.4.1), so links never rely on colour alone. */
+html.a11y-garis-tautan a:not(.btn-primary, .btn-ghost) {
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 0.2em !important;
+}
+
+/* No motion (WCAG 2.2.2 / 2.3.3). */
+html.a11y-tanpa-animasi {
+    scroll-behavior: auto;
+
+    & *,
+    & *::before,
+    & *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    & [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* Readable typeface for low vision. */
+html.a11y-font-baca {
+    --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cookie-banner {
+        animation: none;
+    }
+
+    .js [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .animate-kenburns {
+        animation: none;
+    }
+}

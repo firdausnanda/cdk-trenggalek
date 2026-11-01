@@ -30,4 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // SMART-HUT (Sistem Informasi Data Kehutanan): source of the forestry figures on the public pages.
+    'smart_hut' => [
+        'url' => env('SMART_HUT_URL'),
+        'token' => env('SMART_HUT_TOKEN'),
+        'cdk_id' => (int) env('SMART_HUT_CDK_ID', 3),
+        'cache_ttl' => (int) env('SMART_HUT_CACHE_TTL', 600),
+        'timeout' => (int) env('SMART_HUT_TIMEOUT', 5),
+    ],
+
 ];

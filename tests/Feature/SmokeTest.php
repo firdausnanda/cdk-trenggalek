@@ -24,11 +24,8 @@ class SmokeTest extends TestCase
             'tentang-kami' => ['tentang-kami'],
             'berita' => ['berita'],
             'kontak' => ['kontak'],
-            'kth' => ['kth.index'],
-            'masyarakat' => ['masyarakat.index'],
-            'pbphh' => ['pbphh.index'],
-            'ps' => ['ps.index'],
-            'prestasi' => ['prestasi.index'],
+            'aksesibilitas' => ['aksesibilitas'],
+            'kebijakan-privasi' => ['kebijakan-privasi'],
         ];
     }
 
