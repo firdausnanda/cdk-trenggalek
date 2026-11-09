@@ -17,6 +17,8 @@ use App\Http\Controllers\Backend\TranslationController;
 use App\Http\Controllers\Backend\UserLoginAsController;
 use App\Http\Controllers\Backend\UsersController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CookieConsentController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -26,25 +28,27 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
+| routes are loaded by bootstrap/app.php within a group which
 | contains the "web" middleware group. Now create something great!
 |
 */
 
 Auth::routes(['register' => false, 'login' => false, 'reset' => false]);
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang-kami');
 Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
+Route::get('/berita/kategori/{slug}', [HomeController::class, 'beritaKategori'])->name('berita.kategori');
+Route::get('/berita/tag/{slug}', [HomeController::class, 'beritaTag'])->name('berita.tag');
 Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
 Route::post('/berita/comments', [HomeController::class, 'commentStore'])->name('comments.store');
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
+Route::get('/aksesibilitas', [HomeController::class, 'aksesibilitas'])->name('aksesibilitas');
+Route::get('/kebijakan-privasi', [HomeController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
+Route::post('/cookie-consent', [CookieConsentController::class, 'store'])->name('cookie-consent.store');
 Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_store');
 
-Route::get('/kth', [HomeController::class, 'kth'])->name('kth.index');
-Route::get('/masyarakat', [HomeController::class, 'masyarakat'])->name('masyarakat.index');
-Route::get('/pbphh', [HomeController::class, 'pbphh'])->name('pbphh.index');
-Route::get('/ps', [HomeController::class, 'ps'])->name('ps.index');
-Route::get('/prestasi', [HomeController::class, 'prestasi'])->name('prestasi.index');
 
 /**
  * Admin routes.

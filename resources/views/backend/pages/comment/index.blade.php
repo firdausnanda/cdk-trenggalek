@@ -102,7 +102,7 @@
                                         {{ $comment->email }}
                                     </td>
                                     <td class="px-5 py-4 sm:px-6">
-                                        <span class="line-clamp-2">{!! $comment->content !!}</span>
+                                        <span class="line-clamp-2">{!! komentar_teks($comment->content) !!}</span>
                                         <a href="{{ route('berita.show', ['slug' => $comment->post->slug]) }}" target="_blank" class="text-xs text-blue-500">{{ Str::limit($comment->post->title, 50) }}</a>
                                     </td>
                                     <td class="px-5 py-4 sm:px-6 flex gap-2">

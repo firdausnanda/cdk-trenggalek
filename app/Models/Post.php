@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Controllers\SitemapController;
 use App\Services\Content\ContentService;
 use App\Services\Content\PostType;
 use App\Traits\QueryBuilderTrait;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Post extends Model implements Viewable
@@ -56,6 +58,9 @@ class Post extends Model implements Viewable
                 $post->user_id = auth()->id();
             }
         });
+
+        static::saved(fn () => Cache::forget(SitemapController::CACHE_KEY));
+        static::deleted(fn () => Cache::forget(SitemapController::CACHE_KEY));
     }
 
     /**
@@ -176,9 +181,17 @@ class Post extends Model implements Viewable
     }
 
     /**
+     * A search-engine override set in the post form: "title", "description" or "noindex".
+     */
+    public function seo(string $key): mixed
+    {
+        return $this->meta['seo'][$key] ?? null;
+    }
+
+    /**
      * Get categories for the post
      */
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->terms()->where('taxonomy', 'category');
     }
@@ -186,7 +199,7 @@ class Post extends Model implements Viewable
     /**
      * Get tags for the post
      */
-    public function tags()
+    public function tags(): BelongsToMany
     {
         return $this->terms()->where('taxonomy', 'tag');
     }

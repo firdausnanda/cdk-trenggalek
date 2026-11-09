@@ -71,8 +71,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Create Modules folder if it doesn't exist
-        $path = base_path('Modules'); 
-        if (!File::exists($path)) {
+        $path = base_path('Modules');
+        if (! File::exists($path)) {
             File::makeDirectory($path, 0755, true, true);
         }
     }

@@ -107,7 +107,7 @@ class PermissionService
                     'comment.create',
                     'comment.view',
                     'comment.edit',
-                    'comment.delete'
+                    'comment.delete',
                 ],
             ],
         ];

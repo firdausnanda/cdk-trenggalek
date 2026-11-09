@@ -51,7 +51,7 @@ class SettingsController extends Controller
             $messages["{$fieldName}.max"] = "Ukuran {$label} maksimal 2MB.";
         }
 
-        if (!empty($rules)) {
+        if (! empty($rules)) {
             $request->validate($rules, $messages);
         }
 

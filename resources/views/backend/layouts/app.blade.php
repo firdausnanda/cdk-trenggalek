@@ -13,7 +13,6 @@
     @include('backend.layouts.partials.theme-colors')
     @yield('before_vite_build')
 
-    @viteReactRefresh
     @vite(['resources/js/app.js', 'resources/css/app.css'], 'build')
     @stack('styles')
     @yield('before_head')

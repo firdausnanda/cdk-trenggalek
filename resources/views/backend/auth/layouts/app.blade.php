@@ -11,7 +11,6 @@
     @include('backend.layouts.partials.theme-colors')
     @yield('before_vite_build')
 
-    @viteReactRefresh
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 
     @include('backend.layouts.partials.integration-scripts')

@@ -24,5 +24,5 @@
 @endsection
 
 @push('scripts')
-<x-quill-editor :editor-id="'content'" />
+<x-quill-editor :editor-id="'content'" :upload-url="route('admin.editor.upload')" />
 @endpush

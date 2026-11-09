@@ -49,13 +49,16 @@ class StorePostRequest extends FormRequest
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string',
             'status' => 'required|in:draft,publish,pending,future,private',
-            'featured_image' => 'nullable|file|image|max:5120',
+            'featured_image' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif|max:10240',
             'parent_id' => 'nullable|exists:posts,id',
             'published_at' => 'nullable|date',
             'meta_keys.*' => 'nullable|string|max:255|regex:/^[a-z0-9_]+$/',
             'meta_values.*' => 'nullable|string',
             'meta_types.*' => 'nullable|string|in:input,textarea,number,email,url,text,date,checkbox,select',
             'meta_default_values.*' => 'nullable|string',
+            'seo_title' => 'nullable|string|max:70',
+            'seo_description' => 'nullable|string|max:200',
+            'seo_noindex' => 'nullable|boolean',
         ]);
     }
 }

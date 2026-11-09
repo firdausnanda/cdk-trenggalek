@@ -1,29 +1,29 @@
-@extends('backend.auth.layouts.app')
+@extends('errors.layout')
 
-@section('title')
-    403 - {{ __('Access Denied') }} - {{ config('app.name') }}
+@section('code', '403')
+@section('icon', 'bi-shield-lock')
+@section('title', 'Akses ditolak')
+@section('message')
+    @auth
+        Akun Anda tidak memiliki izin untuk membuka halaman ini. Hubungi administrator bila Anda memerlukan akses.
+    @else
+        Halaman ini hanya dapat dibuka oleh pengguna yang berwenang. Silakan masuk dengan akun yang sesuai.
+    @endauth
 @endsection
 
-@section('admin-content')
-<div class="relative z-1 flex min-h-screen flex-col items-center justify-center overflow-hidden p-6">
-    <div class="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
-        <h1 class="mb-8 text-title-md font-bold text-gray-800 dark:text-white/90 xl:text-title-2xl">
-            {{ __('ERROR') }}
-        </h1>
-        <h1 class="mb-8 text-title-md font-bold text-gray-800 dark:text-white/90 xl:text-title-2xl">
-            403
-        </h1>
-
-        <p class="mt-2 bg-red-100 p-4">
-            <i class="bi bi-exclamation-circle-fill"></i>&nbsp;
-            {{ $exception->getMessage() }}
-        </p>
-
-        <p class="mb-6 mt-10 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
-            {{ __('Access to this resource on the server is denied') }}
-        </p>
-
-        @include('errors.partials.links')
-    </div>
-</div>
+@section('actions')
+    @auth
+        @if (Route::has('admin.dashboard'))
+            <a href="{{ route('admin.dashboard') }}" class="btn-primary !bg-forest-900 !text-white hover:!bg-forest-700">
+                <i aria-hidden="true" class="bi bi-speedometer2"></i> Ke dashboard
+            </a>
+        @endif
+    @else
+        @if (Route::has('admin.login'))
+            <a href="{{ route('admin.login') }}" class="btn-primary !bg-forest-900 !text-white hover:!bg-forest-700">
+                <i aria-hidden="true" class="bi bi-box-arrow-in-right"></i> Masuk
+            </a>
+        @endif
+    @endauth
+    <a href="{{ url('/') }}" class="btn-ghost"><i aria-hidden="true" class="bi bi-house-door"></i> Ke beranda</a>
 @endsection

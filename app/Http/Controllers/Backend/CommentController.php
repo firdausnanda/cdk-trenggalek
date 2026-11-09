@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-
     public function index(Request $request): Renderable
     {
         $this->checkAuthorization(Auth::user(), ['user.view']);
@@ -78,7 +77,7 @@ class CommentController extends Controller
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'ids'   => 'required|array',
+            'ids' => 'required|array',
             'ids.*' => 'exists:comments,id',
         ]);
 

@@ -4,361 +4,186 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Helper\ResponseFormatter;
 use App\Mail\ContactFormMail;
 use App\Models\Comment;
 use App\Models\ContactMessage;
 use App\Models\Post;
 use App\Models\Term;
 use App\Rules\NotEmptyHtml;
+use App\Support\StatisticsConsent;
+use App\Services\SmartHutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Jorenvh\Share\ShareFacade as Share;
 
-use function PHPSTORM_META\map;
-
 class HomeController extends Controller
 {
+    /** Columns needed to render post cards; leaves out the (large) content column. */
+    private const CARD_COLUMNS = ['id', 'title', 'slug', 'excerpt', 'featured_image', 'published_at', 'created_at'];
 
-    public function index()
+    public function index(SmartHutService $smartHut)
     {
         $posts = Post::type('post')
             ->published()
             ->orderBy('created_at', 'desc')
-            ->limit(3)
-            ->get()
-            ->map(function ($post) {
-                $post->image = $post->featured_image;
-                return $post;
-            });
-        return view('pages.index', compact('posts'));
+            ->limit(4)
+            ->get(self::CARD_COLUMNS);
+
+        $kehutanan = $smartHut->summary();
+
+        return view('public.pages.beranda', compact('posts', 'kehutanan'));
+    }
+
+    public function aksesibilitas()
+    {
+        return view('public.pages.aksesibilitas');
+    }
+
+    public function kebijakanPrivasi()
+    {
+        return view('public.pages.kebijakan-privasi');
     }
 
     public function tentangKami()
     {
-        $posts = Post::type('post')
-            ->orderBy('created_at', 'desc')
-            ->limit(3)
-            ->get()
-            ->map(function ($post) {
-                $post->image = $post->featured_image;
-                return $post;
-            });
-
-        // KTH
-        $filePath = public_path('data/kth.csv');
-        $lines = file($filePath);
-        $kth = count($lines) - 1;
-
-        // Jumlah Anggota terlibat
-        $csv = file_get_contents($filePath);
-        $lines = explode("\n", $csv);
-        $totalAnggota = 0;
-
-        foreach ($lines as $key => $row) {
-            if ($key === 0 || trim($row) === '') {
-                continue;
-            }
-            $columns = str_getcsv($row);
-            if (isset($columns[6]) && is_numeric($columns[6])) {
-                $totalAnggota += (int)$columns[6];
-            }
-        }
-
-        // PBPHH
-        $filePath = public_path('data/pbphh.csv');
-        $lines = file($filePath);
-        $pbphh = count($lines) - 1;
-
-        // PS
-        $filePath = public_path('data/ps.csv');
-        $lines = file($filePath);
-        $ps = count($lines) - 1;
-
-        // Prestasi
-        $filePath = public_path('data/prestasi.csv');
-        $lines = file($filePath);
-        $prestasi = count($lines) - 1;
-
-        return view('pages.tentang-kami', compact('posts', 'kth', 'totalAnggota', 'pbphh', 'ps', 'prestasi'));
+        return view('public.pages.tentang-kami');
     }
 
     public function berita(Request $request)
     {
-        $datas = $request->search;
+        // Category filters used to be a query string (?kategori=slug); send them to their own URL.
+        if ($slug = $request->query('kategori')) {
+            return redirect()->route('berita.kategori', ['slug' => $slug, ...$request->except('kategori')], 301);
+        }
+
+        return $this->daftarBerita($request);
+    }
+
+    public function beritaKategori(Request $request, string $slug)
+    {
+        $kategori = Term::where('taxonomy', 'category')->where('slug', $slug)->firstOrFail(['id', 'name', 'slug']);
+
+        return $this->daftarBerita($request, kategori: $kategori);
+    }
+
+    public function beritaTag(Request $request, string $slug)
+    {
+        $tag = Term::where('taxonomy', 'tag')->where('slug', $slug)->firstOrFail(['id', 'name', 'slug']);
+
+        return $this->daftarBerita($request, tag: $tag);
+    }
+
+    /**
+     * The news list, optionally narrowed to one category or one tag and/or a search.
+     */
+    private function daftarBerita(Request $request, ?Term $kategori = null, ?Term $tag = null)
+    {
+        $cari = trim((string) $request->query('search', ''));
+        $kategoriAktif = $kategori?->slug;
+        $kategoriNama = $kategori?->name;
+        $tagAktif = $tag;
+        $filterTerm = $kategori ?? $tag;
 
         $searchableColumns = Post::getSearchableColumns();
         $posts = Post::type('post')
+            ->select(self::CARD_COLUMNS)
+            ->with('categories:terms.id,terms.name,terms.slug')
             ->orderBy('published_at', 'desc')
             ->published()
-            ->when($request->kategori, function ($query) use ($request) {
-                $query->whereHas('categories', function ($query) use ($request) {
-                    $query->where('slug', $request->kategori);
+            ->when($filterTerm, function ($query) use ($filterTerm) {
+                $query->whereHas('terms', fn ($query) => $query->whereKey($filterTerm->id));
+            })
+            ->when($cari !== '', function ($query) use ($cari, $searchableColumns) {
+                $query->where(function ($query) use ($cari, $searchableColumns) {
+                    foreach ($searchableColumns as $column) {
+                        $query->orWhere($column, 'like', '%' . $cari . '%');
+                    }
                 });
             })
-            ->where(function ($query) use ($datas, $searchableColumns) {
-                foreach ($searchableColumns as $column) {
-                    $query->orWhere($column, 'like', '%' . $datas . '%');
-                }
-            })
-            ->take(100)
-            ->paginate(9);
+            ->paginate(9)
+            ->withQueryString();
 
-        return view('pages.berita', compact('posts'));
+        $kategori = $this->kategoriBerita();
+
+        return view('public.pages.berita', compact('posts', 'kategori', 'cari', 'kategoriAktif', 'kategoriNama', 'tagAktif'));
     }
 
-    public function beritaDetail($slug)
+    /**
+     * News categories that have at least one post, most used first.
+     */
+    private function kategoriBerita()
+    {
+        return Term::where('taxonomy', 'category')
+            ->has('posts')
+            ->withCount('posts')
+            ->orderByDesc('posts_count')
+            ->get(['id', 'name', 'slug']);
+    }
+
+    public function beritaDetail(Request $request, $slug)
     {
         $post = Post::type('post')
+            ->published()
+            ->with(['categories:terms.id,terms.name,terms.slug', 'tags:terms.id,terms.name,terms.slug'])
             ->where('slug', $slug)
-            ->first();
-
-        if (!$post) {
-            abort(404);
-        }
+            ->firstOrFail();
 
         $posts = Post::type('post')
-            ->orderBy('published_at', 'desc')
             ->published()
-            ->take(4)
-            ->get(['title', 'slug', 'published_at']);
-
-        $kategori = Term::withCount('posts')
-            ->where('taxonomy', 'category')
-            ->orderByDesc('posts_count')
-            ->take(5)
-            ->get();
+            ->whereKeyNot($post->id)
+            ->with('categories:terms.id,terms.name,terms.slug')
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get(self::CARD_COLUMNS);
 
         $share = Share::page(url()->current(), $post->title)
+            ->whatsapp()
             ->facebook()
             ->twitter()
-            ->linkedin()
-            ->whatsapp()
             ->telegram()
-            ->reddit()
             ->getRawLinks();
 
         $comment = Comment::where('is_approved', true)
             ->where('post_id', $post->id)
+            ->oldest()
             ->get();
 
-        views($post)->cooldown(5)->record();
+        if (StatisticsConsent::accepts($request)) {
+            views($post)->cooldown(5)->record();
+        }
 
-        return view('pages.berita-show', compact('post', 'kategori', 'posts', 'share', 'comment'));
+        return view('public.pages.berita-show', compact('post', 'posts', 'share', 'comment'));
     }
 
     public function kontak()
     {
-        return view('pages.kontak');
+        return view('public.pages.kontak');
     }
 
     public function kontak_store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email',
-            'message' => 'required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string|max:5000',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.max' => 'Nama maksimal 255 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 255 karakter.',
+            'message.required' => 'Pesan wajib diisi.',
+            'message.max' => 'Pesan maksimal 5.000 karakter.',
         ]);
 
-        // Jika ingin menyimpan ke database
         ContactMessage::create($validated);
 
         // Kirim email
         // Mail::to('cdkwilayahtrenggalek@jatimprov.go.id')->send(new ContactFormMail($validated));
 
-        return back()->with('success', '<div class="fw-bold">Pesan Anda telah terkirim! <br><span class="fw-normal">Kami akan segera menghubungi Anda.</span></div>');
-    }
-
-    public function kth(Request $request)
-    {
-        $csv = file_get_contents(public_path('data/kth.csv'));
-        $lines = explode("\n", $csv);
-        $datas = [];
-
-        foreach ($lines as $key => $row) {
-            if ($key === 0 || trim($row) === '') {
-                continue;
-            }
-
-            $columns = str_getcsv($row);
-
-            if (count($columns) >= 8) {
-                $datas[] = [
-                    'nama' => $columns[1] ?? '',
-                    'alamat' => $columns[2] ?? '',
-                    'ketua' => $columns[3] ?? '',
-                    'jenis_usaha' => $columns[4] ?? '',
-                    'no_registrasi' => $columns[5] ?? '',
-                    'wilayah' => $columns[7] ?? ''
-                ];
-            }
-        }
-
-        if ($request->has('wilayah_filter') && $request->wilayah_filter != null) {
-            $datas = array_values(array_filter($datas, function ($item) use ($request) {
-                return $item['wilayah'] == $request->wilayah_filter;
-            }));
-        }
-
-        return ResponseFormatter::success($datas, 'Data berhasil diambil');
-    }
-
-    public function masyarakat(Request $request)
-    {
-        $data = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr'],
-            'values' => [65, 59, 80, 81],
-            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
-        ];
-
-        // Jumlah Anggota terlibat
-        $csv = file_get_contents(public_path('data/kth.csv'));
-        $lines = explode("\n", $csv);
-        $anggotaPerWilayah = [];
-        $header = [];
-        $wilayahIndex = null;
-        $anggotaIndex = null;
-
-        $mappingWilayah = [
-            '1' => 'Trenggalek',
-            '2' => 'Tulungagung',
-            '3' => 'Kediri',
-            'default' => 'Lainnya',
-        ];
-
-        foreach ($lines as $key => $row) {
-            if (trim($row) === '') {
-                continue;
-            }
-
-            $columns = str_getcsv($row);
-
-            if ($key === 0) {
-                $header = $columns;
-                $wilayahIndex = array_search('wilker', $header);
-                $anggotaIndex = array_search('anggota', $header);
-                continue;
-            }
-
-            if ($wilayahIndex !== false && $anggotaIndex !== false) {
-                $wilayahAsli = trim($columns[$wilayahIndex]);
-                $jumlah = is_numeric($columns[$anggotaIndex]) ? (int)$columns[$anggotaIndex] : 0;
-
-                $wilayahBaru = $mappingWilayah[$wilayahAsli] ?? $mappingWilayah['default'] ?? $wilayahAsli;
-
-                if (!isset($anggotaPerWilayah[$wilayahBaru])) {
-                    $anggotaPerWilayah[$wilayahBaru] = 0;
-                }
-
-                $anggotaPerWilayah[$wilayahBaru] += $jumlah;
-            }
-        }
-
-        return response()->json([
-            'labels' => array_keys($anggotaPerWilayah),
-            'values' => array_values($anggotaPerWilayah),
-            'colors' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-        ]);
-    }
-
-    public function pbphh(Request $request)
-    {
-        $csv = file_get_contents(public_path('data/pbphh.csv'));
-        $lines = explode("\n", $csv);
-        $datas = [];
-
-        foreach ($lines as $key => $row) {
-            if ($key === 0 || trim($row) === '') {
-                continue;
-            }
-
-            $columns = str_getcsv($row);
-
-            if (count($columns) >= 8) {
-                $datas[] = [
-                    'nama_pbphh' => $columns[1] ?? '',
-                    'kantor' => $columns[2] ?? '',
-                    'pabrik' => $columns[3] ?? '',
-                    'no_izin' => $columns[4] ?? '',
-                    'direktur' => $columns[5] ?? '',
-                    'skala' => $columns[6] ?? '',
-                    'wilayah' => $columns[7] ?? ''
-                ];
-            }
-        }
-
-        if ($request->has('wilayah_filter') && $request->wilayah_filter != null) {
-            $datas = array_values(array_filter($datas, function ($item) use ($request) {
-                return $item['wilayah'] == $request->wilayah_filter;
-            }));
-        }
-
-        return ResponseFormatter::success($datas, 'Data berhasil diambil');
-    }
-
-    public function prestasi(Request $request)
-    {
-        $csv = file_get_contents(public_path('data/prestasi.csv'));
-        $lines = explode("\n", $csv);
-        $lines = array_reverse($lines);
-        $datas = [];
-
-        foreach ($lines as $key => $row) {
-            if ($key === count($lines)-1 || trim($row) === '') {
-                continue;
-            }
-
-            $columns = str_getcsv($row);
-
-            if (count($columns) >= 5) {
-                $datas[] = [
-                    'nama' => $columns[1] ?? '',
-                    'tahun' => $columns[2] ?? '',
-                    'keterangan' => $columns[3] ?? '',
-                    'juara' => $columns[4] ?? ''
-                ];
-            }
-        }
-
-        return ResponseFormatter::success($datas, 'Data berhasil diambil');
-    }
-
-    public function ps(Request $request)
-    {
-        $csv = file_get_contents(public_path('data/ps.csv'));
-        $lines = explode("\n", $csv);
-        $datas = [];
-
-        foreach ($lines as $key => $row) {
-            if ($key === 0 || trim($row) === '') {
-                continue;
-            }
-
-            $columns = str_getcsv($row);
-
-            if (count($columns) >= 9) {
-                $datas[] = [
-                    'nama' => $columns[1] ?? '',
-                    'skema' => $columns[2] ?? '',
-                    'khdpk' => $columns[3] ?? '',
-                    'no_sk' => $columns[4] ?? '',
-                    'alamat' => $columns[5] ?? '',
-                    'jumlah_kk' => $columns[6] ?? '',
-                    'luas' => $columns[7] ?? '',
-                    'ketua' => $columns[8] ?? '',
-                    'wilayah' => $columns[9] ?? ''
-                ];
-            }
-        }
-
-        if ($request->has('wilayah_filter') && $request->wilayah_filter != null) {
-            $datas = array_values(array_filter($datas, function ($item) use ($request) {
-                return $item['wilayah'] == $request->wilayah_filter;
-            }));
-        }
-
-        return ResponseFormatter::success($datas, 'Data berhasil diambil');
+        return redirect()->to(route('kontak') . '#form-kontak')
+            ->with('success', 'Pesan Anda telah terkirim. Kami akan segera menghubungi Anda melalui email.');
     }
 
     public function commentStore(Request $request)
@@ -366,7 +191,7 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml],
+            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml()],
             'post_id' => 'required|exists:posts,id',
         ], [
             'name.required' => 'Nama wajib diisi.',
@@ -389,7 +214,8 @@ class HomeController extends Controller
             'post_id' => $validated['post_id'],
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'content' => $validated['comment'],
+            // Comments are plain text; drop any markup so it can never run in the site or the admin panel.
+            'content' => trim(strip_tags($validated['comment'])),
             'is_approved' => false,
         ]);
 

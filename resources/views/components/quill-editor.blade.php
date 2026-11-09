@@ -4,6 +4,7 @@
     'maxHeight' => '500px',
     'type' => 'full', // Options: 'full', 'basic', 'minimal'
     'customToolbar' => null, // For custom toolbar configuration
+    'uploadUrl' => null, // When set, toolbar images are uploaded here instead of embedded as base64
 ])
 
 @once
@@ -59,6 +60,7 @@
         const editorType = '{{ $type }}';
         const textareaElement = document.getElementById(editorId);
         const customToolbar = @json($customToolbar);
+        const uploadUrl = @json($uploadUrl);
 
         if (!textareaElement) {
             console.error(`Textarea with ID "${editorId}" not found`);
@@ -111,6 +113,42 @@
                 toolbar: toolbarConfig
             }
         });
+
+        // Upload images picked from the toolbar and insert them by URL.
+        if (uploadUrl) {
+            quill.getModule('toolbar').addHandler('image', function () {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/jpeg,image/png,image/webp,image/gif';
+
+                input.addEventListener('change', async function () {
+                    const file = input.files[0];
+                    if (!file) {
+                        return;
+                    }
+
+                    const range = quill.getSelection(true);
+                    const body = new FormData();
+                    body.append('file', file);
+
+                    quill.enable(false);
+                    try {
+                        const response = await window.axios.post(uploadUrl, body);
+                        // Quill drops user edits while disabled, so re-enable before inserting.
+                        quill.enable(true);
+                        quill.insertEmbed(range.index, 'image', response.data.location, 'user');
+                        quill.setSelection(range.index + 1);
+                    } catch (error) {
+                        const message = error.response?.data?.message || '{{ __('Image upload failed.') }}';
+                        window.showToast?.('error', '{{ __('Upload failed') }}', message);
+                    } finally {
+                        quill.enable(true);
+                    }
+                });
+
+                input.click();
+            });
+        }
 
         // Set initial content from textarea
         if (initialContent) {

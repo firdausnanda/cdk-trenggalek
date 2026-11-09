@@ -106,6 +106,91 @@ if (! function_exists('deleteImageFromPublic')) {
     }
 }
 
+if (! function_exists('image_srcset')) {
+    /**
+     * Get the srcset for an optimized image, or null when it has no size variants.
+     */
+    function image_srcset(?string $url): ?string
+    {
+        return app(\App\Services\ImageService::class)->srcset($url);
+    }
+}
+
+if (! function_exists('rupiah_singkat')) {
+    /**
+     * Format a rupiah amount compactly for display, e.g. 167704808505 → "Rp167,7 M".
+     */
+    function rupiah_singkat(float|int $value): string
+    {
+        foreach ([1e12 => 'T', 1e9 => 'M', 1e6 => 'Jt'] as $unit => $suffix) {
+            if (abs($value) >= $unit) {
+                return 'Rp' . number_format($value / $unit, 1, ',', '.') . ' ' . $suffix;
+            }
+        }
+
+        return 'Rp' . number_format($value, 0, ',', '.');
+    }
+}
+
+if (! function_exists('komentar_teks')) {
+    /**
+     * Visitor comment as escaped plain text with line breaks. Older comments were stored as editor
+     * HTML, so markup is stripped before escaping; the result is safe to echo with {!! !!}.
+     */
+    function komentar_teks(?string $content): string
+    {
+        $text = html_entity_decode(strip_tags((string) $content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return nl2br(e(trim($text)));
+    }
+}
+
+if (! function_exists('judul_halaman')) {
+    /**
+     * A public page's <title>: the page name plus the short site name, when that still fits the
+     * roughly 65 characters search results show. Long titles (often news headlines) go alone.
+     */
+    function judul_halaman(string $judul): string
+    {
+        $lengkap = $judul . ' · ' . config('cdk.nama_singkat');
+
+        return mb_strlen($lengkap) <= 65 ? $lengkap : $judul;
+    }
+}
+
+if (! function_exists('deskripsi_meta')) {
+    /**
+     * Plain text from HTML content, cut at a word boundary to fit a 160-character meta description.
+     */
+    function deskripsi_meta(?string $html): string
+    {
+        $teks = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags((string) $html), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+
+        if (mb_strlen($teks) <= 160) {
+            return $teks;
+        }
+
+        return rtrim(Str::beforeLast(mb_substr($teks, 0, 159), ' '), ' ,.;:') . '…';
+    }
+}
+
+if (! function_exists('lazy_images')) {
+    /**
+     * Add native lazy loading to images inside rendered HTML content, and optionally an alt text
+     * to images that have none.
+     */
+    function lazy_images(?string $html, ?string $altFallback = null): ?string
+    {
+        $images = app(\App\Services\ImageService::class);
+
+        if ($altFallback !== null) {
+            $html = $images->withAltFallback($html, $altFallback);
+        }
+
+        return $images->withLazyLoading($html);
+    }
+}
+
 if (! function_exists('module_vite_compile')) {
     /**
      * support for vite hot reload overriding manifest file.

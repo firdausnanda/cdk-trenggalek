@@ -10,6 +10,7 @@ use App\Http\Requests\Post\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Term;
 use App\Services\Content\ContentService;
+use App\Services\ImageService;
 use App\Services\PostMetaService;
 use App\Services\PostService;
 use Carbon\Carbon;
@@ -24,7 +25,8 @@ class PostsController extends Controller
     public function __construct(
         private readonly ContentService $contentService,
         private readonly PostMetaService $postMetaService,
-        private readonly PostService $postService
+        private readonly PostService $postService,
+        private readonly ImageService $imageService
     ) {
     }
 
@@ -117,7 +119,7 @@ class PostsController extends Controller
         $post = new Post();
         $post->title = $request->title;
         $post->slug = $request->slug ?: Str::slug($request->title);
-        $post->content = $request->content;
+        $post->content = $this->imageService->extractInlineImages($request->content);
         $post->excerpt = $request->excerpt ?: Str::limit(strip_tags($request->content), 200);
         $post->status = $request->status;
         $post->post_type = $postType;
@@ -126,7 +128,7 @@ class PostsController extends Controller
 
         // Handle featured image
         if ($request->hasFile('featured_image')) {
-            $post->featured_image = storeImageAndGetUrl($request, 'featured_image', 'uploads/posts');
+            $post->featured_image = $this->imageService->store($request->file('featured_image'), 'uploads/posts', ImageService::FEATURED_VARIANTS);
         }
 
         // Handle publish date
@@ -138,6 +140,8 @@ class PostsController extends Controller
         } elseif ($request->status === 'publish') {
             $post->published_at = now();
         }
+
+        $this->applySeo($request, $post);
 
         $post = ld_apply_filters('before_post_save', $post, $request);
 
@@ -251,7 +255,7 @@ class PostsController extends Controller
         // Update post.
         $post->title = $request->title;
         $post->slug = $request->slug ?: Str::slug($request->title);
-        $post->content = $request->content;
+        $post->content = $this->imageService->extractInlineImages($request->content);
         $post->excerpt = $request->excerpt ?: Str::limit(strip_tags($request->content), 200);
         $post->status = $request->status;
         $post->parent_id = $request->parent_id;
@@ -260,13 +264,13 @@ class PostsController extends Controller
         if ($request->hasFile('featured_image')) {
             // Delete old image if exists.
             if (! empty($post->featured_image)) {
-                deleteImageFromPublic($post->featured_image);
+                $this->imageService->delete($post->featured_image);
             }
-            $post->featured_image = storeImageAndGetUrl($request, 'featured_image', 'uploads/posts');
+            $post->featured_image = $this->imageService->store($request->file('featured_image'), 'uploads/posts', ImageService::FEATURED_VARIANTS);
         } elseif ($request->has('remove_featured_image') && $request->remove_featured_image) {
             // Delete image if remove is checked.
             if (! empty($post->featured_image)) {
-                deleteImageFromPublic($post->featured_image);
+                $this->imageService->delete($post->featured_image);
                 $post->featured_image = null;
             }
         }
@@ -280,6 +284,8 @@ class PostsController extends Controller
         } elseif ($request->status === 'publish' && ! $post->published_at) {
             $post->published_at = now();
         }
+
+        $this->applySeo($request, $post);
 
         $post = ld_apply_filters('before_post_update', $post, $request);
 
@@ -306,7 +312,7 @@ class PostsController extends Controller
 
         // Delete featured image if exists
         if (! empty($post->featured_image)) {
-            deleteImageFromPublic($post->featured_image);
+            $this->imageService->delete($post->featured_image);
         }
 
         ld_do_action('post_before_deleted', $post);
@@ -336,7 +342,7 @@ class PostsController extends Controller
         foreach ($posts as $post) {
             // Delete featured image if exists.
             if (! empty($post->featured_image)) {
-                deleteImageFromPublic($post->featured_image);
+                $this->imageService->delete($post->featured_image);
             }
 
             ld_do_action('post_before_deleted', $post);
@@ -378,6 +384,27 @@ class PostsController extends Controller
         $post->terms()->sync($termIds);
 
         ld_do_action('post_taxonomies_updated', $post, $termIds);
+    }
+
+    /**
+     * Search-engine overrides (title, description, noindex). Kept in the post's meta column rather
+     * than post_meta, which handlePostMeta() clears and rebuilds from the custom fields on every save.
+     */
+    protected function applySeo(Request $request, Post $post): void
+    {
+        $seo = array_filter([
+            'title' => trim((string) $request->input('seo_title')),
+            'description' => trim((string) $request->input('seo_description')),
+            'noindex' => $request->boolean('seo_noindex'),
+        ]);
+
+        $meta = $post->meta ?? [];
+        unset($meta['seo']);
+        if ($seo) {
+            $meta['seo'] = $seo;
+        }
+
+        $post->meta = $meta ?: null;
     }
 
     protected function handlePostMeta(Request $request, Post $post)
