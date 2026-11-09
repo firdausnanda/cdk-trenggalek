@@ -138,6 +138,19 @@ class ImageService
     }
 
     /**
+     * Give images in HTML content that have no alt attribute a text alternative. The post editor
+     * (Quill) has no alt field, so article photos would otherwise be read out by file name.
+     */
+    public function withAltFallback(?string $html, string $alt): ?string
+    {
+        if ($html === null || ! str_contains($html, '<img')) {
+            return $html;
+        }
+
+        return preg_replace_callback('/<img\b(?![^>]*\balt=)/i', fn () => '<img alt="' . e($alt) . '"', $html);
+    }
+
+    /**
      * Delete an image stored under public/ together with its generated variants.
      */
     public function delete(?string $url): void

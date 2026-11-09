@@ -2,8 +2,14 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Tentang Kami · ' . config('settings.app_name'))
+@section('title', judul_halaman('Tentang Kami'))
 @section('description', 'Profil, tugas dan fungsi, serta struktur organisasi Cabang Dinas Kehutanan Wilayah Trenggalek, Dinas Kehutanan Provinsi Jawa Timur.')
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Tentang Kami', route('tentang-kami')]]),
+    ) !!}</script>
+@endpush
 
 @php
     $fakta = [
@@ -159,7 +165,7 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
                 <p class="eyebrow">Tugas dan fungsi</p>
-                <h2 class="section-title">Empat bidang kerja yang <em>saling terhubung</em>.</h2>
+                <h2 class="section-title">Tugas utama <em>CDK Wilayah Trenggalek</em>.</h2>
             </div>
 
             <ol class="mt-12 grid gap-4 sm:grid-cols-2">
@@ -185,7 +191,7 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal class="mx-auto max-w-2xl text-center">
                 <p class="eyebrow justify-center">Struktur organisasi</p>
-                <h2 class="section-title">Satu kepala, tiga <em>unit kerja</em>.</h2>
+                <h2 class="section-title">Pimpinan dan <em>unit kerja</em>.</h2>
             </div>
 
             <ul data-reveal style="--reveal-delay: 120ms" class="mt-14" aria-label="Struktur organisasi">
@@ -225,7 +231,7 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
                 <p class="eyebrow">Kantor kami</p>
-                <h2 class="section-title">Tiga kantor untuk melayani <em>empat wilayah</em>.</h2>
+                <h2 class="section-title">Alamat kantor dan <em>jam layanan</em>.</h2>
             </div>
 
             <ul class="mt-12 grid gap-5 lg:grid-cols-3">

@@ -325,5 +325,11 @@
     "Demo Mode Active": "Demo Mode Active",
     "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.": "Demo mode is currently enabled for this site. Many features are disabled to prevent changes to the demo data.",
     "Parent": "Parent",
-    "Comment": "Comment"
+    "Comment": "Comment",
+    "Search engine (SEO)": "Search engine (SEO)",
+    "Optional. Leave empty to use the title and excerpt.": "Optional. Leave empty to use the title and excerpt.",
+    "SEO title": "SEO title",
+    "SEO description": "SEO description",
+    "Shown under the title in search results. About 120–160 characters.": "Shown under the title in search results. About 120–160 characters.",
+    "Hide from search engines (noindex)": "Hide from search engines (noindex)"
 }

@@ -2,17 +2,48 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Berita · ' . config('settings.app_name'))
-@section('description', 'Kabar terbaru kegiatan Cabang Dinas Kehutanan Wilayah Trenggalek di Trenggalek, Tulungagung, dan Kediri.')
-
 @php
     $placeholder = asset('images/not-found/image.jpeg');
-    $kategoriNama = $kategoriAktif ? optional($kategori->firstWhere('slug', $kategoriAktif))->name : null;
-    $difilter = $cari !== '' || $kategoriAktif;
+    $difilter = $cari !== '' || $kategoriAktif || $tagAktif;
+    $halaman = $posts->currentPage();
+    // The URL of the current category or tag listing, or of the full list; search and paging go on top.
+    $dasar = fn (array $query = []) => match (true) {
+        (bool) $kategoriAktif => route('berita.kategori', ['slug' => $kategoriAktif, ...$query]),
+        (bool) $tagAktif => route('berita.tag', ['slug' => $tagAktif->slug, ...$query]),
+        default => route('berita', $query),
+    };
+    $judulDaftar = match (true) {
+        (bool) $kategoriNama => 'Berita ' . $kategoriNama,
+        (bool) $tagAktif => 'Berita bertopik ' . $tagAktif->name,
+        default => 'Berita',
+    } . ($halaman > 1 ? ' · Halaman ' . $halaman : '');
+    $deskripsiDaftar = match (true) {
+        (bool) $kategoriNama => 'Kumpulan berita kategori ' . $kategoriNama . ' dari Cabang Dinas Kehutanan Wilayah Trenggalek',
+        (bool) $tagAktif => 'Berita Cabang Dinas Kehutanan Wilayah Trenggalek bertopik ' . $tagAktif->name,
+        default => 'Kabar terbaru kegiatan Cabang Dinas Kehutanan Wilayah Trenggalek di Trenggalek, Tulungagung, dan Kediri',
+    } . ($halaman > 1 ? ', halaman ' . $halaman : '') . '.';
+    // The full list and category listings are indexable. Search results, tag listings (thin, often
+    // a single post) and pages past the end are not, but their links are still followed.
+    $bolehIndeks = $cari === '' && ! $tagAktif && $posts->isNotEmpty();
+    $kanonik = $dasar(array_filter(['page' => $halaman > 1 ? $halaman : null]));
     // The first post on the unfiltered first page is shown as a large lead story.
     $sorotan = ! $difilter && $posts->onFirstPage() ? $posts->first() : null;
     $daftar = $sorotan ? $posts->getCollection()->slice(1) : $posts->getCollection();
 @endphp
+
+@section('title', judul_halaman($judulDaftar))
+@section('description', $deskripsiDaftar)
+@section('robots', $bolehIndeks ? 'index, follow' : 'noindex, follow')
+@section('canonical', $kanonik)
+
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(\App\Support\StructuredData::breadcrumb(array_values(array_filter([
+        ['Beranda', route('home')],
+        ['Berita', route('berita')],
+        $kategoriNama ? [$kategoriNama, $dasar()] : null,
+        $tagAktif ? ['#' . $tagAktif->name, $dasar()] : null,
+    ])))) !!}</script>
+@endpush
 
 @section('content')
     {{-- Page header --}}
@@ -27,25 +58,28 @@
                     <li><a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 py-1 hover:text-white">
                             <i aria-hidden="true" class="bi bi-house-door"></i> Beranda</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li aria-current="page" class="font-semibold text-white">Berita</li>
+                    @if ($kategoriNama || $tagAktif)
+                        <li><a href="{{ route('berita') }}" class="inline-flex items-center py-1 hover:text-white">Berita</a></li>
+                        <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
+                        <li aria-current="page" class="font-semibold text-white">{{ $kategoriNama ?? '#' . $tagAktif->name }}</li>
+                    @else
+                        <li aria-current="page" class="font-semibold text-white">Berita</li>
+                    @endif
                 </ol>
             </nav>
 
             <div class="mt-6 grid gap-8 lg:grid-cols-12 lg:items-end">
                 <div data-reveal style="--reveal-delay: 80ms" class="lg:col-span-7">
                     <h1 class="font-display text-[2.4rem] leading-[1.04] font-bold tracking-[-0.035em] text-balance sm:text-6xl">
-                        Kabar dari <span class="text-leaf">lapangan</span>
+                        Berita dan <span class="text-leaf">kegiatan</span>
                     </h1>
                     <p class="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                        Kegiatan, program, dan informasi terbaru Cabang Dinas Kehutanan Wilayah Trenggalek.
+                        Informasi terbaru dari Cabang Dinas Kehutanan Wilayah Trenggalek.
                     </p>
                 </div>
 
-                <form data-reveal style="--reveal-delay: 160ms" action="{{ route('berita') }}" method="get" role="search"
+                <form data-reveal style="--reveal-delay: 160ms" action="{{ $dasar() }}" method="get" role="search"
                     class="lg:col-span-5">
-                    @if ($kategoriAktif)
-                        <input type="hidden" name="kategori" value="{{ $kategoriAktif }}">
-                    @endif
                     <label for="cari-berita" class="text-sm font-semibold">Cari berita</label>
                     <div class="mt-2 flex rounded-full bg-white p-1.5 shadow-xl shadow-black/20 focus-within:ring-[3px] focus-within:ring-leaf">
 
@@ -75,7 +109,7 @@
                 @foreach ($kategori as $item)
                     @php($aktif = $kategoriAktif === $item->slug)
                     <li class="shrink-0">
-                        <a href="{{ route('berita', array_filter(['kategori' => $item->slug, 'search' => $cari])) }}" @if ($aktif) aria-current="page" @endif
+                        <a href="{{ route('berita.kategori', array_filter(['slug' => $item->slug, 'search' => $cari])) }}" @if ($aktif) aria-current="page" @endif
                             @class([
                                 'inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold whitespace-nowrap transition',
                                 'bg-forest-900 text-white' => $aktif,
@@ -98,12 +132,15 @@
                         Hasil pencarian “{{ $cari }}”
                     @elseif ($kategoriNama)
                         {{ $kategoriNama }}
+                    @elseif ($tagAktif)
+                        Topik #{{ $tagAktif->name }}
                     @else
                         Semua berita
                     @endif
                 </h2>
                 <p class="mt-1 text-sm text-ink/70" role="status">{{ number_format($posts->total(), 0, ',', '.') }} berita
-                    {{ $kategoriNama && $cari !== '' ? 'di kategori ' . $kategoriNama : '' }}</p>
+                    {{ $kategoriNama && $cari !== '' ? 'di kategori ' . $kategoriNama : '' }}
+                    {{ $tagAktif && $cari !== '' ? 'bertopik #' . $tagAktif->name : '' }}</p>
             </div>
             @if ($difilter)
                 <a href="{{ route('berita') }}" class="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-forest-800">

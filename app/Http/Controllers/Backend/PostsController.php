@@ -141,6 +141,8 @@ class PostsController extends Controller
             $post->published_at = now();
         }
 
+        $this->applySeo($request, $post);
+
         $post = ld_apply_filters('before_post_save', $post, $request);
 
         $post->save();
@@ -283,6 +285,8 @@ class PostsController extends Controller
             $post->published_at = now();
         }
 
+        $this->applySeo($request, $post);
+
         $post = ld_apply_filters('before_post_update', $post, $request);
 
         $post->save();
@@ -380,6 +384,27 @@ class PostsController extends Controller
         $post->terms()->sync($termIds);
 
         ld_do_action('post_taxonomies_updated', $post, $termIds);
+    }
+
+    /**
+     * Search-engine overrides (title, description, noindex). Kept in the post's meta column rather
+     * than post_meta, which handlePostMeta() clears and rebuilds from the custom fields on every save.
+     */
+    protected function applySeo(Request $request, Post $post): void
+    {
+        $seo = array_filter([
+            'title' => trim((string) $request->input('seo_title')),
+            'description' => trim((string) $request->input('seo_description')),
+            'noindex' => $request->boolean('seo_noindex'),
+        ]);
+
+        $meta = $post->meta ?? [];
+        unset($meta['seo']);
+        if ($seo) {
+            $meta['seo'] = $seo;
+        }
+
+        $post->meta = $meta ?: null;
     }
 
     protected function handlePostMeta(Request $request, Post $post)

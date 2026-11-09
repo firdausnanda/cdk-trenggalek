@@ -2,11 +2,19 @@
 
 @section('nav-overlay', true)
 
-@section('title', 'Kontak · ' . config('settings.app_name'))
+@section('title', judul_halaman('Kontak'))
 @section('description', 'Hubungi Cabang Dinas Kehutanan Wilayah Trenggalek: kirim pesan, lihat jam layanan, email, dan alamat ketiga kantor kami.')
 
+@push('head')
+    <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
+        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Kontak', route('kontak')]]),
+        ...\App\Support\StructuredData::offices(),
+    ) !!}</script>
+@endpush
+
 @php
-    $email = 'cdkwilayahtrenggalek@jatimprov.go.id';
+    $email = config('cdk.email');
+    $bagianEmail = explode('@', $email, 2);
     $field = 'w-full rounded-xl border-0 bg-white px-4 py-3 text-ink ring-1 ring-forest-900/15 placeholder:text-ink/50 focus:ring-[3px] focus:ring-forest-700 focus:outline-none';
     $sosial = [
         ['icon' => 'bi-facebook', 'label' => 'Facebook', 'href' => 'https://www.facebook.com/cdktrenggalekprogram'],
@@ -115,8 +123,12 @@
                     <h2 class="flex items-center gap-3 font-display text-xl font-semibold">
                         <i aria-hidden="true" class="bi bi-envelope text-forest-700"></i> Email &amp; media sosial
                     </h2>
-                    <a href="mailto:{{ $email }}" class="mt-4 block font-semibold break-all text-forest-800 underline underline-offset-4">{{ $email }}</a>
-                    <ul class="mt-5 flex flex-wrap gap-2">
+                    <div class="mt-5">
+                        <p class="text-xs font-semibold tracking-[0.12em] text-ink/65 uppercase">Alamat email</p>
+                        <a href="mailto:{{ $email }}" class="mt-2 inline-block max-w-full font-semibold leading-relaxed text-forest-800 underline decoration-forest-700/40 underline-offset-4 transition hover:decoration-forest-700">{{ $bagianEmail[0] }}<wbr>&#64;{{ $bagianEmail[1] }}</a>
+                    </div>
+                    <p class="mt-6 border-t border-forest-900/10 pt-5 text-xs font-semibold tracking-[0.12em] text-ink/65 uppercase">Media sosial</p>
+                    <ul class="mt-3 flex flex-wrap gap-2">
                         @foreach ($sosial as $item)
                             <li>
                                 <a href="{{ $item['href'] }}" target="_blank" rel="noopener noreferrer"

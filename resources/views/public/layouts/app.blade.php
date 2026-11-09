@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', config('settings.app_name'))</title>
-    <meta name="description"
-        content="@yield('description', 'Cabang Dinas Kehutanan Wilayah Trenggalek — melindungi, mengelola, dan melestarikan hutan di Trenggalek, Tulungagung, dan Kediri.')">
-    <meta name="author" content="Cabang Dinas Kehutanan Wilayah Trenggalek">
-    <meta name="robots" content="index, follow">
+    <meta name="author" content="Firdaus Nanda Christian">
+    @include('public.partials.seo')
     <meta name="theme-color" content="#0b2118">
 
     <link rel="icon" href="{{ config('settings.site_icon') }}">

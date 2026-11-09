@@ -1,6 +1,8 @@
 @extends('public.layouts.app')
 
 @section('nav-overlay', true)
+@section('title', 'Cabang Dinas Kehutanan Wilayah Trenggalek, Jawa Timur')
+@section('description', 'Layanan, data kehutanan, dan berita kegiatan Cabang Dinas Kehutanan Wilayah Trenggalek di Kabupaten Trenggalek, Tulungagung, Kediri, dan Kota Kediri.')
 
 @php
     // Forestry figures from SMART-HUT (see App\Services\SmartHutService).
@@ -121,8 +123,8 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="eyebrow">Berita terkini</p>
-                    <h2 class="section-title">Kabar dari <em>lapangan</em>.</h2>
+                    <p class="eyebrow">Informasi terbaru</p>
+                    <h2 class="section-title">Berita dan <em>kegiatan</em>.</h2>
                 </div>
                 <a href="{{ route('berita') }}" class="btn-ghost w-fit">Semua berita <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
             </div>

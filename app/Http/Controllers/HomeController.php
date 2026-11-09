@@ -52,8 +52,38 @@ class HomeController extends Controller
 
     public function berita(Request $request)
     {
+        // Category filters used to be a query string (?kategori=slug); send them to their own URL.
+        if ($slug = $request->query('kategori')) {
+            return redirect()->route('berita.kategori', ['slug' => $slug, ...$request->except('kategori')], 301);
+        }
+
+        return $this->daftarBerita($request);
+    }
+
+    public function beritaKategori(Request $request, string $slug)
+    {
+        $kategori = Term::where('taxonomy', 'category')->where('slug', $slug)->firstOrFail(['id', 'name', 'slug']);
+
+        return $this->daftarBerita($request, kategori: $kategori);
+    }
+
+    public function beritaTag(Request $request, string $slug)
+    {
+        $tag = Term::where('taxonomy', 'tag')->where('slug', $slug)->firstOrFail(['id', 'name', 'slug']);
+
+        return $this->daftarBerita($request, tag: $tag);
+    }
+
+    /**
+     * The news list, optionally narrowed to one category or one tag and/or a search.
+     */
+    private function daftarBerita(Request $request, ?Term $kategori = null, ?Term $tag = null)
+    {
         $cari = trim((string) $request->query('search', ''));
-        $kategoriAktif = $request->query('kategori');
+        $kategoriAktif = $kategori?->slug;
+        $kategoriNama = $kategori?->name;
+        $tagAktif = $tag;
+        $filterTerm = $kategori ?? $tag;
 
         $searchableColumns = Post::getSearchableColumns();
         $posts = Post::type('post')
@@ -61,8 +91,8 @@ class HomeController extends Controller
             ->with('categories:terms.id,terms.name,terms.slug')
             ->orderBy('published_at', 'desc')
             ->published()
-            ->when($kategoriAktif, function ($query) use ($kategoriAktif) {
-                $query->whereHas('categories', fn ($query) => $query->where('slug', $kategoriAktif));
+            ->when($filterTerm, function ($query) use ($filterTerm) {
+                $query->whereHas('terms', fn ($query) => $query->whereKey($filterTerm->id));
             })
             ->when($cari !== '', function ($query) use ($cari, $searchableColumns) {
                 $query->where(function ($query) use ($cari, $searchableColumns) {
@@ -76,7 +106,7 @@ class HomeController extends Controller
 
         $kategori = $this->kategoriBerita();
 
-        return view('public.pages.berita', compact('posts', 'kategori', 'cari', 'kategoriAktif'));
+        return view('public.pages.berita', compact('posts', 'kategori', 'cari', 'kategoriAktif', 'kategoriNama', 'tagAktif'));
     }
 
     /**
@@ -85,8 +115,8 @@ class HomeController extends Controller
     private function kategoriBerita()
     {
         return Term::where('taxonomy', 'category')
+            ->has('posts')
             ->withCount('posts')
-            ->having('posts_count', '>', 0)
             ->orderByDesc('posts_count')
             ->get(['id', 'name', 'slug']);
     }
@@ -95,7 +125,7 @@ class HomeController extends Controller
     {
         $post = Post::type('post')
             ->published()
-            ->with(['categories:terms.id,terms.name,terms.slug', 'tags:terms.id,terms.name'])
+            ->with(['categories:terms.id,terms.name,terms.slug', 'tags:terms.id,terms.name,terms.slug'])
             ->where('slug', $slug)
             ->firstOrFail();
 

@@ -1,9 +1,9 @@
 @php
     $socials = [
-        ['icon' => 'bi-facebook', 'label' => 'Facebook CDK Trenggalek', 'href' => 'https://www.facebook.com/cdktrenggalekprogram'],
-        ['icon' => 'bi-instagram', 'label' => 'Instagram CDK Trenggalek', 'href' => 'https://www.instagram.com/cdktrenggalek/'],
-        ['icon' => 'bi-youtube', 'label' => 'YouTube CDK Trenggalek', 'href' => 'https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg'],
-        ['icon' => 'bi-envelope', 'label' => 'Kirim email ke CDK Trenggalek', 'href' => 'mailto:cdkwilayahtrenggalek@jatimprov.go.id'],
+        ['icon' => 'bi-facebook', 'label' => 'Facebook CDK Wilayah Trenggalek', 'href' => 'https://www.facebook.com/cdktrenggalekprogram'],
+        ['icon' => 'bi-instagram', 'label' => 'Instagram CDK Wilayah Trenggalek', 'href' => 'https://www.instagram.com/cdktrenggalek/'],
+        ['icon' => 'bi-youtube', 'label' => 'YouTube CDK Wilayah Trenggalek', 'href' => 'https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg'],
+        ['icon' => 'bi-envelope', 'label' => 'Kirim email ke CDK Wilayah Trenggalek', 'href' => 'mailto:cdkwilayahtrenggalek@jatimprov.go.id'],
     ];
     $links = [
         ['label' => 'Beranda', 'href' => route('home')],

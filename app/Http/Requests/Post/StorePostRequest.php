@@ -56,6 +56,9 @@ class StorePostRequest extends FormRequest
             'meta_values.*' => 'nullable|string',
             'meta_types.*' => 'nullable|string|in:input,textarea,number,email,url,text,date,checkbox,select',
             'meta_default_values.*' => 'nullable|string',
+            'seo_title' => 'nullable|string|max:70',
+            'seo_description' => 'nullable|string|max:200',
+            'seo_noindex' => 'nullable|boolean',
         ]);
     }
 }
