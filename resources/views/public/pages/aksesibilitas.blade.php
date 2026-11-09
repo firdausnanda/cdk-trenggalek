@@ -2,73 +2,67 @@
 
 @section('nav-overlay', true)
 
-@section('title', judul_halaman('Pernyataan Aksesibilitas'))
-@section('description', 'Komitmen Cabang Dinas Kehutanan Wilayah Trenggalek terhadap aksesibilitas situs web sesuai WCAG 2.2 dan ISO/IEC 40500.')
+@section('title', judul_halaman(__('public.nav.accessibility')))
+@section('description', __('public.accessibility.meta_description'))
 
 @push('head')
     <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
-        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Pernyataan Aksesibilitas', route('aksesibilitas')]]),
+        \App\Support\StructuredData::breadcrumb([[__('public.nav.home'), route('home')], [__('public.nav.accessibility'), route('aksesibilitas')]]),
     ) !!}</script>
 @endpush
 
 @php
     $fitur = [
-        ['icon' => 'bi-fonts', 'label' => 'Ukuran teks', 'text' => 'Perbesar teks hingga 130% tanpa merusak tata letak.'],
-        ['icon' => 'bi-circle-half', 'label' => 'Kontras tinggi', 'text' => 'Latar hitam-putih dan teks tanpa transparansi.'],
-        ['icon' => 'bi-text-paragraph', 'label' => 'Spasi teks lega', 'text' => 'Jarak baris, huruf, dan kata sesuai kriteria WCAG 1.4.12.'],
-        ['icon' => 'bi-link-45deg', 'label' => 'Garis bawahi tautan', 'text' => 'Tautan tidak hanya dibedakan dengan warna.'],
-        ['icon' => 'bi-pause-circle', 'label' => 'Hentikan animasi', 'text' => 'Mematikan gerakan latar, hitungan angka, dan efek transisi.'],
-        ['icon' => 'bi-eyeglasses', 'label' => 'Font mudah dibaca', 'text' => 'Atkinson Hyperlegible, dirancang untuk pembaca dengan penglihatan rendah.'],
+        ['icon' => 'bi-fonts', 'label' => __('public.a11y.text_size'), 'text' => __('public.accessibility.feature_size')],
+        ['icon' => 'bi-circle-half', 'label' => __('public.a11y.contrast'), 'text' => __('public.accessibility.feature_contrast')],
+        ['icon' => 'bi-text-paragraph', 'label' => __('public.a11y.spacing'), 'text' => __('public.accessibility.feature_spacing')],
+        ['icon' => 'bi-link-45deg', 'label' => __('public.a11y.underline'), 'text' => __('public.accessibility.feature_underline')],
+        ['icon' => 'bi-pause-circle', 'label' => __('public.a11y.no_motion'), 'text' => __('public.accessibility.feature_motion')],
+        ['icon' => 'bi-eyeglasses', 'label' => __('public.a11y.readable_font'), 'text' => __('public.accessibility.feature_font')],
     ];
     $penerapan = [
-        'Navigasi penuh dengan keyboard, termasuk peta wilayah kerja, dengan penanda fokus yang jelas.',
-        'Tautan "Langsung ke konten" di awal setiap halaman.',
-        'Struktur judul berurutan dan penanda wilayah halaman (header, navigasi, konten utama, footer).',
-        'Teks alternatif pada gambar yang bermakna; ikon dekoratif disembunyikan dari pembaca layar.',
-        'Kontras warna teks minimal 4,5:1, atau 3:1 untuk teks besar dan komponen antarmuka.',
-        'Mengikuti pengaturan "kurangi gerakan" dari sistem operasi.',
-        'Tampilan menyesuaikan layar ponsel tanpa perlu menggulir ke samping.',
-        'Tautan yang membuka tab baru diberi keterangan untuk pembaca layar.',
+        __('public.accessibility.done_keyboard'),
+        __('public.accessibility.done_skip_link'),
+        __('public.accessibility.done_headings'),
+        __('public.accessibility.done_alt'),
+        __('public.accessibility.done_contrast'),
+        __('public.accessibility.done_motion'),
+        __('public.accessibility.done_mobile'),
+        __('public.accessibility.done_new_tab'),
     ];
     $keterbatasan = [
-        'Sebagian gambar pada berita lama mungkin belum memiliki teks alternatif yang deskriptif.',
-        'Peta wilayah kerja bersifat skematis; data setiap wilayah juga tersedia dalam bentuk teks di panel sampingnya.',
-        'Dokumen unduhan (mis. PDF) dari pihak lain belum tentu memenuhi standar aksesibilitas.',
+        __('public.accessibility.limit_alt'),
+        __('public.accessibility.limit_map'),
+        __('public.accessibility.limit_documents'),
     ];
 @endphp
 
 @section('content')
     <section class="bg-forest-950 pt-36 pb-16 text-white sm:pb-20">
         <div class="mx-auto max-w-4xl px-5 sm:px-8">
-            <p class="eyebrow !text-leaf">Aksesibilitas</p>
-            <h1 class="section-title">Pernyataan aksesibilitas</h1>
+            <p class="eyebrow !text-leaf">{{ __('public.a11y.title') }}</p>
+            <h1 class="section-title">{{ __('public.a11y.statement') }}</h1>
             <p class="mt-6 max-w-2xl text-lg text-white/80">
-                Kami berupaya agar situs Cabang Dinas Kehutanan Wilayah Trenggalek dapat digunakan oleh semua orang,
-                termasuk penyandang disabilitas dan pengguna teknologi bantu.
+                {{ __('public.accessibility.intro') }}
             </p>
         </div>
     </section>
 
     <div class="mx-auto max-w-4xl space-y-16 px-5 py-16 sm:px-8 sm:py-20">
         <section aria-labelledby="standar">
-            <h2 id="standar" class="font-display text-3xl">Standar yang dituju</h2>
+            <h2 id="standar" class="font-display text-3xl">{{ __('public.accessibility.standard_title') }}</h2>
             <p class="mt-4 text-lg leading-relaxed text-ink/80">
-                Situs ini dirancang untuk memenuhi <strong>Web Content Accessibility Guidelines (WCAG) 2.2 tingkat AA</strong>
-                dari W3C. WCAG kompatibel ke belakang dengan <strong>ISO/IEC 40500:2012</strong> (WCAG 2.0), sehingga
-                pemenuhan WCAG 2.2 AA juga mencakup standar tersebut.
+                {!! __('public.accessibility.standard_p1') !!}
             </p>
             <p class="mt-4 text-lg leading-relaxed text-ink/80">
-                Status saat ini: <strong>sebagian memenuhi</strong>. Artinya sebagian besar konten sudah sesuai standar,
-                dengan beberapa keterbatasan yang dijelaskan di bawah.
+                {!! __('public.accessibility.standard_p2') !!}
             </p>
         </section>
 
         <section aria-labelledby="menu">
-            <h2 id="menu" class="font-display text-3xl">Menu aksesibilitas</h2>
+            <h2 id="menu" class="font-display text-3xl">{{ __('public.accessibility.menu_title') }}</h2>
             <p class="mt-4 text-lg leading-relaxed text-ink/80">
-                Tombol <i aria-hidden="true" class="bi bi-universal-access"></i> <strong>Aksesibilitas</strong> di pojok kiri
-                bawah setiap halaman membuka pengaturan tampilan berikut. Pengaturan tersimpan di peramban Anda dan tidak
-                dikirim ke server.
+                {!! __('public.accessibility.menu_p1', ['button' => '<i aria-hidden="true" class="bi bi-universal-access"></i> <strong>' . e(__('public.a11y.title')) . '</strong>']) !!}
             </p>
             <ul class="mt-8 grid gap-3 sm:grid-cols-2">
                 @foreach ($fitur as $item)
@@ -82,13 +76,12 @@
                 @endforeach
             </ul>
             <p class="mt-6 text-ink/80">
-                Menu ini melengkapi, bukan menggantikan, teknologi bantu yang Anda gunakan seperti pembaca layar, pembesar
-                layar, atau pengaturan aksesibilitas pada sistem operasi dan peramban.
+                {{ __('public.accessibility.menu_p2') }}
             </p>
         </section>
 
         <section aria-labelledby="penerapan">
-            <h2 id="penerapan" class="font-display text-3xl">Yang sudah kami terapkan</h2>
+            <h2 id="penerapan" class="font-display text-3xl">{{ __('public.accessibility.done_title') }}</h2>
             <ul class="mt-6 space-y-3">
                 @foreach ($penerapan as $item)
                     <li class="flex gap-3 text-lg text-ink/80">
@@ -100,7 +93,7 @@
         </section>
 
         <section aria-labelledby="keterbatasan">
-            <h2 id="keterbatasan" class="font-display text-3xl">Keterbatasan yang diketahui</h2>
+            <h2 id="keterbatasan" class="font-display text-3xl">{{ __('public.accessibility.limits_title') }}</h2>
             <ul class="mt-6 space-y-3">
                 @foreach ($keterbatasan as $item)
                     <li class="flex gap-3 text-lg text-ink/80">
@@ -112,19 +105,18 @@
         </section>
 
         <section aria-labelledby="umpan-balik" class="rounded-[2rem] bg-forest-900 p-8 text-white sm:p-10">
-            <h2 id="umpan-balik" class="font-display text-3xl">Laporkan kendala aksesibilitas</h2>
+            <h2 id="umpan-balik" class="font-display text-3xl">{{ __('public.accessibility.report_title') }}</h2>
             <p class="mt-4 text-lg text-white/80">
-                Jika Anda menemui bagian situs yang sulit diakses, beri tahu kami beserta alamat halaman dan kendalanya.
-                Kami akan menindaklanjuti dan, bila perlu, menyediakan informasi dalam format lain.
+                {{ __('public.accessibility.report_text') }}
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
-                <a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id?subject=Kendala%20aksesibilitas%20situs" class="btn-primary">
+                <a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id?subject={{ rawurlencode(__('public.accessibility.report_subject')) }}" class="btn-primary">
                     <i aria-hidden="true" class="bi bi-envelope"></i> cdkwilayahtrenggalek@jatimprov.go.id
                 </a>
-                <a href="{{ route('kontak') }}" class="btn-ghost">Formulir kontak</a>
+                <a href="{{ route('kontak') }}" class="btn-ghost">{{ __('public.common.contact_form') }}</a>
             </div>
         </section>
 
-        <p class="text-sm text-ink/70">Pernyataan ini terakhir ditinjau pada 31 Oktober 2026.</p>
+        <p class="text-sm text-ink/70">{{ __('public.accessibility.reviewed') }}</p>
     </div>
 @endsection

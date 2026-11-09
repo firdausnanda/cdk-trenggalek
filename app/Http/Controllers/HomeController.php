@@ -168,13 +168,13 @@ class HomeController extends Controller
             'email' => 'required|email|max:255',
             'message' => 'required|string|max:5000',
         ], [
-            'name.required' => 'Nama wajib diisi.',
-            'name.max' => 'Nama maksimal 255 karakter.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.max' => 'Email maksimal 255 karakter.',
-            'message.required' => 'Pesan wajib diisi.',
-            'message.max' => 'Pesan maksimal 5.000 karakter.',
+            'name.required' => __('public.validation.name_required'),
+            'name.max' => __('public.validation.name_max'),
+            'email.required' => __('public.validation.email_required'),
+            'email.email' => __('public.validation.email_invalid'),
+            'email.max' => __('public.validation.email_max'),
+            'message.required' => __('public.validation.message_required'),
+            'message.max' => __('public.validation.message_max'),
         ]);
 
         ContactMessage::create($validated);
@@ -183,7 +183,7 @@ class HomeController extends Controller
         // Mail::to('cdkwilayahtrenggalek@jatimprov.go.id')->send(new ContactFormMail($validated));
 
         return redirect()->to(route('kontak') . '#form-kontak')
-            ->with('success', 'Pesan Anda telah terkirim. Kami akan segera menghubungi Anda melalui email.');
+            ->with('success', __('public.contact.sent'));
     }
 
     public function commentStore(Request $request)
@@ -194,11 +194,11 @@ class HomeController extends Controller
             'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml()],
             'post_id' => 'required|exists:posts,id',
         ], [
-            'name.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'comment.required' => 'Komentar tidak boleh kosong.',
-            'post_id.exists' => 'Postingan tidak ditemukan.',
+            'name.required' => __('public.validation.name_required'),
+            'email.required' => __('public.validation.email_required'),
+            'email.email' => __('public.validation.email_invalid'),
+            'comment.required' => __('public.validation.comment_required'),
+            'post_id.exists' => __('public.validation.post_missing'),
         ]);
 
         if ($validator->fails()) {
@@ -220,7 +220,7 @@ class HomeController extends Controller
         ]);
 
         return back()
-            ->with('success', 'Komentar berhasil dikirim dan menunggu persetujuan.')
+            ->with('success', __('public.news.comment_sent'))
             ->withFragment('comment-form');
     }
 }

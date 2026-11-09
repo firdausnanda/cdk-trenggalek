@@ -15,7 +15,7 @@ class NotEmptyHtml implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (trim(strip_tags($value)) === '') {
-            $fail('Komentar tidak boleh kosong.');
+            $fail(__('public.validation.comment_required'));
         }
     }
 }

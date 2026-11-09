@@ -5,14 +5,15 @@
     Page-specific JSON-LD goes in @push('head') with App\Support\StructuredData::toJson().
 --}}
 @php
-    $deskripsiDefault = 'Cabang Dinas Kehutanan Wilayah Trenggalek — melindungi, mengelola, dan melestarikan hutan di Trenggalek, Tulungagung, dan Kediri.';
+    $deskripsiDefault = __('public.common.meta_description');
+    $ogLocale = ['id' => 'id_ID', 'en' => 'en_US'][app()->getLocale()] ?? 'id_ID';
 @endphp
 <meta name="description" content="@yield('description', $deskripsiDefault)">
 <meta name="robots" content="@yield('robots', 'index, follow')">
 <link rel="canonical" href="@yield('canonical', url()->current())">
 
 <meta property="og:site_name" content="{{ config('settings.app_name') }}">
-<meta property="og:locale" content="id_ID">
+<meta property="og:locale" content="{{ $ogLocale }}">
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:title" content="@yield('title', config('settings.app_name'))">
 <meta property="og:description" content="@yield('description', $deskripsiDefault)">

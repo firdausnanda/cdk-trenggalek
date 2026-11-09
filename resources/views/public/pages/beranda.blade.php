@@ -1,30 +1,34 @@
 @extends('public.layouts.app')
 
 @section('nav-overlay', true)
-@section('title', 'Cabang Dinas Kehutanan Wilayah Trenggalek, Jawa Timur')
-@section('description', 'Layanan, data kehutanan, dan berita kegiatan Cabang Dinas Kehutanan Wilayah Trenggalek di Kabupaten Trenggalek, Tulungagung, Kediri, dan Kota Kediri.')
+@section('title', __('public.home.meta_title'))
+@section('description', __('public.home.meta_description'))
 
 @php
     // Forestry figures from SMART-HUT (see App\Services\SmartHutService).
     $regions = $kehutanan['regions'];
+    // Region names are proper nouns; only the long label ("Kabupaten …" / "… Regency") is translated.
+    foreach ($regions as $slug => $region) {
+        $regions[$slug]['label'] = \Illuminate\Support\Facades\Lang::has("public.regions.{$slug}") ? __("public.regions.{$slug}") : $region['label'];
+    }
     $totals = $kehutanan['totals'];
     $tahun = $kehutanan['tahun'];
     $capaian = $kehutanan['capaian'];
-    $sumberData = 'SMART-HUT, Sistem Informasi Data Kehutanan'
-        . ($kehutanan['diperbarui'] ? ' · diperbarui ' . $kehutanan['diperbarui']->translatedFormat('d F Y') : '');
+    $sumberData = __('public.home.data_source')
+        . ($kehutanan['diperbarui'] ? ' · ' . __('public.home.data_updated', ['date' => $kehutanan['diperbarui']->translatedFormat('d F Y')]) : '');
 
     $heroStats = [
-        ['value' => $totals['kth'], 'label' => 'Kelompok Tani Hutan dibina'],
-        ['value' => $totals['anggota_kth'], 'label' => 'Anggota KTH'],
-        ['value' => $totals['ps'], 'label' => 'Kelompok Perhutanan Sosial'],
-        ['value' => $totals['nilai_transaksi_ekonomi'], 'label' => 'Nilai transaksi ekonomi ' . $tahun, 'rupiah' => true],
+        ['value' => $totals['kth'], 'label' => __('public.home.stat_kth')],
+        ['value' => $totals['anggota_kth'], 'label' => __('public.home.kth_members')],
+        ['value' => $totals['ps'], 'label' => __('public.home.ps_groups')],
+        ['value' => $totals['nilai_transaksi_ekonomi'], 'label' => __('public.home.stat_economic', ['year' => $tahun]), 'rupiah' => true],
     ];
 
     $services = [
-        ['short' => 'Perizinan', 'icon' => 'bi-file-earmark-check', 'title' => 'Izin Pemanfaatan Hutan', 'text' => 'Pelayanan perizinan pemanfaatan hasil hutan kayu dan bukan kayu sesuai peraturan yang berlaku.'],
-        ['short' => 'Rehabilitasi', 'icon' => 'bi-flower2', 'title' => 'Rehabilitasi Kawasan Hutan', 'text' => 'Program rehabilitasi kawasan hutan dan lahan kritis untuk pemulihan ekosistem.'],
-        ['short' => 'Pengawasan', 'icon' => 'bi-shield-check', 'title' => 'Pengawasan & Pengendalian', 'text' => 'Pengawasan dan pengendalian terhadap pemanfaatan hutan secara berkelanjutan.'],
-        ['short' => 'Pemberdayaan', 'icon' => 'bi-people', 'title' => 'Pemberdayaan Masyarakat', 'text' => 'Program pemberdayaan masyarakat sekitar hutan untuk kesejahteraan bersama.'],
+        ['short' => __('public.home.service_permit_short'), 'icon' => 'bi-file-earmark-check', 'title' => __('public.home.service_permit_title'), 'text' => __('public.home.service_permit_text')],
+        ['short' => __('public.home.service_rehab_short'), 'icon' => 'bi-flower2', 'title' => __('public.home.service_rehab_title'), 'text' => __('public.home.service_rehab_text')],
+        ['short' => __('public.home.service_control_short'), 'icon' => 'bi-shield-check', 'title' => __('public.home.service_control_title'), 'text' => __('public.home.service_control_text')],
+        ['short' => __('public.home.service_community_short'), 'icon' => 'bi-people', 'title' => __('public.home.service_community_title'), 'text' => __('public.home.service_community_text')],
     ];
 
     // Schematic (not to scale) map of the working areas, viewBox 0 0 480 400. Shared borders are defined
@@ -82,18 +86,17 @@
             <div class="flex flex-1 flex-col justify-center py-10">
                 <h1 data-reveal
                     class="max-w-4xl font-display text-[2.6rem] leading-[1.02] font-bold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl xl:text-[5rem]">
-                    Lestari hutan, <em class="text-leaf not-italic">sejahtera</em> masyarakat.
+                    {!! __('public.home.hero_title') !!}
                 </h1>
                 <p data-reveal style="--reveal-delay: 120ms"
                     class="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                    Cabang Dinas Kehutanan Wilayah Trenggalek melindungi, mengelola, dan melestarikan hutan di
-                    Wilayah Kabupaten Trenggalek, Kabupaten Tulungagung, Kabupaten Kediri, dan Kota Kediri.
+                    {{ __('public.home.hero_text') }}
                 </p>
                 <div data-reveal style="--reveal-delay: 200ms" class="mt-9 flex flex-wrap gap-3">
                     <a href="#layanan" class="btn-primary group">
-                        Jelajahi layanan <i aria-hidden="true" class="bi bi-arrow-down transition group-hover:translate-y-0.5"></i>
+                        {{ __('public.home.hero_cta') }} <i aria-hidden="true" class="bi bi-arrow-down transition group-hover:translate-y-0.5"></i>
                     </a>
-                    <a href="#wilayah" class="btn-ghost">Lihat wilayah kerja</a>
+                    <a href="#wilayah" class="btn-ghost">{{ __('public.home.hero_cta_regions') }}</a>
                 </div>
             </div>
 
@@ -110,7 +113,7 @@
                         <dt class="mt-1 text-sm text-white/65">{{ $stat['label'] }}</dt>
                         <dd class="order-first font-display text-3xl whitespace-nowrap tabular-nums sm:text-4xl" x-count="{{ $stat['value'] }}"
                             @if ($stat['rupiah'] ?? false) data-format="rupiah" @endif>
-                            {{ ($stat['rupiah'] ?? false) ? rupiah_singkat($stat['value']) : number_format($stat['value'], 0, ',', '.') }}
+                            {{ ($stat['rupiah'] ?? false) ? rupiah_singkat($stat['value']) : angka($stat['value']) }}
                         </dd>
                     </div>
                 @endforeach
@@ -123,16 +126,16 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="eyebrow">Informasi terbaru</p>
-                    <h2 class="section-title">Berita dan <em>kegiatan</em>.</h2>
+                    <p class="eyebrow">{{ __('public.home.news_eyebrow') }}</p>
+                    <h2 class="section-title">{!! __('public.home.news_title') !!}</h2>
                 </div>
-                <a href="{{ route('berita') }}" class="btn-ghost w-fit">Semua berita <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+                <a href="{{ route('berita') }}" class="btn-ghost w-fit">{{ __('public.home.all_news') }} <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
             </div>
 
             @if ($posts->isEmpty())
                 <div class="mt-12 rounded-3xl border border-dashed border-forest-900/20 p-12 text-center text-ink/60">
                     <i aria-hidden="true" class="bi bi-newspaper text-4xl"></i>
-                    <p class="mt-3">Belum ada berita yang diterbitkan.</p>
+                    <p class="mt-3">{{ __('public.home.no_news') }}</p>
                 </div>
             @else
                 @php
@@ -147,7 +150,7 @@
                             class="absolute inset-0 -z-10 size-full object-cover opacity-80 transition duration-700 ease-soft group-hover:scale-105">
                         <div class="absolute inset-0 -z-10 bg-gradient-to-t from-forest-950 via-forest-950/60 to-transparent"></div>
 
-                        <span class="w-fit rounded-full bg-leaf px-3 py-1 text-xs font-semibold text-forest-950">Terbaru</span>
+                        <span class="w-fit rounded-full bg-leaf px-3 py-1 text-xs font-semibold text-forest-950">{{ __('public.common.latest') }}</span>
                         <time class="mt-4 text-sm text-white/70" datetime="{{ $featured->published_at?->toDateString() }}">
                             {{ $featured->published_at?->translatedFormat('d F Y') }}
                         </time>
@@ -176,7 +179,7 @@
                                         </a>
                                     </h3>
                                     <span class="mt-auto inline-flex items-center gap-1 pt-2 text-sm font-semibold text-forest-700">
-                                        Baca <i aria-hidden="true" class="bi bi-arrow-right transition group-hover:translate-x-1"></i>
+                                        {{ __('public.common.read') }} <i aria-hidden="true" class="bi bi-arrow-right transition group-hover:translate-x-1"></i>
                                     </span>
                                 </div>
                             </article>
@@ -193,7 +196,7 @@
             regions: @js($regions),
             active: 'trenggalek',
             metric: 'kth',
-            metrics: { kth: 'KTH', ps: 'Perhutanan Sosial', nilai_transaksi_ekonomi: 'Nilai Ekonomi' },
+            metrics: @js(['kth' => __('public.home.metric_kth'), 'ps' => __('public.home.metric_ps'), 'nilai_transaksi_ekonomi' => __('public.home.metric_value')]),
             get region() { return this.regions[this.active] },
             get min() { return Math.min(...Object.values(this.regions).map(r => r[this.metric])) },
             get max() { return Math.max(...Object.values(this.regions).map(r => r[this.metric])) },
@@ -204,8 +207,8 @@
             },
             format(value) {
                 return {
-                    kth: this.$angka(value) + ' KTH',
-                    ps: this.$angka(value) + ' kelompok PS',
+                    kth: this.$angka(value) + ' ' + @js(__('public.home.unit_kth')),
+                    ps: this.$angka(value) + ' ' + @js(__('public.home.unit_ps')),
                     nilai_transaksi_ekonomi: this.$rupiah(value),
                 }[this.metric];
             },
@@ -213,8 +216,8 @@
         }">
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
-                <p class="eyebrow !text-leaf">Wilayah kerja</p>
-                <h2 class="section-title max-w-2xl">Data kehutanan di <em class="!text-leaf">tiap wilayah</em>.</h2>
+                <p class="eyebrow !text-leaf">{{ __('public.home.regions_eyebrow') }}</p>
+                <h2 class="section-title max-w-2xl">{!! __('public.home.regions_title') !!}</h2>
             </div>
 
             @php
@@ -223,20 +226,20 @@
                     : null;
                 $capaianItems = [
                     [
-                        'label' => 'Rehabilitasi lahan', 'value' => $capaian['rehab_lahan']['realisasi'], 'decimals' => 1, 'unit' => 'ha',
+                        'label' => __('public.home.ach_rehab'), 'value' => $capaian['rehab_lahan']['realisasi'], 'decimals' => 1, 'unit' => 'ha',
                         'note' => $rehabPersen !== null
-                            ? $rehabPersen . '% dari target ' . number_format($capaian['rehab_lahan']['target'], 1, ',', '.') . ' ha'
-                            : 'Realisasi',
+                            ? __('public.home.ach_rehab_note', ['percent' => $rehabPersen, 'target' => angka($capaian['rehab_lahan']['target'], 1)])
+                            : __('public.home.ach_realised'),
                     ],
-                    ['label' => 'Penghijauan lingkungan', 'value' => $capaian['penghijauan']['realisasi'], 'decimals' => 1, 'unit' => 'ha', 'note' => null],
-                    ['label' => 'Pengunjung wisata alam', 'value' => $capaian['wisata']['pengunjung'], 'decimals' => 0, 'unit' => 'orang', 'note' => 'Pendapatan ' . rupiah_singkat($capaian['wisata']['pendapatan'])],
-                    ['label' => 'Kebakaran hutan', 'value' => $capaian['kebakaran']['kejadian'], 'decimals' => 0, 'unit' => 'kejadian', 'note' => number_format($capaian['kebakaran']['luas'], 1, ',', '.') . ' ha terdampak'],
+                    ['label' => __('public.home.ach_greening'), 'value' => $capaian['penghijauan']['realisasi'], 'decimals' => 1, 'unit' => 'ha', 'note' => null],
+                    ['label' => __('public.home.ach_tourism'), 'value' => $capaian['wisata']['pengunjung'], 'decimals' => 0, 'unit' => __('public.home.unit_people'), 'note' => __('public.home.ach_tourism_note', ['amount' => rupiah_singkat($capaian['wisata']['pendapatan'])])],
+                    ['label' => __('public.home.ach_fire'), 'value' => $capaian['kebakaran']['kejadian'], 'decimals' => 0, 'unit' => __('public.home.unit_incidents'), 'note' => __('public.home.ach_fire_note', ['area' => angka($capaian['kebakaran']['luas'], 1)])],
                 ];
             @endphp
             <div class="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)] lg:gap-12">
                 <figure data-reveal class="min-w-0">
                     <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-                        <div class="flex flex-wrap gap-x-5 gap-y-2" role="group" aria-label="Pilih indikator peta">
+                        <div class="flex flex-wrap gap-x-5 gap-y-2" role="group" aria-label="{{ __('public.home.map_metric_label') }}">
                             <template x-for="(name, key) in metrics" :key="key">
                                 <button type="button" @click="metric = key" :aria-pressed="metric === key"
                                     class="cursor-pointer border-b-2 px-0 py-3 text-sm font-medium transition-colors motion-reduce:transition-none"
@@ -247,7 +250,7 @@
                     </div>
 
                     <div class="mt-5 overflow-hidden rounded-2xl bg-forest-900">
-                        <svg viewBox="0 0 480 400" class="block w-full" role="group" aria-label="Peta skematis wilayah kerja">
+                        <svg viewBox="0 0 480 400" class="block w-full" role="group" aria-label="{{ __('public.home.map_label') }}">
                             <path d="{{ $coast }} L480 0 L0 0 Z" fill="#174a31" />
                             <path d="{{ $coast }} L480 400 L0 400 Z" fill="#0b2118" />
                             <path d="{{ $coast }}" fill="none" stroke="#7ca885" stroke-opacity="0.65" />
@@ -256,12 +259,12 @@
                                     class="fill-white/80 text-[8.5px] font-semibold tracking-[0.2em] uppercase">{{ $neighbour['name'] }}</text>
                             @endforeach
                             <text x="240" y="376" text-anchor="middle" aria-hidden="true"
-                                class="fill-white/80 text-[9px] font-semibold tracking-[0.5em] uppercase">Samudra Hindia</text>
+                                class="fill-white/80 text-[9px] font-semibold tracking-[0.5em] uppercase">{{ __('public.home.indian_ocean') }}</text>
 
                             {{-- Working areas, shaded by the selected indicator. --}}
                             @foreach ($mapShapes as $slug => $shape)
                                 <path d="{{ $shape['d'] }}" role="button" tabindex="0"
-                                    aria-label="Tampilkan data {{ $regions[$slug]['label'] }}"
+                                    aria-label="{{ __('public.home.map_show_region', ['region' => $regions[$slug]['label']]) }}"
                                     :aria-pressed="active === '{{ $slug }}'" @click="active = '{{ $slug }}'"
                                     @keydown.enter.prevent="active = '{{ $slug }}'" @keydown.space.prevent="active = '{{ $slug }}'"
                                     stroke="#0b2118" stroke-width="2" stroke-linejoin="round" :style="fill('{{ $slug }}')"
@@ -279,7 +282,7 @@
                                 <path d="M228 104 L240 98 L252 104 L254 116 L244 124 L230 120 Z" fill="white" fill-opacity="0.18"
                                     stroke="white" stroke-opacity="0.7" stroke-dasharray="2 2" />
                                 <text x="241" y="138" text-anchor="middle" paint-order="stroke" stroke="#0b2118" stroke-width="3"
-                                    stroke-opacity="0.6" class="fill-white text-[8.5px] font-semibold">Kota Kediri</text>
+                                    stroke-opacity="0.6" class="fill-white text-[8.5px] font-semibold">{{ __('public.home.map_kediri_city') }}</text>
                             </g>
 
                             @foreach ($mapShapes as $slug => $shape)
@@ -295,9 +298,9 @@
 
                             {{-- Office locations (config/cdk.php), placed by hand on the schematic map. --}}
                             @foreach ([
-                                ['x' => 178, 'y' => 206, 'label' => 'Kantor utama'],
-                                ['x' => 262, 'y' => 228, 'label' => 'Kantor wilker'],
-                                ['x' => 241, 'y' => 111, 'label' => 'Kantor wilker'],
+                                ['x' => 178, 'y' => 206, 'label' => __('public.home.map_main_office')],
+                                ['x' => 262, 'y' => 228, 'label' => __('public.home.map_area_office')],
+                                ['x' => 241, 'y' => 111, 'label' => __('public.home.map_area_office')],
                             ] as $pin)
                                 <g class="pointer-events-none" aria-hidden="true">
                                     <circle cx="{{ $pin['x'] }}" cy="{{ $pin['y'] }}" r="4.5" class="fill-clay" stroke="#f7f3e8" stroke-width="1.5" />
@@ -312,7 +315,7 @@
                 @include('public.partials.wilayah-detail')
             </div>
 
-            <p class="mt-4 text-xs text-white/50">Sumber: {{ $sumberData }}.</p>
+            <p class="mt-4 text-xs text-white/50">{{ __('public.common.source', ['source' => $sumberData]) }}.</p>
         </div>
     </section>
 
@@ -322,14 +325,14 @@
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal class="grid gap-6 lg:grid-cols-2 lg:items-end">
                 <div>
-                    <p class="eyebrow">Layanan kami</p>
-                    <h2 class="section-title">Melayani masyarakat dan pelaku usaha <em>kehutanan</em>.</h2>
+                    <p class="eyebrow">{{ __('public.home.services_eyebrow') }}</p>
+                    <h2 class="section-title">{!! __('public.home.services_title') !!}</h2>
                 </div>
             </div>
 
             <div data-reveal style="--reveal-delay: 120ms"
                 class="mt-12 grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10">
-                <div class="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-1" role="group" aria-label="Pilih layanan">
+                <div class="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-1" role="group" aria-label="{{ __('public.home.services_pick') }}">
                     @foreach ($services as $i => $service)
                         <button type="button" @click="active = {{ $i }}" :aria-pressed="active === {{ $i }}"
                             aria-controls="layanan-detail"
@@ -369,7 +372,7 @@
                             x-text="services[active].text">{{ $services[0]['text'] }}</p>
                         <a href="{{ route('kontak') }}"
                             class="mt-7 inline-flex min-h-11 items-center gap-2 border-b border-leaf pb-0.5 text-sm font-semibold text-leaf transition-colors hover:border-white hover:text-white focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-leaf motion-reduce:transition-none">
-                            Tanyakan layanan
+                            {{ __('public.home.services_ask') }}
                             <i aria-hidden="true" class="bi bi-arrow-up-right text-base"></i>
                         </a>
                     </div>

@@ -1,15 +1,15 @@
 @php
     $ukuranTeks = [
-        ['value' => 100, 'label' => 'Normal', 'sample' => 'text-base'],
-        ['value' => 115, 'label' => 'Besar', 'sample' => 'text-lg'],
-        ['value' => 130, 'label' => 'Sangat besar', 'sample' => 'text-xl'],
+        ['value' => 100, 'label' => __('public.a11y.size_normal'), 'sample' => 'text-base'],
+        ['value' => 115, 'label' => __('public.a11y.size_large'), 'sample' => 'text-lg'],
+        ['value' => 130, 'label' => __('public.a11y.size_xlarge'), 'sample' => 'text-xl'],
     ];
     $pilihan = [
-        ['key' => 'kontras', 'icon' => 'bi-circle-half', 'label' => 'Kontras tinggi', 'text' => 'Latar hitam-putih dan teks lebih tegas'],
-        ['key' => 'spasi', 'icon' => 'bi-text-paragraph', 'label' => 'Spasi teks lega', 'text' => 'Jarak baris, huruf, dan kata lebih lebar'],
-        ['key' => 'garisTautan', 'icon' => 'bi-link-45deg', 'label' => 'Garis bawahi tautan', 'text' => 'Tautan mudah dibedakan dari teks biasa'],
-        ['key' => 'tanpaAnimasi', 'icon' => 'bi-pause-circle', 'label' => 'Hentikan animasi', 'text' => 'Matikan gerakan dan efek transisi'],
-        ['key' => 'fontBaca', 'icon' => 'bi-fonts', 'label' => 'Font mudah dibaca', 'text' => 'Atkinson Hyperlegible, untuk penglihatan rendah'],
+        ['key' => 'kontras', 'icon' => 'bi-circle-half', 'label' => __('public.a11y.contrast'), 'text' => __('public.a11y.contrast_hint')],
+        ['key' => 'spasi', 'icon' => 'bi-text-paragraph', 'label' => __('public.a11y.spacing'), 'text' => __('public.a11y.spacing_hint')],
+        ['key' => 'garisTautan', 'icon' => 'bi-link-45deg', 'label' => __('public.a11y.underline'), 'text' => __('public.a11y.underline_hint')],
+        ['key' => 'tanpaAnimasi', 'icon' => 'bi-pause-circle', 'label' => __('public.a11y.no_motion'), 'text' => __('public.a11y.no_motion_hint')],
+        ['key' => 'fontBaca', 'icon' => 'bi-fonts', 'label' => __('public.a11y.readable_font'), 'text' => __('public.a11y.readable_font_hint')],
     ];
 @endphp
 
@@ -25,12 +25,12 @@
                 class="absolute -top-1 -right-1 grid size-4 place-items-center rounded-full bg-white text-[10px] font-bold text-forest-900 ring-2 ring-forest-900"
                 x-text="aktif"></span>
         </span>
-        <span class="sr-only">Buka menu</span>
+        <span class="sr-only">{{ __('public.a11y.open') }}</span>
         <span class="sr-only sm:not-sr-only sm:grid sm:grid-cols-[0fr] sm:transition-[grid-template-columns] sm:duration-300 sm:ease-soft sm:group-hover:grid-cols-[1fr] sm:group-focus-visible:grid-cols-[1fr]">
             <span class="overflow-hidden text-left leading-tight whitespace-nowrap">
-                <span class="block pl-2.5 text-[13px] font-bold">Aksesibilitas</span>
+                <span class="block pl-2.5 text-[13px] font-bold">{{ __('public.a11y.title') }}</span>
                 <span class="block pl-2.5 text-[11px] text-white/75"
-                    x-text="aktif ? aktif + ' pengaturan aktif' : 'Atur tampilan'">Atur tampilan</span>
+                    x-text="aktif ? aktif + ' ' + @js(__('public.a11y.active_suffix')) : @js(__('public.a11y.adjust'))">{{ __('public.a11y.adjust') }}</span>
             </span>
         </span>
     </button>
@@ -44,19 +44,19 @@
         class="fixed inset-x-3 bottom-3 z-[61] max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-[1.75rem] bg-cream text-ink shadow-2xl sm:inset-x-auto sm:bottom-24 sm:left-5 sm:max-h-[calc(100dvh-8rem)] sm:w-[25rem]">
         <div class="sticky top-0 flex items-start justify-between gap-4 border-b border-ink/10 bg-cream px-6 pt-6 pb-4">
             <div>
-                <h2 id="judul-aksesibilitas" class="font-display text-2xl">Aksesibilitas</h2>
-                <p class="mt-1 text-sm text-ink/70">Atur tampilan agar lebih nyaman dibaca. Pengaturan tersimpan di perangkat ini.</p>
+                <h2 id="judul-aksesibilitas" class="font-display text-2xl">{{ __('public.a11y.title') }}</h2>
+                <p class="mt-1 text-sm text-ink/70">{{ __('public.a11y.intro') }}</p>
             </div>
             <button type="button" @click="open = false"
                 class="grid size-11 shrink-0 place-items-center rounded-full text-xl transition hover:bg-ink/5">
                 <i aria-hidden="true" class="bi bi-x-lg"></i>
-                <span class="sr-only">Tutup menu aksesibilitas</span>
+                <span class="sr-only">{{ __('public.a11y.close') }}</span>
             </button>
         </div>
 
         <div class="px-6 py-5">
             <fieldset>
-                <legend class="text-sm font-semibold">Ukuran teks</legend>
+                <legend class="text-sm font-semibold">{{ __('public.a11y.text_size') }}</legend>
                 <div class="mt-3 grid grid-cols-3 gap-2">
                     @foreach ($ukuranTeks as $ukuran)
                         <button type="button" @click="pref.teks = {{ $ukuran['value'] }}" :aria-pressed="pref.teks === {{ $ukuran['value'] }}"
@@ -95,10 +95,10 @@
         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-ink/10 px-6 py-4">
             <button type="button" @click="aturUlang()" :disabled="!aktif"
                 class="inline-flex items-center gap-2 rounded-full border-2 border-ink/15 px-4 py-2 text-sm font-semibold transition hover:border-forest-700 disabled:opacity-50">
-                <i aria-hidden="true" class="bi bi-arrow-counterclockwise"></i> Atur ulang
+                <i aria-hidden="true" class="bi bi-arrow-counterclockwise"></i> {{ __('public.a11y.reset') }}
             </button>
             <a href="{{ route('aksesibilitas') }}" class="py-2 text-sm font-semibold text-forest-700 underline underline-offset-4">
-                Pernyataan aksesibilitas
+                {{ __('public.a11y.statement') }}
             </a>
         </div>
     </div>

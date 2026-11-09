@@ -6,15 +6,24 @@ const reduceMotion = () =>
     window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
     document.documentElement.classList.contains("a11y-tanpa-animasi");
 
+// Numbers follow the page language (<html lang>, set from the visitor's language choice), matching
+// the angka() and rupiah_singkat() PHP helpers.
+const bahasa = document.documentElement.lang === "en" ? "en" : "id";
+const NUMBER_LOCALE = { id: "id-ID", en: "en-US" }[bahasa];
+const RUPIAH_UNITS = {
+    id: [[1e12, "T"], [1e9, "M"], [1e6, "Jt"]],
+    en: [[1e12, "T"], [1e9, "B"], [1e6, "M"]],
+}[bahasa];
+
 const formatNumber = (value, decimals) =>
-    new Intl.NumberFormat("id-ID", {
+    new Intl.NumberFormat(NUMBER_LOCALE, {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
     }).format(value);
 
-// Compact rupiah, matching the rupiah_singkat() PHP helper: 167704808505 → "Rp167,7 M".
+// Compact rupiah: 167704808505 → "Rp167,7 M" (id) or "Rp167.7 B" (en).
 const formatRupiah = (value) => {
-    for (const [unit, suffix] of [[1e12, "T"], [1e9, "M"], [1e6, "Jt"]]) {
+    for (const [unit, suffix] of RUPIAH_UNITS) {
         if (Math.abs(value) >= unit) return `Rp${formatNumber(value / unit, 1)} ${suffix}`;
     }
     return `Rp${formatNumber(value, 0)}`;

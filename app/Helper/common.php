@@ -116,19 +116,59 @@ if (! function_exists('image_srcset')) {
     }
 }
 
+if (! function_exists('angka')) {
+    /**
+     * Format a number with the separators of the current language: 1.234,5 (id) or 1,234.5 (en).
+     */
+    function angka(float|int $value, int $decimals = 0): string
+    {
+        return app()->getLocale() === 'id'
+            ? number_format($value, $decimals, ',', '.')
+            : number_format($value, $decimals, '.', ',');
+    }
+}
+
 if (! function_exists('rupiah_singkat')) {
     /**
-     * Format a rupiah amount compactly for display, e.g. 167704808505 → "Rp167,7 M".
+     * Format a rupiah amount compactly for display, e.g. 167704808505 → "Rp167,7 M" (id) or
+     * "Rp167.7 B" (en). Keep the units in step with formatRupiah() in resources/js/public.js.
      */
     function rupiah_singkat(float|int $value): string
     {
-        foreach ([1e12 => 'T', 1e9 => 'M', 1e6 => 'Jt'] as $unit => $suffix) {
+        $units = app()->getLocale() === 'id'
+            ? [1e12 => 'T', 1e9 => 'M', 1e6 => 'Jt']
+            : [1e12 => 'T', 1e9 => 'B', 1e6 => 'M'];
+
+        foreach ($units as $unit => $suffix) {
             if (abs($value) >= $unit) {
-                return 'Rp' . number_format($value / $unit, 1, ',', '.') . ' ' . $suffix;
+                return 'Rp' . angka($value / $unit, 1) . ' ' . $suffix;
             }
         }
 
-        return 'Rp' . number_format($value, 0, ',', '.');
+        return 'Rp' . angka($value);
+    }
+}
+
+if (! function_exists('kantor_cdk')) {
+    /**
+     * The offices from config/cdk.php with their name and type in the current language. The
+     * translations live in lang/{locale}/public.php as offices.{city}_name and offices.{city}_type;
+     * when one is missing the Indonesian value from the config is used.
+     */
+    function kantor_cdk(): array
+    {
+        return array_map(function (array $kantor) {
+            $kota = Str::slug($kantor['kota'], '_');
+
+            foreach (['nama' => 'name', 'jenis' => 'type'] as $field => $suffix) {
+                $key = "public.offices.{$kota}_{$suffix}";
+                if (\Illuminate\Support\Facades\Lang::has($key)) {
+                    $kantor[$field] = __($key);
+                }
+            }
+
+            return $kantor;
+        }, config('cdk.kantor'));
     }
 }
 

@@ -20,8 +20,8 @@
     <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
         \App\Support\StructuredData::newsArticle($post),
         \App\Support\StructuredData::breadcrumb([
-            ['Beranda', route('home')],
-            ['Berita', route('berita')],
+            [__('public.nav.home'), route('home')],
+            [__('public.nav.news'), route('berita')],
             [$post->title, route('berita.show', $post->slug)],
         ]),
     ) !!}</script>
@@ -52,9 +52,9 @@
         <div class="mx-auto max-w-7xl px-5 pt-32 pb-14 sm:px-8 sm:pt-36 sm:pb-16 lg:pt-24 lg:pb-10">
             <nav aria-label="Breadcrumb">
                 <ol class="flex flex-wrap items-center gap-2 text-sm text-white/70">
-                    <li><a href="{{ route('home') }}" class="inline-flex min-h-11 items-center hover:text-white">Beranda</a></li>
+                    <li><a href="{{ route('home') }}" class="inline-flex min-h-11 items-center hover:text-white">{{ __('public.nav.home') }}</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-white">Berita</a></li>
+                    <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-white">{{ __('public.nav.news') }}</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
                     <li aria-current="page" class="text-white">{{ Str::limit($post->title, 60) }}</li>
                 </ol>
@@ -79,16 +79,16 @@
                         <div class="flex items-center gap-3">
                             <img src="{{ config('settings.site_icon') }}" alt="" width="44" height="44" class="size-11 rounded-full bg-white object-contain p-1">
                             <div class="leading-snug">
-                                <p class="font-semibold text-white">Cabang Dinas Kehutanan</p>
-                                <p class="text-white/70">Wilayah Trenggalek</p>
+                                <p class="font-semibold text-white">{{ __('public.common.org_line1') }}</p>
+                                <p class="text-white/70">{{ __('public.common.org_line2') }}</p>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-white/75">
                             <time datetime="{{ $post->published_at?->toDateString() }}">{{ $post->published_at?->translatedFormat('d F Y') }}</time>
                             <span aria-hidden="true" class="hidden size-1 rounded-full bg-leaf sm:block"></span>
-                            <span>{{ $menitBaca }} menit baca</span>
+                            <span>{{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</span>
                             <span aria-hidden="true" class="hidden size-1 rounded-full bg-leaf sm:block"></span>
-                            <span>{{ number_format($dilihat, 0, ',', '.') }} kali dibaca</span>
+                            <span>{{ trans_choice('public.news.views', $dilihat, ['count' => angka($dilihat)]) }}</span>
                         </div>
                     </div>
                 </div>
@@ -113,25 +113,25 @@
     <article class="mx-auto grid max-w-7xl gap-10 px-5 pt-14 pb-20 sm:px-8 sm:pt-20 lg:grid-cols-[11rem_minmax(0,45rem)_1fr] lg:gap-14">
         <aside class="hidden lg:block">
             <div class="sticky top-28 border-t-2 border-forest-700 pt-4 text-sm">
-                <p class="font-semibold text-forest-800">Tentang berita ini</p>
-                <p class="mt-3 text-ink/70">{{ $menitBaca }} menit baca</p>
+                <p class="font-semibold text-forest-800">{{ __('public.news.about_article') }}</p>
+                <p class="mt-3 text-ink/70">{{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</p>
                 <a href="#bagikan" class="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">
-                    <i aria-hidden="true" class="bi bi-share"></i> Bagikan berita
+                    <i aria-hidden="true" class="bi bi-share"></i> {{ __('public.news.share_short') }}
                 </a>
                 <a href="#komentar" class="mt-1 inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">
-                    <i aria-hidden="true" class="bi bi-chat-left-text"></i> Komentar ({{ $comment->count() }})
+                    <i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $comment->count() }})
                 </a>
             </div>
         </aside>
 
         <div class="mx-auto w-full min-w-0 max-w-[45rem]">
             <div id="isi-berita" class="konten-berita">
-                {!! lazy_images($post->content, 'Dokumentasi kegiatan: ' . $post->title) !!}
+                {!! lazy_images($post->content, __('public.news.image_alt', ['title' => $post->title])) !!}
             </div>
 
         @if ($post->tags->isNotEmpty())
             <div class="mt-12 flex flex-wrap items-center gap-2">
-                <span class="mr-1 text-sm font-semibold text-forest-800">Topik</span>
+                <span class="mr-1 text-sm font-semibold text-forest-800">{{ __('public.news.topics') }}</span>
                 @foreach ($post->tags as $tag)
                     <a href="{{ route('berita.tag', $tag->slug) }}" class="inline-flex min-h-11 items-center border-b border-forest-900/25 text-sm text-ink/80 hover:border-forest-700 hover:text-forest-800">#{{ $tag->name }}</a>
                 @endforeach
@@ -141,8 +141,8 @@
         <div id="bagikan" class="mt-12 flex scroll-mt-24 flex-col gap-5 border-y border-forest-900/20 py-7 sm:flex-row sm:items-center sm:justify-between"
             x-data="{ disalin: false, salin() { navigator.clipboard?.writeText(location.href).then(() => { this.disalin = true; setTimeout(() => this.disalin = false, 2500) }) } }">
             <div>
-                <h2 class="font-display text-lg font-semibold">Bagikan berita ini</h2>
-                <p class="mt-1 text-sm text-ink/70">Kirim ke rekan atau simpan tautannya.</p>
+                <h2 class="font-display text-lg font-semibold">{{ __('public.news.share_title') }}</h2>
+                <p class="mt-1 text-sm text-ink/70">{{ __('public.news.share_text') }}</p>
             </div>
             <ul class="flex flex-wrap gap-2">
                 @foreach ($bagikan as $kunci => $item)
@@ -151,7 +151,7 @@
                         <a href="{{ $share[$kunci] }}" target="_blank" rel="noopener noreferrer"
                             class="grid size-11 place-items-center rounded-lg border border-forest-900/20 bg-white text-lg text-forest-800 transition hover:border-forest-900 hover:bg-forest-900 hover:text-white active:scale-95">
                             <i aria-hidden="true" class="bi {{ $item['icon'] }}"></i>
-                            <span class="sr-only">Bagikan ke {{ $item['label'] }} (membuka tab baru)</span>
+                            <span class="sr-only">{{ __('public.news.share_to', ['network' => $item['label']]) }} ({{ __('public.common.new_tab') }})</span>
                         </a>
                     </li>
                 @endforeach
@@ -159,21 +159,21 @@
                     <button type="button" @click="salin()"
                         class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-forest-900/20 bg-white px-4 text-sm font-semibold text-forest-800 transition hover:border-forest-900 hover:bg-forest-900 hover:text-white active:scale-95">
                         <i aria-hidden="true" class="bi" :class="disalin ? 'bi-check2' : 'bi-link-45deg'"></i>
-                        <span x-text="disalin ? 'Tautan disalin' : 'Salin tautan'">Salin tautan</span>
+                        <span x-text="disalin ? @js(__('public.news.link_copied')) : @js(__('public.news.copy_link'))">{{ __('public.news.copy_link') }}</span>
                     </button>
-                    <span class="sr-only" role="status" x-text="disalin ? 'Tautan berita disalin' : ''"></span>
+                    <span class="sr-only" role="status" x-text="disalin ? @js(__('public.news.link_copied_sr')) : ''"></span>
                 </li>
             </ul>
         </div>
 
         <section id="komentar" class="mt-16 scroll-mt-24" aria-labelledby="judul-komentar">
             <div class="border-b border-forest-900/20 pb-5">
-                <h2 id="judul-komentar" class="font-display text-2xl font-semibold sm:text-3xl">Komentar <span class="text-forest-700">{{ $comment->count() }}</span></h2>
-                <p class="mt-2 text-sm text-ink/70">Tanggapan pembaca terhadap berita ini.</p>
+                <h2 id="judul-komentar" class="font-display text-2xl font-semibold sm:text-3xl">{{ __('public.news.comments') }} <span class="text-forest-700">{{ $comment->count() }}</span></h2>
+                <p class="mt-2 text-sm text-ink/70">{{ __('public.news.comments_text') }}</p>
             </div>
 
             @if ($comment->isEmpty())
-                <p class="mt-4 text-ink/70">Belum ada komentar. Jadilah yang pertama menanggapi berita ini.</p>
+                <p class="mt-4 text-ink/70">{{ __('public.news.no_comments') }}</p>
             @else
                 <ul class="divide-y divide-forest-900/15">
                     @foreach ($comment as $c)
@@ -194,7 +194,7 @@
             @endif
 
             <div id="comment-form" class="mt-10 scroll-mt-24 rounded-lg border border-forest-900/15 bg-white/70 p-6 sm:p-8">
-                <h3 class="font-display text-2xl font-semibold">Tulis komentar</h3>
+                <h3 class="font-display text-2xl font-semibold">{{ __('public.news.write_comment') }}</h3>
 
                 @if (session('success'))
                     <p role="status" class="mt-4 flex items-start gap-3 rounded-xl bg-forest-900 px-4 py-3 text-sm text-white">
@@ -207,23 +207,23 @@
                     <input type="hidden" name="post_id" value="{{ $post->id }}">
 
                     <div>
-                        <label for="komentar-nama" class="text-sm font-semibold">Nama <span aria-hidden="true" class="text-clay">*</span></label>
+                        <label for="komentar-nama" class="text-sm font-semibold">{{ __('public.form.name') }} <span aria-hidden="true" class="text-clay">*</span></label>
                         <input id="komentar-nama" type="text" name="name" value="{{ old('name') }}" required autocomplete="name"
                             @error('name') aria-invalid="true" aria-describedby="galat-nama" @enderror class="mt-2 {{ $field }}">
                         @error('name')<p id="galat-nama" class="mt-1.5 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
                     </div>
 
                     <div>
-                        <label for="komentar-email" class="text-sm font-semibold">Email <span aria-hidden="true" class="text-clay">*</span></label>
+                        <label for="komentar-email" class="text-sm font-semibold">{{ __('public.form.email') }} <span aria-hidden="true" class="text-clay">*</span></label>
                         <input id="komentar-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
                             aria-describedby="catatan-email @error('email') galat-email @enderror" @error('email') aria-invalid="true" @enderror
                             class="mt-2 {{ $field }}">
-                        <p id="catatan-email" class="mt-1.5 text-xs text-ink/70">Tidak ditampilkan.</p>
+                        <p id="catatan-email" class="mt-1.5 text-xs text-ink/70">{{ __('public.form.email_hidden') }}</p>
                         @error('email')<p id="galat-email" class="mt-1 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
                     </div>
 
                     <div class="sm:col-span-2">
-                        <label for="komentar-isi" class="text-sm font-semibold">Komentar <span aria-hidden="true" class="text-clay">*</span></label>
+                        <label for="komentar-isi" class="text-sm font-semibold">{{ __('public.news.comment_field') }} <span aria-hidden="true" class="text-clay">*</span></label>
                         <textarea id="komentar-isi" name="comment" rows="5" maxlength="1000" required
                             @error('comment') aria-invalid="true" aria-describedby="galat-komentar" @enderror
                             class="mt-2 {{ $field }}">{{ old('comment') }}</textarea>
@@ -232,11 +232,11 @@
 
                     <div class="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
                         <p class="text-sm text-ink/70">
-                            Komentar ditampilkan setelah disetujui admin. Nama dan komentar Anda akan terlihat publik.
-                            <a href="{{ route('kebijakan-privasi') }}" class="font-semibold text-forest-800 underline underline-offset-4">Kebijakan Privasi</a>
+                            {{ __('public.news.comment_notice') }}
+                            <a href="{{ route('kebijakan-privasi') }}" class="font-semibold text-forest-800 underline underline-offset-4">{{ __('public.form.privacy_link') }}</a>
                         </p>
                         <button type="submit" class="btn-primary shrink-0 !bg-forest-900 !text-white hover:!bg-forest-700">
-                            Kirim komentar <i aria-hidden="true" class="bi bi-send"></i>
+                            {{ __('public.news.send_comment') }} <i aria-hidden="true" class="bi bi-send"></i>
                         </button>
                     </div>
                 </form>
@@ -250,10 +250,10 @@
             <div class="mx-auto max-w-7xl px-5 sm:px-8">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <p class="text-sm font-semibold text-forest-700">Baca selanjutnya</p>
-                        <h2 id="judul-lainnya" class="mt-2 font-display text-3xl font-semibold">Berita lainnya</h2>
+                        <p class="text-sm font-semibold text-forest-700">{{ __('public.news.read_next') }}</p>
+                        <h2 id="judul-lainnya" class="mt-2 font-display text-3xl font-semibold">{{ __('public.news.other_news') }}</h2>
                     </div>
-                    <a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">Lihat semua berita <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+                    <a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">{{ __('public.news.see_all') }} <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
                 </div>
                 <ul class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($posts as $item)
@@ -267,7 +267,7 @@
                                     <h3 class="mt-3 font-display text-xl leading-snug font-semibold transition-colors group-hover:text-forest-700">
                                         <a href="{{ route('berita.show', $item->slug) }}" class="after:absolute after:inset-0">{{ $item->title }}</a>
                                     </h3>
-                                    <span class="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-forest-800" aria-hidden="true">Baca berita <i class="bi bi-arrow-right"></i></span>
+                                    <span class="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-forest-800" aria-hidden="true">{{ __('public.news.read_article') }} <i class="bi bi-arrow-right"></i></span>
                                 </div>
                             </article>
                         </li>

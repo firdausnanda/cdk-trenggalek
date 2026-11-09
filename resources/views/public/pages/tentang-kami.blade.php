@@ -2,50 +2,50 @@
 
 @section('nav-overlay', true)
 
-@section('title', judul_halaman('Tentang Kami'))
-@section('description', 'Profil, tugas dan fungsi, serta struktur organisasi Cabang Dinas Kehutanan Wilayah Trenggalek, Dinas Kehutanan Provinsi Jawa Timur.')
+@section('title', judul_halaman(__('public.nav.about')))
+@section('description', __('public.about.meta_description'))
 
 @push('head')
     <script type="application/ld+json">{!! \App\Support\StructuredData::toJson(
-        \App\Support\StructuredData::breadcrumb([['Beranda', route('home')], ['Tentang Kami', route('tentang-kami')]]),
+        \App\Support\StructuredData::breadcrumb([[__('public.nav.home'), route('home')], [__('public.nav.about'), route('tentang-kami')]]),
     ) !!}</script>
 @endpush
 
 @php
     $fakta = [
-        ['icon' => 'bi-journal-text', 'label' => 'Dasar hukum', 'value' => 'Pergub Jatim No. 48 Tahun 2018'],
-        ['icon' => 'bi-bank', 'label' => 'Instansi induk', 'value' => 'Dinas Kehutanan Provinsi Jawa Timur'],
-        ['icon' => 'bi-map', 'label' => 'Wilayah kerja', 'value' => '3 kabupaten, 1 kota'],
-        ['icon' => 'bi-buildings', 'label' => 'Kantor', 'value' => 'Trenggalek, Tulungagung, Kediri'],
+        ['icon' => 'bi-journal-text', 'label' => __('public.about.fact_legal'), 'value' => __('public.about.fact_legal_value')],
+        ['icon' => 'bi-bank', 'label' => __('public.about.fact_parent'), 'value' => __('public.footer.agency_forestry')],
+        ['icon' => 'bi-map', 'label' => __('public.about.working_area'), 'value' => __('public.about.fact_area_value')],
+        ['icon' => 'bi-buildings', 'label' => __('public.about.fact_offices'), 'value' => 'Trenggalek, Tulungagung, Kediri'],
     ];
 
-    $kantor = config('cdk.kantor');
+    $kantor = kantor_cdk();
 
     $bagian = [
-        ['href' => '#profil', 'label' => 'Profil'],
-        ['href' => '#tugas', 'label' => 'Tugas & fungsi'],
-        ['href' => '#struktur', 'label' => 'Struktur organisasi'],
-        ['href' => '#kantor', 'label' => 'Kantor'],
+        ['href' => '#profil', 'label' => __('public.about.profile')],
+        ['href' => '#tugas', 'label' => __('public.about.duties_short')],
+        ['href' => '#struktur', 'label' => __('public.about.structure')],
+        ['href' => '#kantor', 'label' => __('public.about.fact_offices')],
     ];
 
     $wilayah = [
-        ['nama' => 'Kabupaten Trenggalek', 'catatan' => 'Kantor utama'],
-        ['nama' => 'Kabupaten Tulungagung', 'catatan' => 'Kantor wilayah kerja'],
-        ['nama' => 'Kabupaten Kediri', 'catatan' => null],
-        ['nama' => 'Kota Kediri', 'catatan' => 'Kantor wilayah kerja'],
+        ['nama' => __('public.regions.trenggalek'), 'catatan' => __('public.offices.trenggalek_type')],
+        ['nama' => __('public.regions.tulungagung'), 'catatan' => __('public.offices.tulungagung_type')],
+        ['nama' => __('public.regions.kediri_regency'), 'catatan' => null],
+        ['nama' => __('public.regions.kediri_city'), 'catatan' => __('public.offices.kediri_type')],
     ];
 
     $tugas = [
-        ['icon' => 'bi-clipboard-check', 'title' => 'Perencanaan & Administrasi', 'text' => 'Menyusun program, anggaran, dan pengawasan administrasi kehutanan, serta pelayanan masyarakat dan evaluasi kinerja untuk tata kelola hutan berkelanjutan.'],
-        ['icon' => 'bi-tree', 'title' => 'Pengelolaan & Rehabilitasi Hutan', 'text' => 'Melakukan pembinaan hutan hak, rehabilitasi lahan, pendampingan sertifikasi, dan pengolahan hasil hutan untuk kelestarian ekosistem.'],
-        ['icon' => 'bi-droplet-half', 'title' => 'Konservasi & Ekosistem', 'text' => 'Melaksanakan pembinaan konservasi tanah dan air, pengendalian satwa liar non-CITES, dan pengelolaan kawasan penyangga untuk kelestarian lingkungan.'],
-        ['icon' => 'bi-people', 'title' => 'Pemberdayaan Masyarakat & Penyuluhan', 'text' => 'Melakukan penyuluhan kehutanan, memberdayakan masyarakat, dan mengembangkan perhutanan sosial untuk kesejahteraan berkelanjutan.'],
+        ['icon' => 'bi-clipboard-check', 'title' => __('public.about.duty_planning_title'), 'text' => __('public.about.duty_planning_text')],
+        ['icon' => 'bi-tree', 'title' => __('public.about.duty_management_title'), 'text' => __('public.about.duty_management_text')],
+        ['icon' => 'bi-droplet-half', 'title' => __('public.about.duty_conservation_title'), 'text' => __('public.about.duty_conservation_text')],
+        ['icon' => 'bi-people', 'title' => __('public.about.duty_community_title'), 'text' => __('public.about.duty_community_text')],
     ];
 
     $unit = [
-        ['jabatan' => 'Kepala Subbagian Tata Usaha', 'nama' => 'Subbagian Tata Usaha'],
-        ['jabatan' => 'Kepala Seksi TKUK', 'nama' => 'Seksi Tata Kelola dan Usaha Hutan'],
-        ['jabatan' => 'Kepala Seksi RLPM', 'nama' => 'Seksi Rehabilitasi Lahan dan Pemberdayaan Masyarakat'],
+        ['jabatan' => __('public.about.unit_admin_head'), 'nama' => __('public.about.unit_admin')],
+        ['jabatan' => __('public.about.unit_tkuk_head'), 'nama' => __('public.about.unit_tkuk')],
+        ['jabatan' => __('public.about.unit_rlpm_head'), 'nama' => __('public.about.unit_rlpm')],
     ];
 @endphp
 
@@ -62,22 +62,21 @@
             <nav data-reveal aria-label="Breadcrumb">
                 <ol class="flex flex-wrap items-center gap-2 text-sm text-white/75">
                     <li><a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 py-1 hover:text-white">
-                            <i aria-hidden="true" class="bi bi-house-door"></i> Beranda</a></li>
+                            <i aria-hidden="true" class="bi bi-house-door"></i> {{ __('public.nav.home') }}</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li aria-current="page" class="font-semibold text-white">Tentang Kami</li>
+                    <li aria-current="page" class="font-semibold text-white">{{ __('public.nav.about') }}</li>
                 </ol>
             </nav>
 
             <h1 data-reveal style="--reveal-delay: 80ms"
                 class="mt-6 max-w-3xl font-display text-[2.4rem] leading-[1.04] font-bold tracking-[-0.035em] text-balance sm:text-6xl lg:text-[4.25rem]">
-                Cabang Dinas Kehutanan <span class="text-leaf">Wilayah Trenggalek</span>
+                {{ __('public.common.org_line1') }} <span class="text-leaf">{{ __('public.common.org_line2') }}</span>
             </h1>
             <p data-reveal style="--reveal-delay: 160ms" class="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                Cabang Dinas Kehutanan Provinsi Jawa Timur yang mengelola, merehabilitasi, dan melindungi hutan
-                bersama masyarakat di Wilayah Kabupaten Trenggalek, Kabupaten Tulungagung, Kabupaten Kediri, dan Kota Kediri.
+                {{ __('public.about.hero_text') }}
             </p>
 
-            <nav data-reveal style="--reveal-delay: 240ms" aria-label="Bagian halaman" class="mt-9">
+            <nav data-reveal style="--reveal-delay: 240ms" aria-label="{{ __('public.about.page_sections') }}" class="mt-9">
                 <ul class="flex flex-wrap gap-2">
                     @foreach ($bagian as $item)
                         <li>
@@ -120,24 +119,16 @@
     <section id="profil" class="scroll-mt-20 pt-20 pb-24 sm:pt-24 sm:pb-32">
         <div class="mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:items-center">
             <div data-reveal class="lg:col-span-6">
-                <p class="eyebrow">Profil</p>
-                <h2 class="section-title">Empat wilayah, satu komitmen untuk hutan yang <em>lestari</em>.</h2>
+                <p class="eyebrow">{{ __('public.about.profile') }}</p>
+                <h2 class="section-title">{!! __('public.about.profile_title') !!}</h2>
                 <div class="mt-6 space-y-4 text-lg leading-relaxed text-ink/75">
-                    <p>
-                        Berdasarkan Peraturan Gubernur Jawa Timur Nomor 48 Tahun 2018, Cabang Dinas Kehutanan Wilayah
-                        Trenggalek bertugas melaksanakan pengelolaan hutan, rehabilitasi lahan, perlindungan kawasan hutan,
-                        serta pemberdayaan masyarakat desa hutan.
-                    </p>
-                    <p>
-                        Kami menyediakan layanan perizinan kehutanan, pengawasan, dan penanganan pengaduan masyarakat.
-                        Bersama seluruh pemangku kepentingan, kami berkomitmen mewujudkan pengelolaan hutan berkelanjutan
-                        untuk kesejahteraan masyarakat.
-                    </p>
+                    <p>{{ __('public.about.profile_p1') }}</p>
+                    <p>{{ __('public.about.profile_p2') }}</p>
                 </div>
             </div>
 
             <div data-reveal style="--reveal-delay: 120ms" class="lg:col-span-6">
-                <h3 class="text-xs font-semibold tracking-[0.18em] text-ink/70 uppercase">Wilayah kerja</h3>
+                <h3 class="text-xs font-semibold tracking-[0.18em] text-ink/70 uppercase">{{ __('public.about.working_area') }}</h3>
                 <ul class="mt-4 divide-y divide-forest-900/10 border-y border-forest-900/10">
                     @foreach ($wilayah as $item)
                         <li class="flex items-center gap-4 py-4">
@@ -153,7 +144,7 @@
                 </ul>
                 <a href="{{ route('home') }}#wilayah"
                     class="group mt-6 inline-flex min-h-11 items-center gap-3 font-semibold text-forest-800">
-                    <span class="border-b-2 border-leaf pb-0.5">Lihat data kehutanan tiap wilayah</span>
+                    <span class="border-b-2 border-leaf pb-0.5">{{ __('public.about.see_region_data') }}</span>
                     <i aria-hidden="true" class="bi bi-arrow-right transition group-hover:translate-x-1"></i>
                 </a>
             </div>
@@ -164,8 +155,8 @@
     <section id="tugas" class="scroll-mt-16 bg-sand/60 py-24 sm:py-32">
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
-                <p class="eyebrow">Tugas dan fungsi</p>
-                <h2 class="section-title">Tugas utama <em>CDK Wilayah Trenggalek</em>.</h2>
+                <p class="eyebrow">{{ __('public.about.duties') }}</p>
+                <h2 class="section-title">{!! __('public.about.duties_title') !!}</h2>
             </div>
 
             <ol class="mt-12 grid gap-4 sm:grid-cols-2">
@@ -190,16 +181,16 @@
     <section id="struktur" class="scroll-mt-16 py-24 sm:py-32">
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal class="mx-auto max-w-2xl text-center">
-                <p class="eyebrow justify-center">Struktur organisasi</p>
-                <h2 class="section-title">Pimpinan dan <em>unit kerja</em>.</h2>
+                <p class="eyebrow justify-center">{{ __('public.about.structure') }}</p>
+                <h2 class="section-title">{!! __('public.about.structure_title') !!}</h2>
             </div>
 
-            <ul data-reveal style="--reveal-delay: 120ms" class="mt-14" aria-label="Struktur organisasi">
+            <ul data-reveal style="--reveal-delay: 120ms" class="mt-14" aria-label="{{ __('public.about.structure') }}">
                 <li>
                     <div class="mx-auto flex max-w-md items-center gap-4 rounded-2xl bg-forest-900 p-6 text-center text-white shadow-xl shadow-forest-950/15">
                         <span class="w-full">
-                            <span class="block text-sm font-semibold text-leaf">Kepala Cabang Dinas</span>
-                            <span class="mt-0.5 block font-display text-xl leading-snug font-semibold">Cabang Dinas Kehutanan Wilayah Trenggalek</span>
+                            <span class="block text-sm font-semibold text-leaf">{{ __('public.about.head') }}</span>
+                            <span class="mt-0.5 block font-display text-xl leading-snug font-semibold">{{ __('public.common.org_name') }}</span>
                         </span>
                     </div>
 
@@ -230,8 +221,8 @@
     <section id="kantor" class="scroll-mt-16 bg-sand/60 py-24 sm:py-32">
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
-                <p class="eyebrow">Kantor kami</p>
-                <h2 class="section-title">Alamat kantor dan <em>jam layanan</em>.</h2>
+                <p class="eyebrow">{{ __('public.common.our_offices') }}</p>
+                <h2 class="section-title">{!! __('public.about.offices_title') !!}</h2>
             </div>
 
             <ul class="mt-12 grid gap-5 lg:grid-cols-3">
@@ -240,7 +231,7 @@
                         class="flex flex-col overflow-hidden rounded-2xl bg-cream shadow-sm ring-1 ring-forest-900/10">
                         @if ($loop->first)
                             <img src="{{ asset('images/background/gedung-cdk.webp') }}" loading="lazy"
-                                alt="Gedung {{ $item['nama'] }}" class="aspect-[16/9] w-full object-cover">
+                                alt="{{ __('public.about.building_alt', ['name' => $item['nama']]) }}" class="aspect-[16/9] w-full object-cover">
                         @else
                             <div aria-hidden="true"
                                 class="relative grid aspect-[16/9] place-items-center overflow-hidden bg-forest-900 text-6xl text-leaf [background-image:repeating-radial-gradient(circle_at_85%_120%,rgb(181_216_106/0.12)_0_1px,transparent_1.5px_26px)]">
@@ -260,9 +251,9 @@
                             </p>
                             <a href="{{ $item['maps'] }}" target="_blank" rel="noopener noreferrer"
                                 class="group mt-auto inline-flex min-h-11 w-fit items-center gap-2 pt-6 font-semibold text-forest-800">
-                                <span class="border-b-2 border-leaf pb-0.5">Buka di Google Maps</span>
+                                <span class="border-b-2 border-leaf pb-0.5">{{ __('public.about.open_maps') }}</span>
                                 <i aria-hidden="true" class="bi bi-arrow-up-right transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
-                                <span class="sr-only">untuk {{ $item['nama'] }} (membuka tab baru)</span>
+                                <span class="sr-only">{{ __('public.about.open_maps_for', ['name' => $item['nama']]) }} ({{ __('public.common.new_tab') }})</span>
                             </a>
                         </div>
                     </li>
@@ -272,15 +263,15 @@
             <div data-reveal class="mt-5 flex flex-col gap-6 rounded-2xl bg-forest-900 p-7 text-white sm:p-8 lg:flex-row lg:items-center lg:justify-between">
                 <dl class="flex flex-col gap-4 sm:flex-row sm:gap-10">
                     <div class="flex gap-3">
-                        <dt><i aria-hidden="true" class="bi bi-clock text-xl text-leaf"></i><span class="sr-only">Jam layanan</span></dt>
-                        <dd class="text-white/85">Senin – Jumat, 08.00 – 16.00 WIB</dd>
+                        <dt><i aria-hidden="true" class="bi bi-clock text-xl text-leaf"></i><span class="sr-only">{{ __('public.common.service_hours_label') }}</span></dt>
+                        <dd class="text-white/85">{{ __('public.common.service_hours') }}</dd>
                     </div>
                     <div class="flex gap-3">
                         <dt><i aria-hidden="true" class="bi bi-envelope text-xl text-leaf"></i><span class="sr-only">Email</span></dt>
                         <dd><a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id" class="break-all text-white/85 underline decoration-leaf underline-offset-4 hover:text-white">cdkwilayahtrenggalek@jatimprov.go.id</a></dd>
                     </div>
                 </dl>
-                <a href="{{ route('kontak') }}" class="btn-primary w-fit shrink-0">Hubungi kami <i aria-hidden="true" class="bi bi-send"></i></a>
+                <a href="{{ route('kontak') }}" class="btn-primary w-fit shrink-0">{{ __('public.nav.contact_us') }} <i aria-hidden="true" class="bi bi-send"></i></a>
             </div>
         </div>
     </section>

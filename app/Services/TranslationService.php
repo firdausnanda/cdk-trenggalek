@@ -13,6 +13,7 @@ class TranslationService
      */
     protected array $groups = [
         'json' => 'General',
+        'public' => 'Public Website',
         'auth' => 'Authentication',
         'pagination' => 'Pagination',
         'passwords' => 'Passwords',
