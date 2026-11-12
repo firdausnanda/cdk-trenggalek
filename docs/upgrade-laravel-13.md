@@ -43,24 +43,39 @@ Laradock (submodule) sudah dihapus dan diganti setup ringan di repo ini:
 - `docker/php/php.ini` — memory 256M, upload 20M, opcache
 - `docker/nginx/default.conf` — konfigurasi Laravel standar
 - `docker-compose.yml` — service `app`, `scheduler` (`schedule:work`), `nginx` (port 8081),
-  `mysql` 8.4 (port 3307), dan `node` (profil `tools`, untuk build aset)
+  dan `node` (profil `tools`, untuk build aset)
 
-Port dan nama service sama dengan Laradock (`mysql`, 8081, 3307), jadi `.env` di server
-tidak perlu diubah selama `DB_HOST=mysql`. Variabel compose dibaca dari `.env` Laravel.
+Database **tidak** ada di stack ini. Proyek memakai MySQL bersama di VPS (stack terpisah di
+`/opt/mysql`, container `mysql`, MySQL 8.4) lewat network eksternal `db_net`. Service `app` dan
+`scheduler` ikut `db_net`; `nginx` tidak. Variabel compose dibaca dari `.env` Laravel.
+
+`.env` di server:
+
+```
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=<database proyek ini>
+DB_USERNAME=<user khusus proyek ini, bukan root>
+DB_PASSWORD=<password user tersebut>
+```
 
 ### Pindah dari Laradock di server (sekali saja)
 
-1. Backup database: `docker exec <container mysql laradock> mysqldump -uroot -p --all-databases > backup.sql`
-2. Catat isi `laradock/.env` (password MySQL, port). `MYSQL_ROOT_PASSWORD` hanya dipakai saat
-   database pertama kali dibuat; data lama tetap memakai user/password yang sudah ada.
-3. Matikan Laradock: `cd laradock && docker compose down` (data di `~/.laradock/data/mysql` tetap ada)
-4. Matikan cron `schedule:run` lama jika ada di host (scheduler kini jalan di service `scheduler`).
-5. Dari root proyek: `git pull`. Folder `laradock/` akan tersisa sebagai folder biasa; pindahkan
+Prasyarat: network `db_net` dan stack MySQL bersama sudah jalan, dan database proyek sudah
+di-import ke sana beserta user-nya.
+
+1. `php artisan down` di Laradock, lalu cek ulang data di MySQL bersama sudah lengkap.
+2. Matikan cron `schedule:run` lama jika ada di host (scheduler kini jalan di service `scheduler`).
+3. Dari root proyek: `git pull`. Folder `laradock/` akan tersisa sebagai folder biasa; pindahkan
    ke luar proyek (simpan `.env`-nya) lalu jalankan `rm -rf .git/modules/laradock`.
-6. Jika user host bukan UID/GID 1000, set `DOCKER_UID`/`DOCKER_GID` di `.env`.
-7. `docker compose up -d --build` — MySQL otomatis memakai data lama dari
-   `~/.laradock/data/mysql` (ubah lewat `DOCKER_MYSQL_DATA` bila lokasinya lain).
-8. Cek: `docker compose ps` dan buka `http://<server>:8081`.
+4. Ubah `DB_*` di `.env` seperti di atas. Jika user host bukan UID/GID 1000, set
+   `DOCKER_UID`/`DOCKER_GID` di `.env`.
+5. Matikan Laradock: `cd <folder laradock> && docker compose down` (membebaskan port 8081).
+   Jangan pakai `-v`. Proyek lain yang masih join network Laradock harus sudah dipindah ke `db_net`.
+6. `docker compose up -d --build`, lalu `composer install`, build aset, dan `php artisan up`
+   (lihat perintah di header `docker-compose.yml`).
+7. Cek: `docker compose ps`, `docker compose exec app php artisan migrate:status`, dan buka
+   `http://<server>:8081`.
 
 ## Langkah deploy (staging dulu, lalu production)
 

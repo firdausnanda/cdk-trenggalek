@@ -21,8 +21,23 @@ class PostService
         }
 
         // Create base query with post type filter.
+        // The admin list never shows content, so skip the longText column and load only what it renders.
         $query = Post::where('post_type', $filters['post_type'])
-            ->with(['user', 'terms']);
+            ->select([
+                'id', 'user_id', 'post_type', 'title', 'slug', 'featured_image',
+                'status', 'parent_id', 'published_at', 'created_at', 'updated_at',
+            ])
+            ->with(['user:id,name', 'terms:terms.id,terms.name,terms.taxonomy']);
+
+        // Search title and excerpt only: a LIKE '%...%' over content scans every post body.
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', '%'.$search.'%')
+                    ->orWhere('excerpt', 'LIKE', '%'.$search.'%');
+            });
+            unset($filters['search']);
+        }
 
         // Handle category filter separately.
         if (isset($filters['category']) && ! empty($filters['category'])) {

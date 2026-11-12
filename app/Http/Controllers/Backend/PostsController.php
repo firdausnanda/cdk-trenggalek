@@ -54,8 +54,9 @@ class PostsController extends Controller
         $posts = $this->postService->getPosts($filters);
 
         // Get categories and tags for filters.
-        $categories = Term::where('taxonomy', 'category')->select('id', 'name')->get();
-        $tags = Term::where('taxonomy', 'tag')->select('id', 'name')->get();
+        // Post counts come from a single COUNT subquery instead of loading every post per term.
+        $categories = Term::where('taxonomy', 'category')->select('id', 'name')->withCount('posts')->get();
+        $tags = Term::where('taxonomy', 'tag')->select('id', 'name')->withCount('posts')->get();
 
         return view('backend.pages.posts.index', compact('posts', 'postType', 'postTypeModel', 'categories', 'tags'))
             ->with([

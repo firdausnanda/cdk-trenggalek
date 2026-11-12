@@ -108,7 +108,7 @@
                                         <li class="cursor-pointer text-sm text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 px-2 py-1 rounded {{ $category->id == request('category') ? 'bg-gray-200 dark:bg-gray-600' : '' }}"
                                             onclick="window.location.href='{{ route('admin.posts.index', ['postType' => $postType, 'status' => request('status'), 'search' => request('search'), 'category' => $category->id, 'tag' => request('tag')]) }}'">
                                             {{ $category->name }}
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">({{ $category->posts->count() ?? 0 }})</span>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">({{ $category->posts_count }})</span>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -141,7 +141,7 @@
                                         <li class="cursor-pointer text-sm text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 px-2 py-1 rounded {{ $tag->id == request('tag') ? 'bg-gray-200 dark:bg-gray-600' : '' }}"
                                             onclick="window.location.href='{{ route('admin.posts.index', ['postType' => $postType, 'status' => request('status'), 'search' => request('search'), 'category' => request('category'), 'tag' => $tag->id]) }}'">
                                             {{ $tag->name }}
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">({{ $tag->posts->count() ?? 0 }})</span>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">({{ $tag->posts_count }})</span>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -254,7 +254,7 @@
                                     </td>
                                     @if($postType === 'post')
                                         <td class="px-5 py-4 sm:px-6">
-                                            @foreach($post->categories as $category)
+                                            @foreach($post->terms->where('taxonomy', 'category') as $category)
                                                 <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-medium text-gray-800 bg-gray-100 rounded-full mr-1 mb-1 dark:bg-gray-700 dark:text-white">
                                                     {{ $category->name }}
                                                 </span>

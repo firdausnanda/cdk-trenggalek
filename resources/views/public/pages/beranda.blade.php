@@ -31,44 +31,7 @@
         ['short' => __('public.home.service_community_short'), 'icon' => 'bi-people', 'title' => __('public.home.service_community_title'), 'text' => __('public.home.service_community_text')],
     ];
 
-    // Schematic (not to scale) map of the working areas, viewBox 0 0 480 400. Shared borders are defined
-    // once and reused (a leading "-" reverses one) so neighbouring regions line up exactly.
-    $borders = [
-        'tg_tl' => [[220, 190], [214, 212], [218, 232], [208, 252], [214, 276], [222, 298], [226, 318]],
-        'kd_tl' => [[220, 190], [242, 196], [262, 192], [290, 206], [318, 200], [344, 210], [370, 212]],
-        'kd_tg' => [[212, 168], [218, 180], [220, 190]],
-        'tl_east' => [[370, 212], [382, 236], [374, 262], [380, 288], [362, 306], [350, 326]],
-        'tl_coast' => [[226, 318], [252, 326], [280, 322], [312, 330], [350, 326]],
-        'tg_coast' => [[70, 322], [98, 316], [128, 326], [160, 320], [194, 328], [226, 318]],
-        'tg_west' => [[70, 322], [62, 298], [66, 272], [54, 248], [70, 222], [78, 196], [90, 168]],
-        'tg_north' => [[90, 168], [118, 160], [140, 164], [160, 150], [186, 158], [212, 168]],
-        'kd_outer' => [[370, 212], [392, 190], [408, 150], [396, 118], [402, 92], [380, 70], [352, 60], [326, 44], [300, 38], [272, 50], [240, 48], [205, 62], [200, 90], [188, 108], [196, 120], [204, 146], [212, 168]],
-    ];
-    $points = function (array $segments) use ($borders) {
-        $points = [];
-        foreach ($segments as $segment) {
-            $line = $borders[ltrim($segment, '-')];
-            $line = str_starts_with($segment, '-') ? array_reverse($line) : $line;
-            $points = array_merge($points, $points ? array_slice($line, 1) : $line);
-        }
-
-        return implode(' L', array_map(fn ($p) => "{$p[0]} {$p[1]}", $points));
-    };
-    $mapShapes = [
-        'trenggalek' => ['d' => 'M' . $points(['tg_coast', '-tg_tl', '-kd_tg', '-tg_north', '-tg_west']) . ' Z', 'x' => 140, 'y' => 238],
-        'tulungagung' => ['d' => 'M' . $points(['kd_tl', 'tl_east', '-tl_coast', '-tg_tl']) . ' Z', 'x' => 298, 'y' => 262],
-        'kediri' => ['d' => 'M' . $points(['kd_tl', 'kd_outer', 'kd_tg']) . ' Z', 'x' => 318, 'y' => 128],
-    ];
-    // Coastline from the west edge to the east edge, passing along both coastal regions.
-    $coast = 'M0 330 L40 326 L' . $points(['tg_coast', 'tl_coast']) . ' L392 332 L436 328 L480 336';
-    $neighbours = [
-        ['name' => 'Ponorogo', 'x' => 100, 'y' => 96],
-        ['name' => 'Pacitan', 'x' => 30, 'y' => 300],
-        ['name' => 'Nganjuk', 'x' => 250, 'y' => 22],
-        ['name' => 'Jombang', 'x' => 420, 'y' => 40],
-        ['name' => 'Malang', 'x' => 444, 'y' => 140],
-        ['name' => 'Blitar', 'x' => 432, 'y' => 262],
-    ];
+    $map = json_decode(file_get_contents(resource_path('data/wilayah-map.json')), true);
     $placeholder = asset('images/not-found/image.jpeg');
 @endphp
 
@@ -203,16 +166,8 @@
             fill(slug) {
                 const spread = this.max - this.min;
                 const share = spread ? (this.regions[slug][this.metric] - this.min) / spread : 0.5;
-                return `fill: color-mix(in oklab, #b5d86a ${Math.round(share * 100)}%, #346a48)`;
+                return `fill: color-mix(in oklab, #3d865c ${Math.round(share * 100)}%, #bad4a8)`;
             },
-            format(value) {
-                return {
-                    kth: this.$angka(value) + ' ' + @js(__('public.home.unit_kth')),
-                    ps: this.$angka(value) + ' ' + @js(__('public.home.unit_ps')),
-                    nilai_transaksi_ekonomi: this.$rupiah(value),
-                }[this.metric];
-            },
-            label(slug) { return this.format(this.regions[slug][this.metric]) },
         }">
         <div class="mx-auto max-w-7xl px-5 sm:px-8">
             <div data-reveal>
@@ -249,73 +204,12 @@
                         </div>
                     </div>
 
-                    <div class="mt-5 overflow-hidden rounded-2xl bg-forest-900">
-                        <svg viewBox="0 0 480 400" class="block w-full" role="group" aria-label="{{ __('public.home.map_label') }}">
-                            <path d="{{ $coast }} L480 0 L0 0 Z" fill="#174a31" />
-                            <path d="{{ $coast }} L480 400 L0 400 Z" fill="#0b2118" />
-                            <path d="{{ $coast }}" fill="none" stroke="#7ca885" stroke-opacity="0.65" />
-                            @foreach ($neighbours as $neighbour)
-                                <text x="{{ $neighbour['x'] }}" y="{{ $neighbour['y'] }}" text-anchor="middle" aria-hidden="true"
-                                    class="fill-white/80 text-[8.5px] font-semibold tracking-[0.2em] uppercase">{{ $neighbour['name'] }}</text>
-                            @endforeach
-                            <text x="240" y="376" text-anchor="middle" aria-hidden="true"
-                                class="fill-white/80 text-[9px] font-semibold tracking-[0.5em] uppercase">{{ __('public.home.indian_ocean') }}</text>
-
-                            {{-- Working areas, shaded by the selected indicator. --}}
-                            @foreach ($mapShapes as $slug => $shape)
-                                <path d="{{ $shape['d'] }}" role="button" tabindex="0"
-                                    aria-label="{{ __('public.home.map_show_region', ['region' => $regions[$slug]['label']]) }}"
-                                    :aria-pressed="active === '{{ $slug }}'" @click="active = '{{ $slug }}'"
-                                    @keydown.enter.prevent="active = '{{ $slug }}'" @keydown.space.prevent="active = '{{ $slug }}'"
-                                    stroke="#0b2118" stroke-width="2" stroke-linejoin="round" :style="fill('{{ $slug }}')"
-                                    class="cursor-pointer outline-none transition-[fill] duration-200 motion-reduce:transition-none hover:brightness-110 focus-visible:stroke-leaf focus-visible:[stroke-width:4]" />
-                            @endforeach
-
-                            {{-- Active outline drawn last so it sits above the neighbouring regions. --}}
-                            @foreach ($mapShapes as $slug => $shape)
-                                <path d="{{ $shape['d'] }}" x-show="active === '{{ $slug }}'" fill="none" stroke="white"
-                                    stroke-width="2.5" stroke-linejoin="round" class="pointer-events-none" />
-                            @endforeach
-
-                            {{-- Kota Kediri sits inside Kabupaten Kediri; both share one data set. --}}
-                            <g class="pointer-events-none" aria-hidden="true">
-                                <path d="M228 104 L240 98 L252 104 L254 116 L244 124 L230 120 Z" fill="white" fill-opacity="0.18"
-                                    stroke="white" stroke-opacity="0.7" stroke-dasharray="2 2" />
-                                <text x="241" y="138" text-anchor="middle" paint-order="stroke" stroke="#0b2118" stroke-width="3"
-                                    stroke-opacity="0.6" class="fill-white text-[8.5px] font-semibold">{{ __('public.home.map_kediri_city') }}</text>
-                            </g>
-
-                            @foreach ($mapShapes as $slug => $shape)
-                                <g class="pointer-events-none" aria-hidden="true">
-                                    <text x="{{ $shape['x'] }}" y="{{ $shape['y'] }}" text-anchor="middle" paint-order="stroke"
-                                        stroke="#0b2118" stroke-width="4" stroke-opacity="0.55" stroke-linejoin="round"
-                                        class="fill-white text-[14px] font-extrabold">{{ $regions[$slug]['name'] }}</text>
-                                    <text x="{{ $shape['x'] }}" y="{{ $shape['y'] + 16 }}" text-anchor="middle" paint-order="stroke"
-                                        stroke="#0b2118" stroke-width="3" stroke-opacity="0.55" stroke-linejoin="round"
-                                        class="fill-white/85 text-[10px] font-semibold" x-text="label('{{ $slug }}')"></text>
-                                </g>
-                            @endforeach
-
-                            {{-- Office locations (config/cdk.php), placed by hand on the schematic map. --}}
-                            @foreach ([
-                                ['x' => 178, 'y' => 206, 'label' => __('public.home.map_main_office')],
-                                ['x' => 262, 'y' => 228, 'label' => __('public.home.map_area_office')],
-                                ['x' => 241, 'y' => 111, 'label' => __('public.home.map_area_office')],
-                            ] as $pin)
-                                <g class="pointer-events-none" aria-hidden="true">
-                                    <circle cx="{{ $pin['x'] }}" cy="{{ $pin['y'] }}" r="4.5" class="fill-clay" stroke="#f7f3e8" stroke-width="1.5" />
-                                    <text x="{{ $pin['x'] }}" y="{{ $pin['y'] - 10 }}" text-anchor="middle" paint-order="stroke" stroke="#0b2118" stroke-width="3"
-                                        stroke-opacity="0.6" class="fill-cream text-[8px] font-bold">{{ $pin['label'] }}</text>
-                                </g>
-                            @endforeach
-                        </svg>
-                    </div>
+                    @include('public.partials.wilayah-map')
                 </figure>
 
                 @include('public.partials.wilayah-detail')
             </div>
 
-            <p class="mt-4 text-xs text-white/50">{{ __('public.common.source', ['source' => $sumberData]) }}.</p>
         </div>
     </section>
 

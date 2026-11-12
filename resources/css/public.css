@@ -85,6 +85,33 @@
 }
 
 @layer components {
+    .wilayah-map-region {
+        cursor: pointer;
+        stroke: #f5f9ed;
+        stroke-width: 2px;
+        vector-effect: non-scaling-stroke;
+        transition: filter 180ms ease;
+    }
+
+    .wilayah-map-region:hover {
+        filter: brightness(1.12);
+    }
+
+    .wilayah-map-region:focus {
+        outline: none;
+    }
+
+    .wilayah-map-region:focus-visible {
+        stroke: #a84816;
+        stroke-width: 5px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .wilayah-map-region {
+            transition: none;
+        }
+    }
+
     .cookie-banner {
         animation: cookie-banner-enter 420ms var(--ease-soft) both;
     }
