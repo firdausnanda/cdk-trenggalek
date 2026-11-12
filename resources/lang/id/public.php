@@ -187,6 +187,7 @@ return [
         'ach_greening' => 'Penghijauan lingkungan',
         'ach_tourism' => 'Pengunjung wisata alam',
         'ach_tourism_note' => 'Pendapatan :amount',
+        'ach_tourism_reporters' => '{1} dilaporkan 1 pengelola: :names|[2,*] dilaporkan :count pengelola',
         'ach_fire' => 'Kebakaran hutan',
         'ach_fire_note' => ':area ha terdampak',
         'data_source' => 'SMART-HUT, Sistem Informasi Data Kehutanan',

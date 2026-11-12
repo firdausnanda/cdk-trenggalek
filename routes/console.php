@@ -21,3 +21,6 @@ Artisan::command('inspire', function () {
 
 // Refresh the demo database every 15 minutes (the command skips itself unless demo mode is enabled).
 Schedule::command('demo:refresh-database')->everyFifteenMinutes();
+
+// Refresh the forestry figures on the homepage from SMART-HUT (pages only read the stored copy).
+Schedule::command('smart-hut:sync')->everyTenMinutes()->withoutOverlapping()->runInBackground();

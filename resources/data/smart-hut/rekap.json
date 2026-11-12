@@ -1,0 +1,387 @@
+{
+    "pemberdayaan": {
+        "tahun": 2026,
+        "tahun_tersedia": [
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+        ],
+        "kth": {
+            "jumlah": 310,
+            "jumlah_anggota": 9698,
+            "luas_kelola_ha": 825.92,
+            "jumlah_catatan": 323
+        },
+        "perhutanan_sosial": {
+            "jumlah_kelompok": 26,
+            "jumlah_kk": 22766,
+            "luas_ps_ha": 23838.27
+        },
+        "kups": {
+            "jumlah": 12,
+            "per_kelas": [
+                {
+                    "kelas": "Blue",
+                    "jumlah": 5
+                },
+                {
+                    "kelas": "Gold",
+                    "jumlah": 6
+                },
+                {
+                    "kelas": "Platinum",
+                    "jumlah": 1
+                }
+            ]
+        },
+        "nilai_transaksi_ekonomi": {
+            "total_rp": 205269662770,
+            "jumlah_catatan": 2419,
+            "periode": {
+                "bulan_awal": 1,
+                "bulan_akhir": 10
+            },
+            "per_bulan": [
+                {
+                    "bulan": 1,
+                    "jumlah_catatan": 282,
+                    "total_rp": 19123461515
+                },
+                {
+                    "bulan": 2,
+                    "jumlah_catatan": 262,
+                    "total_rp": 18863930850
+                },
+                {
+                    "bulan": 3,
+                    "jumlah_catatan": 275,
+                    "total_rp": 16360237720
+                },
+                {
+                    "bulan": 4,
+                    "jumlah_catatan": 249,
+                    "total_rp": 13749360362
+                },
+                {
+                    "bulan": 5,
+                    "jumlah_catatan": 276,
+                    "total_rp": 17493082480
+                },
+                {
+                    "bulan": 6,
+                    "jumlah_catatan": 270,
+                    "total_rp": 25886429860
+                },
+                {
+                    "bulan": 7,
+                    "jumlah_catatan": 272,
+                    "total_rp": 30776781728
+                },
+                {
+                    "bulan": 8,
+                    "jumlah_catatan": 272,
+                    "total_rp": 29233758180
+                },
+                {
+                    "bulan": 9,
+                    "jumlah_catatan": 257,
+                    "total_rp": 33578072225
+                },
+                {
+                    "bulan": 10,
+                    "jumlah_catatan": 4,
+                    "total_rp": 204547850
+                }
+            ]
+        },
+        "nilai_ekonomi": {
+            "total_rp": 3724809000,
+            "jumlah_catatan": 6,
+            "periode": {
+                "bulan_awal": 1,
+                "bulan_akhir": 5
+            },
+            "per_bulan": [
+                {
+                    "bulan": 1,
+                    "jumlah_catatan": 1,
+                    "total_rp": 817044000
+                },
+                {
+                    "bulan": 2,
+                    "jumlah_catatan": 1,
+                    "total_rp": 288186000
+                },
+                {
+                    "bulan": 3,
+                    "jumlah_catatan": 1,
+                    "total_rp": 484579000
+                },
+                {
+                    "bulan": 4,
+                    "jumlah_catatan": 2,
+                    "total_rp": 1755000000
+                },
+                {
+                    "bulan": 5,
+                    "jumlah_catatan": 1,
+                    "total_rp": 380000000
+                }
+            ]
+        },
+        "per_kabupaten": [
+            {
+                "kabupaten": {
+                    "id": "3503",
+                    "nama": "KABUPATEN TRENGGALEK"
+                },
+                "kth": {
+                    "jumlah": 79,
+                    "jumlah_anggota": 3400,
+                    "luas_kelola_ha": 825.92
+                },
+                "perhutanan_sosial": {
+                    "jumlah_kelompok": 16,
+                    "jumlah_kk": 14926,
+                    "luas_ps_ha": 18599.49
+                },
+                "nilai_transaksi_ekonomi_rp": 122651878743
+            },
+            {
+                "kabupaten": {
+                    "id": "3504",
+                    "nama": "KABUPATEN TULUNGAGUNG"
+                },
+                "kth": {
+                    "jumlah": 154,
+                    "jumlah_anggota": 4127,
+                    "luas_kelola_ha": 0
+                },
+                "perhutanan_sosial": {
+                    "jumlah_kelompok": 4,
+                    "jumlah_kk": 2397,
+                    "luas_ps_ha": 2303
+                },
+                "nilai_transaksi_ekonomi_rp": 68326532790
+            },
+            {
+                "kabupaten": {
+                    "id": "3506",
+                    "nama": "KABUPATEN KEDIRI"
+                },
+                "kth": {
+                    "jumlah": 77,
+                    "jumlah_anggota": 2171,
+                    "luas_kelola_ha": 0
+                },
+                "perhutanan_sosial": {
+                    "jumlah_kelompok": 6,
+                    "jumlah_kk": 5443,
+                    "luas_ps_ha": 2935.78
+                },
+                "nilai_transaksi_ekonomi_rp": 14291251237
+            }
+        ],
+        "diperbarui_pada": "2026-10-23T07:27:06+00:00"
+    },
+    "rhl": {
+        "tahun": 2026,
+        "tahun_tersedia": [
+            2021,
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+        ],
+        "rehab_lahan": {
+            "jumlah_lokasi": 11,
+            "target_tahunan_ha": 49,
+            "realisasi_ha": 10,
+            "persentase_realisasi": 20.4,
+            "periode": {
+                "bulan_awal": 2,
+                "bulan_akhir": 11
+            },
+            "per_kabupaten": [
+                {
+                    "kabupaten": {
+                        "id": "3503",
+                        "nama": "KABUPATEN TRENGGALEK"
+                    },
+                    "jumlah_lokasi": 3,
+                    "target_tahunan_ha": 14,
+                    "realisasi_ha": 5,
+                    "persentase_realisasi": 35.7
+                },
+                {
+                    "kabupaten": {
+                        "id": "3504",
+                        "nama": "KABUPATEN TULUNGAGUNG"
+                    },
+                    "jumlah_lokasi": 5,
+                    "target_tahunan_ha": 22,
+                    "realisasi_ha": 5,
+                    "persentase_realisasi": 22.7
+                },
+                {
+                    "kabupaten": {
+                        "id": "3506",
+                        "nama": "KABUPATEN KEDIRI"
+                    },
+                    "jumlah_lokasi": 3,
+                    "target_tahunan_ha": 13,
+                    "realisasi_ha": 0,
+                    "persentase_realisasi": 0
+                }
+            ]
+        },
+        "penghijauan_lingkungan": {
+            "jumlah_lokasi": 10,
+            "target_tahunan_ha": 0,
+            "realisasi_ha": 35,
+            "persentase_realisasi": null,
+            "periode": {
+                "bulan_awal": 1,
+                "bulan_akhir": 4
+            },
+            "per_kabupaten": [
+                {
+                    "kabupaten": {
+                        "id": "3503",
+                        "nama": "KABUPATEN TRENGGALEK"
+                    },
+                    "jumlah_lokasi": 7,
+                    "target_tahunan_ha": 0,
+                    "realisasi_ha": 17.5,
+                    "persentase_realisasi": null
+                },
+                {
+                    "kabupaten": {
+                        "id": "3504",
+                        "nama": "KABUPATEN TULUNGAGUNG"
+                    },
+                    "jumlah_lokasi": 3,
+                    "target_tahunan_ha": 0,
+                    "realisasi_ha": 17.5,
+                    "persentase_realisasi": null
+                }
+            ]
+        },
+        "rehab_mangrove": {
+            "jumlah_lokasi": 1,
+            "target_tahunan_ha": 0,
+            "realisasi_ha": 0.1,
+            "persentase_realisasi": null,
+            "periode": {
+                "bulan_awal": 4,
+                "bulan_akhir": 4
+            },
+            "per_kabupaten": [
+                {
+                    "kabupaten": {
+                        "id": "3504",
+                        "nama": "KABUPATEN TULUNGAGUNG"
+                    },
+                    "jumlah_lokasi": 1,
+                    "target_tahunan_ha": 0,
+                    "realisasi_ha": 0.1,
+                    "persentase_realisasi": null
+                }
+            ]
+        },
+        "reboisasi_ps": {
+            "jumlah_lokasi": 4,
+            "target_tahunan_ha": 216.38,
+            "realisasi_ha": 0,
+            "persentase_realisasi": 0,
+            "periode": {
+                "bulan_awal": 1,
+                "bulan_akhir": 1
+            },
+            "per_kabupaten": [
+                {
+                    "kabupaten": {
+                        "id": "3506",
+                        "nama": "KABUPATEN KEDIRI"
+                    },
+                    "jumlah_lokasi": 4,
+                    "target_tahunan_ha": 216.38,
+                    "realisasi_ha": 0,
+                    "persentase_realisasi": 0
+                }
+            ]
+        },
+        "diperbarui_pada": "2026-09-25T01:58:16+00:00"
+    },
+    "perlindungan": {
+        "tahun": 2026,
+        "tahun_tersedia": [
+            2021,
+            2022,
+            2023,
+            2024,
+            2025,
+            2026
+        ],
+        "kebakaran_hutan": {
+            "jumlah_kejadian": 26,
+            "luas_terbakar_ha": 47.1,
+            "periode": {
+                "bulan_awal": 6,
+                "bulan_akhir": 9
+            },
+            "per_kabupaten": [
+                {
+                    "kabupaten": {
+                        "id": "3503",
+                        "nama": "KABUPATEN TRENGGALEK"
+                    },
+                    "jumlah_kejadian": 14,
+                    "luas_terbakar_ha": 23
+                },
+                {
+                    "kabupaten": {
+                        "id": "3504",
+                        "nama": "KABUPATEN TULUNGAGUNG"
+                    },
+                    "jumlah_kejadian": 11,
+                    "luas_terbakar_ha": 22.6
+                },
+                {
+                    "kabupaten": {
+                        "id": "3506",
+                        "nama": "KABUPATEN KEDIRI"
+                    },
+                    "jumlah_kejadian": 1,
+                    "luas_terbakar_ha": 1.5
+                }
+            ]
+        },
+        "pengunjung_wisata": {
+            "jumlah_pengunjung": 331229,
+            "pendapatan_bruto_rp": 5251533000,
+            "periode": {
+                "bulan_awal": 1,
+                "bulan_akhir": 8
+            },
+            "per_pengelola": [
+                {
+                    "pengelola": {
+                        "id": 9,
+                        "nama": "Rimba Madu Sejahtera (Trenggalek)"
+                    },
+                    "jumlah_pengunjung": 331229,
+                    "pendapatan_bruto_rp": 5251533000,
+                    "periode": {
+                        "bulan_awal": 1,
+                        "bulan_akhir": 8
+                    }
+                }
+            ]
+        },
+        "diperbarui_pada": "2026-10-23T07:23:35+00:00"
+    }
+}

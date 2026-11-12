@@ -34,9 +34,7 @@ return [
     'smart_hut' => [
         'url' => env('SMART_HUT_URL'),
         'token' => env('SMART_HUT_TOKEN'),
-        'cdk_id' => (int) env('SMART_HUT_CDK_ID', 3),
-        'cache_ttl' => (int) env('SMART_HUT_CACHE_TTL', 600),
-        'timeout' => (int) env('SMART_HUT_TIMEOUT', 5),
+        'timeout' => (int) env('SMART_HUT_TIMEOUT', 20),
     ],
 
 ];

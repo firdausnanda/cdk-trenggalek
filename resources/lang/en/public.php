@@ -188,6 +188,7 @@ return [
         'ach_greening' => 'Environmental greening',
         'ach_tourism' => 'Nature tourism visitors',
         'ach_tourism_note' => 'Revenue :amount',
+        'ach_tourism_reporters' => '{1} reported by 1 operator: :names|[2,*] reported by :count operators',
         'ach_fire' => 'Forest fires',
         'ach_fire_note' => ':area ha affected',
         'data_source' => 'SMART-HUT, Forestry Data Information System',

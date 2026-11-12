@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
  * Forestry figures for the public pages, read from SMART-HUT (Sistem Informasi Data Kehutanan).
  *
- * The CDK summary comes from SMART-HUT's public endpoint (see docs/smart-hut-integration.md) and is
- * cached. When SMART-HUT is not configured or cannot be reached, the last good response is used, and
- * failing that the snapshot bundled in resources/data/smart-hut/ringkasan.json.
+ * The figures come from SMART-HUT's summary endpoints /api/v1/{modul}/rekap, which count final data only,
+ * scoped to the token's CDK (see docs/smart-hut-integration.md). Pages never call SMART-HUT: the scheduled
+ * `smart-hut:sync` command stores the responses, and pages read the stored copy, or the snapshot bundled
+ * in resources/data/smart-hut/rekap.json until the first sync succeeds.
  */
 class SmartHutService
 {
@@ -26,93 +28,169 @@ class SmartHutService
         'kediri' => ['name' => 'Kediri', 'label' => 'Kabupaten & Kota Kediri', 'regencies' => ['3506', '3571']],
     ];
 
-    /** Per-regency figures in the SMART-HUT response that are summed into regions and totals. */
+    /** Per-region figures, summed into regions. */
     public const REGION_METRICS = ['kth', 'anggota_kth', 'ps', 'ps_kk', 'nilai_transaksi_ekonomi'];
 
-    private const CACHE_KEY = 'smart_hut.ringkasan';
+    /** SMART-HUT summary endpoints, by module. */
+    public const MODULES = ['pemberdayaan', 'rhl', 'perlindungan'];
 
-    private const LAST_GOOD_KEY = 'smart_hut.ringkasan.last_good';
+    public const CACHE_KEY = 'smart_hut.rekap';
 
     /**
      * The CDK summary grouped by region, with totals, yearly achievements and where it came from.
      */
     public function summary(): array
     {
-        $raw = Cache::remember(self::CACHE_KEY, config('services.smart_hut.cache_ttl'), fn () => $this->fetch());
-
-        return $this->normalize($raw);
+        return $this->normalize(Cache::get(self::CACHE_KEY) ?? $this->snapshot());
     }
 
-    private function fetch(): array
+    /**
+     * Fetch the summaries from SMART-HUT and store them for the pages. On failure the stored copy is kept.
+     *
+     * @throws Throwable when SMART-HUT is not configured or cannot be read
+     */
+    public function sync(): array
     {
-        $url = config('services.smart_hut.url');
-
-        if ($url) {
-            try {
-                $token = config('services.smart_hut.token');
-                $data = Http::baseUrl($url)
-                    ->when($token, fn ($request) => $request->withToken($token))
-                    ->acceptJson()
-                    ->timeout(config('services.smart_hut.timeout'))
-                    ->get('api/public/cdk/' . config('services.smart_hut.cdk_id') . '/ringkasan')
-                    ->throw()
-                    ->json();
-
-                if (is_array($data) && isset($data['wilayah'])) {
-                    $data['sumber'] = 'smart-hut';
-                    Cache::forever(self::LAST_GOOD_KEY, $data);
-
-                    return $data;
-                }
-
-                Log::warning('SMART-HUT summary has an unexpected shape.');
-            } catch (Throwable $e) {
-                Log::warning('SMART-HUT summary unavailable: ' . $e->getMessage());
-            }
+        if (! config('services.smart_hut.url')) {
+            throw new \RuntimeException('SMART_HUT_URL is not set.');
         }
 
-        return Cache::get(self::LAST_GOOD_KEY) ?? $this->snapshot();
+        $data = ['sumber' => 'smart-hut'];
+        foreach (self::MODULES as $module) {
+            $data[$module] = $this->rekap($module);
+        }
+
+        Cache::forever(self::CACHE_KEY, $data);
+
+        return $this->normalize($data);
+    }
+
+    private function rekap(string $module): array
+    {
+        $token = config('services.smart_hut.token');
+        $response = Http::baseUrl(rtrim(config('services.smart_hut.url'), '/') . '/api/v1/')
+            ->when($token, fn ($request) => $request->withToken($token))
+            ->acceptJson()
+            ->timeout(config('services.smart_hut.timeout'))
+            ->retry(3, 2000, fn (Throwable $e) => $e instanceof ConnectionException
+                || ($e instanceof RequestException && ($e->response->serverError() || $e->response->status() === 429)))
+            ->get("{$module}/rekap")
+            ->json();
+
+        if (! is_array($response['data'] ?? null) || ! array_key_exists('tahun', $response['data'])) {
+            throw new \UnexpectedValueException("SMART-HUT {$module}/rekap has an unexpected shape.");
+        }
+
+        return $response['data'];
     }
 
     private function snapshot(): array
     {
-        $data = json_decode(file_get_contents(resource_path('data/smart-hut/ringkasan.json')), true);
+        $data = json_decode(file_get_contents(resource_path('data/smart-hut/rekap.json')), true);
 
         return ['sumber' => 'snapshot'] + $data;
     }
 
     private function normalize(array $raw): array
     {
-        $byRegency = collect($raw['wilayah'] ?? [])->keyBy(fn (array $row) => (string) $row['regency_id']);
+        $pemberdayaan = $raw['pemberdayaan'] ?? [];
+        $rhl = $raw['rhl'] ?? [];
+        $perlindungan = $raw['perlindungan'] ?? [];
+
+        $byRegency = collect($pemberdayaan['per_kabupaten'] ?? [])
+            ->keyBy(fn (array $row) => (string) $row['kabupaten']['id'])
+            ->map(fn (array $row) => [
+                'kth' => $row['kth']['jumlah'] ?? 0,
+                'anggota_kth' => $row['kth']['jumlah_anggota'] ?? 0,
+                'ps' => $row['perhutanan_sosial']['jumlah_kelompok'] ?? 0,
+                'ps_kk' => $row['perhutanan_sosial']['jumlah_kk'] ?? 0,
+                'nilai_transaksi_ekonomi' => $row['nilai_transaksi_ekonomi_rp'] ?? 0,
+            ]);
 
         $regions = [];
         foreach (self::REGIONS as $slug => $region) {
             $rows = $byRegency->only($region['regencies']);
             $regions[$slug] = ['slug' => $slug, 'name' => $region['name'], 'label' => $region['label']];
             foreach (self::REGION_METRICS as $metric) {
-                $regions[$slug][$metric] = $rows->sum(fn (array $row) => $row[$metric] ?? 0);
+                $regions[$slug][$metric] = $rows->sum($metric);
             }
         }
 
-        $totals = [];
-        foreach (self::REGION_METRICS as $metric) {
-            $totals[$metric] = array_sum(array_column($regions, $metric));
-        }
+        $transaksi = $pemberdayaan['nilai_transaksi_ekonomi'] ?? [];
+        $rehab = $rhl['rehab_lahan'] ?? [];
+        $hijau = $rhl['penghijauan_lingkungan'] ?? [];
+        $wisata = $perlindungan['pengunjung_wisata'] ?? [];
+        $api = $perlindungan['kebakaran_hutan'] ?? [];
 
-        $capaian = $raw['capaian'] ?? [];
+        $updated = collect([$pemberdayaan, $rhl, $perlindungan])->pluck('diperbarui_pada')->filter()
+            ->map(fn (string $at) => Carbon::parse($at))->max();
 
         return [
             'sumber' => $raw['sumber'] ?? 'snapshot',
-            'diperbarui' => isset($raw['diperbarui']) ? Carbon::parse($raw['diperbarui']) : null,
-            'tahun' => (int) ($raw['tahun'] ?? now()->year),
+            'diperbarui' => $updated,
+            'tahun' => $pemberdayaan['tahun'] ?? null,
+            'periode' => $transaksi['periode'] ?? null,
             'regions' => $regions,
-            'totals' => $totals,
+            'totals' => [
+                'kth' => $pemberdayaan['kth']['jumlah'] ?? 0,
+                'anggota_kth' => $pemberdayaan['kth']['jumlah_anggota'] ?? 0,
+                'ps' => $pemberdayaan['perhutanan_sosial']['jumlah_kelompok'] ?? 0,
+                'ps_kk' => $pemberdayaan['perhutanan_sosial']['jumlah_kk'] ?? 0,
+                'nilai_transaksi_ekonomi' => $transaksi['total_rp'] ?? 0,
+            ],
             'capaian' => [
-                'rehab_lahan' => ($capaian['rehab_lahan'] ?? []) + ['realisasi' => 0, 'target' => 0],
-                'penghijauan' => ($capaian['penghijauan'] ?? []) + ['realisasi' => 0, 'target' => 0],
-                'wisata' => ($capaian['wisata'] ?? []) + ['pengunjung' => 0, 'pendapatan' => 0],
-                'kebakaran' => ($capaian['kebakaran'] ?? []) + ['kejadian' => 0, 'luas' => 0],
+                'tahun' => $rhl['tahun'] ?? $perlindungan['tahun'] ?? null,
+                'rehab_lahan' => [
+                    'tahun' => $rhl['tahun'] ?? null,
+                    'periode' => $rehab['periode'] ?? null,
+                    'realisasi' => $rehab['realisasi_ha'] ?? 0,
+                    'target' => $rehab['target_tahunan_ha'] ?? 0,
+                    'persen' => $rehab['persentase_realisasi'] ?? null,
+                ],
+                'penghijauan' => [
+                    'tahun' => $rhl['tahun'] ?? null,
+                    'periode' => $hijau['periode'] ?? null,
+                    'realisasi' => $hijau['realisasi_ha'] ?? 0,
+                    'target' => $hijau['target_tahunan_ha'] ?? 0,
+                    'persen' => $hijau['persentase_realisasi'] ?? null,
+                ],
+                'wisata' => [
+                    'tahun' => $perlindungan['tahun'] ?? null,
+                    'periode' => $wisata['periode'] ?? null,
+                    'pengunjung' => $wisata['jumlah_pengunjung'] ?? 0,
+                    'pendapatan' => $wisata['pendapatan_bruto_rp'] ?? 0,
+                    'pengelola' => array_values(array_filter(array_map(
+                        fn (array $row) => $row['pengelola']['nama'] ?? null,
+                        $wisata['per_pengelola'] ?? [],
+                    ))),
+                ],
+                'kebakaran' => [
+                    'tahun' => $perlindungan['tahun'] ?? null,
+                    'periode' => $api['periode'] ?? null,
+                    'kejadian' => $api['jumlah_kejadian'] ?? 0,
+                    'luas' => $api['luas_terbakar_ha'] ?? 0,
+                ],
             ],
         ];
+    }
+
+    /**
+     * "Jan–Sep 2026", "Agt 2026", or just the year for a full or unknown month range.
+     */
+    public static function periodLabel(?array $periode, ?int $tahun): string
+    {
+        if (! $tahun) {
+            return '';
+        }
+
+        $awal = (int) ($periode['bulan_awal'] ?? 1);
+        $akhir = (int) ($periode['bulan_akhir'] ?? 12);
+        if (! $periode || ($awal === 1 && $akhir === 12)) {
+            return (string) $tahun;
+        }
+
+        $month = fn (int $m) => Carbon::create($tahun, $m, 1)->translatedFormat('M');
+
+        return ($awal === $akhir ? $month($awal) : $month($awal) . '–' . $month($akhir)) . ' ' . $tahun;
     }
 }

@@ -6,77 +6,50 @@ Angka kehutanan di beranda (statistik hero, peta wilayah kerja, dan Capaian tahu
 ## Alur data
 
 ```
-SMART-HUT  ──GET /api/public/cdk/{cdk}/ringkasan──▶  SmartHutService  ──▶  beranda
-                                                     │ cache 10 menit
-                                                     ├ gagal? pakai respons terakhir yang berhasil
-                                                     └ belum pernah berhasil? pakai snapshot bawaan
+SMART-HUT /api/v1  ──▶  php artisan smart-hut:sync (terjadwal tiap 10 menit)  ──▶  cache  ──▶  beranda
+                         ├ gagal? ringkasan tersimpan sebelumnya tetap dipakai
+                         └ belum pernah berhasil? beranda pakai snapshot bawaan
 ```
 
-- `App\Services\SmartHutService` mengambil ringkasan, menyimpannya di cache (`SMART_HUT_CACHE_TTL`, default
-  600 detik), lalu mengelompokkan kabupaten/kota menjadi tiga wilayah di situs:
-  Trenggalek (`3503`), Tulungagung (`3504`), dan Kediri (`3506` Kabupaten + `3571` Kota).
-- Jika SMART-HUT tidak dapat diakses, situs tetap tampil dengan respons terakhir yang berhasil. Jika belum
-  pernah berhasil, situs memakai `resources/data/smart-hut/ringkasan.json`.
-- Halaman menampilkan sumber dan tanggal pembaruan; label "salinan" muncul jika data berasal dari snapshot.
+SMART-HUT bisa lambat, jadi halaman **tidak pernah** memanggilnya langsung. Perintah `smart-hut:sync`
+(dijadwalkan di `routes/console.php`, dijalankan container `scheduler`) memanggil
+`App\Services\SmartHutService::sync()`, yang membaca tiga endpoint rekap. Semua angka dihitung di SMART-HUT dari
+data **final**, dibatasi ke CDK pemilik token. Tahunnya adalah tahun terakhir yang punya data final, bukan tahun
+kalender. Kabupaten/kota dikelompokkan menjadi tiga wilayah situs: Trenggalek (`3503`), Tulungagung (`3504`), dan
+Kediri (`3506` Kabupaten + `3571` Kota).
+
+| Angka di beranda | Endpoint | Field |
+|---|---|---|
+| KTH, anggota KTH (satu catatan terbaru per nomor register) | `pemberdayaan/rekap` | `kth.jumlah`, `kth.jumlah_anggota`, `per_kabupaten[].kth` |
+| Kelompok PS, KK | `pemberdayaan/rekap` | `perhutanan_sosial.jumlah_kelompok`, `.jumlah_kk`, `per_kabupaten[].perhutanan_sosial` |
+| Nilai transaksi ekonomi + periode | `pemberdayaan/rekap` | `nilai_transaksi_ekonomi.total_rp`, `.periode`, `per_kabupaten[].nilai_transaksi_ekonomi_rp` |
+| Rehabilitasi lahan (% dari target) | `rhl/rekap` | `rehab_lahan.realisasi_ha`, `.target_tahunan_ha`, `.persentase_realisasi`, `.periode` |
+| Penghijauan | `rhl/rekap` | `penghijauan_lingkungan.realisasi_ha`, `.periode` |
+| Wisata alam + pengelola yang melapor | `perlindungan/rekap` | `pengunjung_wisata.jumlah_pengunjung`, `.pendapatan_bruto_rp`, `.periode`, `.per_pengelola[]` |
+| Kebakaran hutan | `perlindungan/rekap` | `kebakaran_hutan.jumlah_kejadian`, `.luas_terbakar_ha`, `.periode` |
+| Tanggal pembaruan | ketiganya | `diperbarui_pada` terbaru |
+
+Setiap angka diberi label periode bulan dari field `periode`, mis. "Jan–Sep 2026". Pengunjung wisata juga
+menyebut pengelola yang melapor, karena tidak semua objek wisata melapor setiap tahun.
+
+Gangguan koneksi, 5xx, dan 429 dicoba ulang hingga 3 kali. Jika satu endpoint tetap gagal, seluruh sinkronisasi
+dibatalkan dan ringkasan sebelumnya tetap dipakai. Sebelum sinkronisasi pertama berhasil, beranda memakai snapshot
+`resources/data/smart-hut/rekap.json` (respons ketiga endpoint rekap).
+
+Token wajib punya ability `pemberdayaan.read`, `rhl.read`, dan `perlindungan.read`.
 
 ## Konfigurasi (`.env`)
 
 | Variabel | Isi |
 |---|---|
-| `SMART_HUT_URL` | URL dasar SMART-HUT, mis. `https://smarthut.example.go.id`. Kosong = pakai snapshot. |
-| `SMART_HUT_TOKEN` | Token Bearer jika endpoint dilindungi (opsional). |
-| `SMART_HUT_CDK_ID` | ID CDK di tabel `m_cdk` SMART-HUT. CDK Wilayah Trenggalek = `3`. |
-| `SMART_HUT_CACHE_TTL` | Lama cache dalam detik (default `600`). |
+| `SMART_HUT_URL` | URL dasar SMART-HUT tanpa `/api/v1`: `https://smarthut.dishut.jatimprov.go.id`. Kosong = pakai snapshot. |
+| `SMART_HUT_TOKEN` | Token Bearer klien integrasi. Simpan hanya di `.env`, jangan di repositori. |
+| `SMART_HUT_TIMEOUT` | Batas waktu tiap permintaan dalam detik (default `20`). |
 
-## Kontrak endpoint (perlu dibuat di SMART-HUT)
-
-`GET /api/public/cdk/{cdk_id}/ringkasan` → `200 application/json`
-
-Semua angka hanya dari data berstatus `final` dan belum dihapus (`deleted_at IS NULL`), difilter `cdk_id`.
-
-```json
-{
-  "cdk": { "id": 3, "nama": "CDK Wilayah Trenggalek" },
-  "tahun": 2026,
-  "diperbarui": "2026-09-10T01:34:22+07:00",
-  "wilayah": [
-    {
-      "regency_id": "3503",
-      "nama": "KABUPATEN TRENGGALEK",
-      "kth": 90,
-      "anggota_kth": 3908,
-      "ps": 16,
-      "ps_kk": 14926,
-      "nilai_transaksi_ekonomi": 96521266978
-    }
-  ],
-  "capaian": {
-    "rehab_lahan": { "realisasi": 10, "target": 49 },
-    "penghijauan": { "realisasi": 35, "target": 0 },
-    "wisata": { "pengunjung": 331229, "pendapatan": 5251533000 },
-    "kebakaran": { "kejadian": 23, "luas": 40.4 }
-  }
-}
-```
-
-`wilayah` berisi satu baris per kabupaten/kota di `cdk_regency` untuk CDK tersebut.
-
-| Field | Sumber di SMART-HUT |
-|---|---|
-| `kth`, `anggota_kth` | `perkembangan_kth`: `count(*)`, `sum(jumlah_anggota)` |
-| `ps`, `ps_kk` | `skps`: `count(*)`, `sum(number_of_kk)` |
-| `nilai_transaksi_ekonomi` | `nilai_transaksi_ekonomi`: `sum(total_nilai_transaksi)` untuk `tahun` |
-| `capaian.rehab_lahan` | `rehab_lahan`: `sum(realization)`, `sum(target_annual)` untuk `tahun` (ha) |
-| `capaian.penghijauan` | `penghijauan_lingkungan`: `sum(realization)`, `sum(target_annual)` untuk `tahun` (ha) |
-| `capaian.wisata` | `pengunjung_wisata`: `sum(number_of_visitors)`, `sum(gross_income)` untuk `tahun` |
-| `capaian.kebakaran` | `kebakaran_hutan`: `sum(number_of_fires)`, `sum(fire_area)` untuk `tahun` (ha) |
-| `diperbarui` | `max(updated_at)` dari tabel-tabel di atas |
-
-Saran implementasi di SMART-HUT: rute di `routes/api.php` tanpa login (atau dengan token Sanctum
-khusus), `Cache::remember` 5–10 menit seperti dashboard publik, dan `throttle` untuk membatasi permintaan.
+Setelah mengubah `.env`, jalankan `php artisan config:clear` lalu `php artisan smart-hut:sync` untuk langsung
+memperbarui data tanpa menunggu jadwal.
 
 ## Memperbarui snapshot
 
-Snapshot `resources/data/smart-hut/ringkasan.json` dibuat dari database SMART-HUT lokal (data final
-CDK 3, tahun 2026, diperbarui 10 September 2026). Setelah endpoint tersedia, perbarui snapshot dengan
-menyimpan respons endpoint ke file tersebut.
+Simpan bagian `data` dari respons `pemberdayaan/rekap`, `rhl/rekap`, dan `perlindungan/rekap` ke
+`resources/data/smart-hut/rekap.json` dengan kunci `pemberdayaan`, `rhl`, dan `perlindungan`.

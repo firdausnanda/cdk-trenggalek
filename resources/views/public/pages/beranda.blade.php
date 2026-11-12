@@ -12,8 +12,10 @@
         $regions[$slug]['label'] = \Illuminate\Support\Facades\Lang::has("public.regions.{$slug}") ? __("public.regions.{$slug}") : $region['label'];
     }
     $totals = $kehutanan['totals'];
-    $tahun = $kehutanan['tahun'];
     $capaian = $kehutanan['capaian'];
+    // Capaian year (latest year with final data); the transaction figure carries its own month range.
+    $tahun = $capaian['tahun'];
+    $periodeTransaksi = \App\Services\SmartHutService::periodLabel($kehutanan['periode'], $kehutanan['tahun']);
     $sumberData = __('public.home.data_source')
         . ($kehutanan['diperbarui'] ? ' · ' . __('public.home.data_updated', ['date' => $kehutanan['diperbarui']->translatedFormat('d F Y')]) : '');
 
@@ -21,7 +23,7 @@
         ['value' => $totals['kth'], 'label' => __('public.home.stat_kth')],
         ['value' => $totals['anggota_kth'], 'label' => __('public.home.kth_members')],
         ['value' => $totals['ps'], 'label' => __('public.home.ps_groups')],
-        ['value' => $totals['nilai_transaksi_ekonomi'], 'label' => __('public.home.stat_economic', ['year' => $tahun]), 'rupiah' => true],
+        ['value' => $totals['nilai_transaksi_ekonomi'], 'label' => __('public.home.stat_economic', ['year' => $periodeTransaksi]), 'rupiah' => true],
     ];
 
     $services = [
@@ -176,19 +178,30 @@
             </div>
 
             @php
-                $rehabPersen = $capaian['rehab_lahan']['target'] > 0
-                    ? min(100, round($capaian['rehab_lahan']['realisasi'] / $capaian['rehab_lahan']['target'] * 100))
-                    : null;
+                $periode = fn (array $item) => \App\Services\SmartHutService::periodLabel($item['periode'], $item['tahun']);
+                $catatan = fn (?string ...$parts) => implode(' · ', array_filter($parts)) ?: null;
+                $rehab = $capaian['rehab_lahan'];
+                $wisata = $capaian['wisata'];
                 $capaianItems = [
                     [
-                        'label' => __('public.home.ach_rehab'), 'value' => $capaian['rehab_lahan']['realisasi'], 'decimals' => 1, 'unit' => 'ha',
-                        'note' => $rehabPersen !== null
-                            ? __('public.home.ach_rehab_note', ['percent' => $rehabPersen, 'target' => angka($capaian['rehab_lahan']['target'], 1)])
-                            : __('public.home.ach_realised'),
+                        'label' => __('public.home.ach_rehab'), 'value' => $rehab['realisasi'], 'decimals' => 1, 'unit' => 'ha',
+                        'note' => $catatan(
+                            $rehab['persen'] !== null
+                                ? __('public.home.ach_rehab_note', ['percent' => angka(min(100, $rehab['persen']), 0), 'target' => angka($rehab['target'], 1)])
+                                : __('public.home.ach_realised'),
+                            $periode($rehab),
+                        ),
                     ],
-                    ['label' => __('public.home.ach_greening'), 'value' => $capaian['penghijauan']['realisasi'], 'decimals' => 1, 'unit' => 'ha', 'note' => null],
-                    ['label' => __('public.home.ach_tourism'), 'value' => $capaian['wisata']['pengunjung'], 'decimals' => 0, 'unit' => __('public.home.unit_people'), 'note' => __('public.home.ach_tourism_note', ['amount' => rupiah_singkat($capaian['wisata']['pendapatan'])])],
-                    ['label' => __('public.home.ach_fire'), 'value' => $capaian['kebakaran']['kejadian'], 'decimals' => 0, 'unit' => __('public.home.unit_incidents'), 'note' => __('public.home.ach_fire_note', ['area' => angka($capaian['kebakaran']['luas'], 1)])],
+                    ['label' => __('public.home.ach_greening'), 'value' => $capaian['penghijauan']['realisasi'], 'decimals' => 1, 'unit' => 'ha', 'note' => $periode($capaian['penghijauan'])],
+                    [
+                        'label' => __('public.home.ach_tourism'), 'value' => $wisata['pengunjung'], 'decimals' => 0, 'unit' => __('public.home.unit_people'),
+                        'note' => $catatan(
+                            __('public.home.ach_tourism_note', ['amount' => rupiah_singkat($wisata['pendapatan'])]),
+                            $periode($wisata),
+                            $wisata['pengelola'] ? trans_choice('public.home.ach_tourism_reporters', count($wisata['pengelola']), ['names' => implode(', ', $wisata['pengelola'])]) : null,
+                        ),
+                    ],
+                    ['label' => __('public.home.ach_fire'), 'value' => $capaian['kebakaran']['kejadian'], 'decimals' => 0, 'unit' => __('public.home.unit_incidents'), 'note' => $catatan(__('public.home.ach_fire_note', ['area' => angka($capaian['kebakaran']['luas'], 1)]), $periode($capaian['kebakaran']))],
                 ];
             @endphp
             <div class="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)] lg:gap-12">

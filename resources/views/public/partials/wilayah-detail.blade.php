@@ -24,7 +24,7 @@
                 </div>
             @endforeach
             <div class="flex items-baseline justify-between gap-5 py-3">
-                <dt class="text-sm text-white/70">{{ __('public.home.kth_economic_value', ['year' => $tahun]) }}</dt>
+                <dt class="text-sm text-white/70">{{ __('public.home.kth_economic_value', ['year' => $periodeTransaksi]) }}</dt>
                 <dd class="shrink-0 font-display text-xl whitespace-nowrap tabular-nums" x-text="$rupiah(region.nilai_transaksi_ekonomi)"
                     :class="metric === 'nilai_transaksi_ekonomi' ? 'text-leaf' : 'text-white'">
                     {{ rupiah_singkat($regions['trenggalek']['nilai_transaksi_ekonomi']) }}
