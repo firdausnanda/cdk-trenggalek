@@ -1,8 +1,16 @@
 @php
 use App\Services\ThemeColorService;
 
-$primaryColor = config('settings.theme_primary_color', '#635bff');
-$secondaryColor = config('settings.theme_secondary_color', '#1f2937');
+// The admin follows the CDK forest palette. The old LaraDashboard defaults (purple / slate)
+// are treated as "not customised", so a colour picked in Settings still wins.
+$primaryColor = config('settings.theme_primary_color') ?: '#1f5f3d';
+$secondaryColor = config('settings.theme_secondary_color') ?: '#0b2118';
+if (strtolower($primaryColor) === '#635bff') {
+    $primaryColor = '#1f5f3d';
+}
+if (strtolower($secondaryColor) === '#1f2937') {
+    $secondaryColor = '#0b2118';
+}
 
 $primaryPalette = ThemeColorService::generateColorPalette($primaryColor);
 @endphp

@@ -1,43 +1,45 @@
+{{--
+    Stat card. Params (all optional except label/value):
+    label, value, url, icon (bootstrap-icons class) or icon_svg (image URL), hint (small text under the value),
+    tone: forest | leaf | clay | sky (accent colour), bg (legacy: hex accent colour, used when no tone given).
+--}}
 @php
-    $enable_full_div_click = $enable_full_div_click ?? true;
+    $tones = [
+        'forest' => 'bg-forest-100 text-forest-800 dark:bg-forest-700/40 dark:text-forest-100',
+        'leaf' => 'bg-leaf/35 text-forest-900 dark:bg-leaf/20 dark:text-leaf',
+        'clay' => 'bg-[#f4e4d4] text-clay dark:bg-clay/30 dark:text-[#f0c9a4]',
+        'sky' => 'bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200',
+    ];
+    // No tone and no legacy hex colour -> forest.
+    $toneClass = $tones[$tone ?? (isset($bg) ? '' : 'forest')] ?? null;
+    $url = $url ?? null;
+    $tag = $url ? 'a' : 'div';
 @endphp
 
-<div class="{{ $class ?? 'bg-white' }} dark:bg-slate-800 w-full h-[160px] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden p-6 pb-0 {{ $enable_full_div_click ? 'cursor-pointer hover:shadow-lg transition-shadow duration-300' : '' }}"
-    @if($enable_full_div_click)
-        onclick="window.location.href='{{ $url ?? '#' }}'"
-    @endif
->
-    <div class="flex justify-between">
-        <p class="text-[#090909] dark:text-gray-100 text-sm font-medium">{{ $label }}</p>
-
-        <div class="">
-            <button type="button" data-tooltip-target="tooltip-card-{{ Str::slug($label) }}" data-tooltip-placement="bottom"
-                onclick="window.location.href='{{ $url ?? '#' }}'"
-                class="inline-flex items-center justify-center text-gray-500 w-8 h-8 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm">
-                <img src="{{ asset('/images/icons/move.svg') }}" class="dark:invert">
-            </button>
-            <div id="tooltip-card-{{ Str::slug($label) }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                {{ __('View') }} {{ $label }}
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex mt-6 gap-6 items-center">
-        <div class="bg-white rounded-lg border border-[#EFEFFF] shadow-sm w-10 h-10 items-center flex justify-center">
-            @if(!empty($icon))
-                <i class="{{ $icon }}"></i>
-            @elseif(!empty($icon_svg))
-                <img src="{{ $icon_svg }}" alt="">
+<{{ $tag }} @if ($url) href="{{ $url }}" @endif
+    class="group relative flex h-full flex-col justify-between gap-5 overflow-hidden rounded-2xl border border-sand bg-white p-4 sm:p-5 transition-all duration-200 dark:border-white/10 dark:bg-forest-900/60 {{ $url ? 'hover:-translate-y-0.5 hover:border-forest-200 hover:shadow-theme-md dark:hover:border-white/20' : '' }} {{ $class ?? '' }}">
+    <div class="flex items-start justify-between gap-3">
+        <p class="text-sm font-medium text-ink/65 dark:text-white/65">{{ $label }}</p>
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-xl {{ $toneClass ?? '' }}"
+            @if (!$toneClass) style="background: {{ ($bg ?? '#1f5f3d') }}1f; color: {{ $bg ?? '#1f5f3d' }};" @endif>
+            @if (!empty($icon))
+                <i class="{{ $icon }} text-lg" aria-hidden="true"></i>
+            @elseif (!empty($icon_svg))
+                <img src="{{ $icon_svg }}" alt="" class="size-5 dark:invert">
             @endif
-        </div>
+        </span>
+    </div>
 
-        <div class="text-[#090909] dark:text-gray-100 text-xl md:text-3xl font-medium">
+    <div>
+        <p class="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-forest-950 tabular-nums dark:text-white">
             {!! $value ?? 0 !!}
-        </div>
+        </p>
+        @if (!empty($hint))
+            <p class="mt-1 text-xs text-ink/55 dark:text-white/55">{!! $hint !!}</p>
+        @endif
     </div>
 
-    <div class="flex justify-end">
-        <div class="-mt-10 w-20 h-40 rounded-full blur-3xl" style="background: {{ $bg ?? '' }};"></div>
-    </div>
-</div>
+    @if ($url)
+        <i class="bi bi-arrow-up-right absolute right-5 bottom-5 text-sm text-ink/30 transition-colors group-hover:text-forest-700 dark:text-white/30 dark:group-hover:text-leaf" aria-hidden="true"></i>
+    @endif
+</{{ $tag }}>

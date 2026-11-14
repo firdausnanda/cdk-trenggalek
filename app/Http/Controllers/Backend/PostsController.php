@@ -132,15 +132,7 @@ class PostsController extends Controller
             $post->featured_image = $this->imageService->store($request->file('featured_image'), 'uploads/posts', ImageService::FEATURED_VARIANTS);
         }
 
-        // Handle publish date
-        if ($request->has('schedule_post') && $request->schedule_post && ! empty($request->published_at)) {
-            $post->status = 'future';
-            $post->published_at = Carbon::parse($request->published_at);
-        } elseif ($request->status === 'future' && ! empty($request->published_at)) {
-            $post->published_at = Carbon::parse($request->published_at);
-        } elseif ($request->status === 'publish') {
-            $post->published_at = now();
-        }
+        $this->applyPublishDate($request, $post);
 
         $this->applySeo($request, $post);
 
@@ -276,15 +268,7 @@ class PostsController extends Controller
             }
         }
 
-        // Handle publish date.
-        if ($request->has('schedule_post') && $request->schedule_post && ! empty($request->published_at)) {
-            $post->status = 'future';
-            $post->published_at = \Carbon\Carbon::parse($request->published_at);
-        } elseif ($request->status === 'future' && ! empty($request->published_at)) {
-            $post->published_at = \Carbon\Carbon::parse($request->published_at);
-        } elseif ($request->status === 'publish' && ! $post->published_at) {
-            $post->published_at = now();
-        }
+        $this->applyPublishDate($request, $post);
 
         $this->applySeo($request, $post);
 
@@ -432,5 +416,27 @@ class PostsController extends Controller
         }
 
         ld_do_action('post_meta_updated', $post, $metaKeys, $metaValues, $metaTypes, $metaDefaultValues);
+    }
+
+    /**
+     * Set the publish date from the form. Any date is allowed, including past dates for
+     * back-dated (archive) news. Published/scheduled status follows the chosen date:
+     * a past or current date publishes the post, a future date schedules it.
+     */
+    private function applyPublishDate(Request $request, Post $post): void
+    {
+        if ($request->boolean('schedule_post') && filled($request->published_at)) {
+            $post->published_at = Carbon::parse($request->published_at);
+
+            if (in_array($post->status, ['publish', 'future'], true)) {
+                $post->status = $post->published_at->isFuture() ? 'future' : 'publish';
+            }
+
+            return;
+        }
+
+        if ($post->status === 'publish' && ! $post->published_at) {
+            $post->published_at = now();
+        }
     }
 }

@@ -33,12 +33,12 @@
     darkMode = JSON.parse(localStorage.getItem('darkMode')) ?? false;
     $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)));
     $watch('sidebarToggle', value => localStorage.setItem('sidebarToggle', JSON.stringify(value)))
-" :class="{ 'dark bg-gray-900': darkMode === true }">
+" :class="{ 'dark bg-forest-950': darkMode === true }">
     <!-- Preloader -->
     <div x-show="loaded"
         x-init="window.addEventListener('DOMContentLoaded', () => { setTimeout(() => loaded = false, 500) })"
-        class="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-white dark:bg-black">
-        <div class="h-16 w-16 animate-spin rounded-full border-4 border-solid border-brand-500 border-t-transparent">
+        class="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-cream dark:bg-forest-950">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-forest-700 border-t-transparent dark:border-leaf dark:border-t-transparent">
         </div>
     </div>
     <!-- End Preloader -->
@@ -47,10 +47,10 @@
         @include('backend.layouts.partials.sidebar-logo')
 
         <!-- Content Area -->
-        <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto bg-white dark:bg-gray-900">
+        <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto bg-cream dark:bg-forest-950">
             <!-- Small Device Overlay -->
             <div @click="sidebarToggle = false" :class="sidebarToggle ? 'block lg:hidden' : 'hidden'"
-                class="fixed w-full h-screen z-9 bg-gray-900/50"></div>
+                class="fixed w-full h-screen z-9 bg-forest-950/60 backdrop-blur-sm"></div>
             <!-- End Small Device Overlay -->
 
             @include('backend.layouts.partials.header')

@@ -13,6 +13,10 @@ import userGrowthChart from "./components/charts/user-growth-chart.js";
 import "./components/image-resize";
 import SlugGenerator from "./components/slug-generator";
 import * as Popper from '@popperjs/core';
+import ApexCharts from "apexcharts";
+
+// Dashboard charts are written inline in Blade views; expose the bundled library to them.
+window.ApexCharts = ApexCharts;
 
 // Make Popper available globally with the correct structure
 window.Popper = Popper;

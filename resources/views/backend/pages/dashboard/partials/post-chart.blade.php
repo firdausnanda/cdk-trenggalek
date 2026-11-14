@@ -1,143 +1,52 @@
-<div class="col-span-12">
-    <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-        <div class="mb-4 flex items-center justify-between">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Post Activity') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Posts created over time') }}</p>
-            </div>
+<div class="h-full rounded-2xl border border-sand bg-white p-5 dark:border-white/10 dark:bg-forest-900/60 sm:p-6">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h2 class="font-display text-lg font-semibold text-forest-950 dark:text-white">{{ __('Post Activity') }}</h2>
+            <p class="text-sm text-ink/60 dark:text-white/60">{{ __('Posts created over time') }}</p>
         </div>
-        <div id="post-activity-chart" class="h-80"></div>
     </div>
+    <div id="post-activity-chart" class="mt-2 min-h-[300px]"></div>
 </div>
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Post data from the server
+    document.addEventListener('DOMContentLoaded', function () {
+        const el = document.querySelector('#post-activity-chart');
+        if (!el || typeof ApexCharts === 'undefined') return;
+
         const postData = @json($post_stats);
-        
-        // Chart options
-        const options = {
+        const t = window.dashboardChartTheme();
+
+        new ApexCharts(el, {
             series: [
-                {
-                    name: '{{ __("Published") }}',
-                    data: postData.published
-                },
-                {
-                    name: '{{ __("Draft") }}',
-                    data: postData.draft
-                }
+                { name: @json(__('Published')), data: postData.published },
+                { name: @json(__('Draft')), data: postData.draft },
             ],
             chart: {
                 type: 'bar',
-                height: 320,
+                height: 300,
                 stacked: true,
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true,
-                        selection: false,
-                        zoom: false,
-                        zoomin: false,
-                        zoomout: false,
-                        pan: false,
-                        reset: false
-                    }
-                },
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800
-                }
+                fontFamily: t.font,
+                foreColor: t.text,
+                background: 'transparent',
+                toolbar: { show: false },
             },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    borderRadius: 5,
-                    dataLabels: {
-                        total: {
-                            enabled: false
-                        }
-                    }
-                },
-            },
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                width: 2,
-                colors: ['transparent']
-            },
+            colors: [t.dark ? '#b5d86a' : '#1f5f3d', t.dark ? 'rgba(255,255,255,0.25)' : '#d8cfb6'],
+            plotOptions: { bar: { columnWidth: '42%', borderRadius: 6, borderRadiusApplication: 'end', borderRadiusWhenStacked: 'last' } },
+            dataLabels: { enabled: false },
             xaxis: {
                 categories: postData.labels,
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                },
-                labels: {
-                    style: {
-                        colors: '#64748b'
-                    }
-                }
+                axisBorder: { show: false },
+                axisTicks: { show: false },
             },
-            yaxis: {
-                title: {
-                    text: '{{ __("Number of Posts") }}',
-                    style: {
-                        color: '#64748b'
-                    }
-                },
-                labels: {
-                    style: {
-                        colors: '#64748b'
-                    }
-                }
-            },
-            fill: {
-                opacity: 1,
-                colors: ['#635bff', '#fb923c']
-            },
+            yaxis: { labels: { formatter: (v) => Math.round(v) } },
+            grid: { borderColor: t.grid, strokeDashArray: 4 },
+            legend: { position: 'top', horizontalAlign: 'right', markers: { size: 6, shape: 'circle' } },
             tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return val + " {{ __('posts') }}"
-                    }
-                }
+                theme: t.dark ? 'dark' : 'light',
+                y: { formatter: (v) => v + ' ' + @json(__('posts')) },
             },
-            legend: {
-                position: 'top',
-                horizontalAlign: 'right',
-                offsetY: -30,
-                markers: {
-                    width: 12,
-                    height: 12,
-                    radius: 12
-                }
-            },
-            grid: {
-                show: true,
-                borderColor: '#e2e8f0',
-                strokeDashArray: 4,
-                position: 'back'
-            },
-            responsive: [
-                {
-                    breakpoint: 480,
-                    options: {
-                        legend: {
-                            position: 'bottom',
-                            offsetY: 0
-                        }
-                    }
-                }
-            ]
-        };
-
-        const chart = new ApexCharts(document.querySelector("#post-activity-chart"), options);
-        chart.render();
+        }).render();
     });
 </script>
 @endpush

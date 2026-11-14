@@ -161,7 +161,7 @@
 
                 {!! ld_apply_filters('post_form_after_status', '') !!}
 
-                <!-- Publish Date (for scheduled posts) -->
+                <!-- Publish Date: any date; past dates back-date the post, future dates schedule it -->
                 <div x-data="{
                     showSchedule: {{ isset($post) && (old('status', $post->status) === 'future' || $post->published_at) ? 'true' : 'false' }},
                     status: '{{ old('status', $post->status ?? 'draft') }}',
@@ -175,10 +175,9 @@
                 }">
                     <div class="mb-2">
                         <input type="checkbox" id="schedule_post" name="schedule_post" x-model="showSchedule"
-                            x-on:change="if(showSchedule && status !== 'future') status = 'future'; $dispatch('input', status)"
                             class="mr-2">
                         <label for="schedule_post"
-                            class="text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('Schedule this post') }}</label>
+                            class="text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('Set publish date') }}</label>
                     </div>
                     <div x-show="showSchedule" class="mt-2">
                         <x-inputs.datetime-picker id="published_at" name="published_at" :label="__('Publish Date')"
@@ -186,8 +185,8 @@
                                 'published_at',
                                 isset($post) && $post->published_at
                                     ? $post->published_at->format('Y-m-d H:i')
-                                    : now()->addDay()->format('Y-m-d H:i'),
-                            )" :min-date="now()->format('Y-m-d')" :help-text="__('Schedule when this post should be published')" />
+                                    : now()->format('Y-m-d H:i'),
+                            )" :help-text="__('Pick any date. A past date publishes the post with that date (e.g. archive news); a future date schedules it.')" />
                     </div>
                 </div>
                 {!! ld_apply_filters('post_form_after_publish_date', '') !!}

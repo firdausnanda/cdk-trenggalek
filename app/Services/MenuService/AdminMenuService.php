@@ -263,11 +263,11 @@ class AdminMenuService
             'priority' => 1,
             'badge' => null,
             'html' => '
-                <li class="hover:menu-item-active">
+                <li>
                     <form method="POST" action="' . route('logout') . '">
                         ' . csrf_field() . '
-                        <button type="submit" class="menu-item group w-full text-left menu-item-inactive text-black dark:text-white hover:text-black">
-                            <img src="' . asset('images/icons/logout.svg') . '" alt="Logout" class="menu-item-icon dark:invert">
+                        <button type="submit" class="menu-item group w-[calc(100%-1.5rem)] text-left menu-item-inactive">
+                            <img src="' . asset('images/icons/logout.svg') . '" alt="" class="menu-item-icon">
                             <span class="menu-item-text">' . __('Logout') . '</span>
                         </button>
                     </form>
