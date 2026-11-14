@@ -2,7 +2,7 @@
     $socials = [
         ['icon' => 'bi-facebook', 'label' => 'Facebook ' . config('cdk.nama_singkat'), 'href' => 'https://www.facebook.com/cdktrenggalekprogram'],
         ['icon' => 'bi-instagram', 'label' => 'Instagram ' . config('cdk.nama_singkat'), 'href' => 'https://www.instagram.com/cdktrenggalek/'],
-        ['icon' => 'bi-youtube', 'label' => 'YouTube ' . config('cdk.nama_singkat'), 'href' => 'https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg'],
+        ['icon' => 'bi-youtube', 'label' => 'YouTube ' . config('cdk.nama_singkat'), 'href' => 'https://www.youtube.com/@cdktrenggalek'],
         ['icon' => 'bi-envelope', 'label' => __('public.footer.email_us'), 'href' => 'mailto:cdkwilayahtrenggalek@jatimprov.go.id'],
     ];
     $links = [
@@ -25,7 +25,7 @@
 
     <div class="relative mx-auto max-w-7xl px-5 pt-16 pb-10 sm:px-8">
         <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-3">
                 <div class="flex items-center gap-3 text-white">
                     <img src="{{ config('settings.site_icon') }}" alt="" class="size-12 object-contain">
                     <p class="font-display text-lg leading-tight">{{ __('public.common.org_line1') }}<br>{{ __('public.common.org_line2') }}</p>
@@ -70,7 +70,7 @@
                 </ul>
             </div>
 
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-4">
                 <h2 class="text-sm font-semibold tracking-widest text-white uppercase">{{ __('public.nav.contact') }}</h2>
                 <ul class="mt-5 space-y-3 text-sm">
                     @foreach (kantor_cdk() as $kantor)
@@ -87,7 +87,15 @@
                         </li>
                     @endforeach
                     <li><a href="{{ route('tentang-kami') }}#kantor" class="inline-block py-1 underline underline-offset-4 transition hover:text-leaf">{{ __('public.footer.all_offices') }}</a></li>
-                    <li class="flex gap-3"><i class="bi bi-envelope text-leaf" aria-hidden="true"></i> <span class="break-all">cdkwilayahtrenggalek@jatimprov.go.id</span></li>
+                    <li class="flex gap-3">
+                        <i class="bi bi-envelope text-leaf" aria-hidden="true"></i>
+                        <ul class="min-w-0 space-y-1.5">
+                            @foreach (config('cdk.emails') as $email)
+                                @php($bagian = explode('@', $email, 2))
+                                <li><a href="mailto:{{ $email }}" class="break-words transition-colors hover:text-leaf">{{ $bagian[0] }}<wbr>&#64;{{ $bagian[1] }}</a></li>
+                            @endforeach
+                        </ul>
+                    </li>
                     <li class="flex gap-3"><i class="bi bi-clock text-leaf" aria-hidden="true"></i> {{ __('public.common.service_hours') }}</li>
                 </ul>
             </div>

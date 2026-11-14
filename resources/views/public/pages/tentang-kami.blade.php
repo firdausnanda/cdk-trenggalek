@@ -268,7 +268,11 @@
                     </div>
                     <div class="flex gap-3">
                         <dt><i aria-hidden="true" class="bi bi-envelope text-xl text-leaf"></i><span class="sr-only">Email</span></dt>
-                        <dd><a href="mailto:cdkwilayahtrenggalek@jatimprov.go.id" class="break-all text-white/85 underline decoration-leaf underline-offset-4 hover:text-white">cdkwilayahtrenggalek@jatimprov.go.id</a></dd>
+                        <dd class="flex flex-col gap-1">
+                            @foreach (config('cdk.emails') as $email)
+                                <a href="mailto:{{ $email }}" class="break-words text-white/85 underline decoration-leaf underline-offset-4 hover:text-white">{{ Str::before($email, '@') }}<wbr>&#64;{{ Str::after($email, '@') }}</a>
+                            @endforeach
+                        </dd>
                     </div>
                 </dl>
                 <a href="{{ route('kontak') }}" class="btn-primary w-fit shrink-0">{{ __('public.nav.contact_us') }} <i aria-hidden="true" class="bi bi-send"></i></a>

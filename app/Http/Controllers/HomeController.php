@@ -15,12 +15,20 @@ use App\Services\SmartHutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
 {
     /** Columns needed to render post cards; leaves out the (large) content column. */
     private const CARD_COLUMNS = ['id', 'title', 'slug', 'excerpt', 'featured_image', 'published_at', 'created_at'];
+
+    /** Contact form anti-spam: successful sends per IP per window, form fill-time bounds, and link cap. */
+    private const CONTACT_MAX_ATTEMPTS = 3;
+    private const CONTACT_DECAY_SECONDS = 600;
+    private const CONTACT_MIN_SECONDS = 3;
+    private const CONTACT_MAX_SECONDS = 7200;
+    private const CONTACT_MAX_LINKS = 2;
 
     public function index(SmartHutService $smartHut)
     {
@@ -166,19 +174,55 @@ class HomeController extends Controller
 
     public function kontak_store(Request $request)
     {
+        $backToForm = fn () => redirect()->to(route('kontak') . '#form-kontak');
+
+        // Honeypot: people never see the "website" field, bots fill it. Pretend success so they don't adapt.
+        if ($request->filled('website')) {
+            return $backToForm()->with('success', __('public.contact.sent'));
+        }
+
+        // Time trap: a person needs more than a few seconds to fill the form; a stale/missing token is a replay.
+        try {
+            $elapsed = now()->timestamp - (int) decrypt((string) $request->input('_ts'));
+        } catch (\Throwable) {
+            $elapsed = -1;
+        }
+        if ($elapsed < self::CONTACT_MIN_SECONDS || $elapsed > self::CONTACT_MAX_SECONDS) {
+            return $backToForm()->withInput()->withErrors(['form' => __('public.contact.retry')]);
+        }
+
+        // Per-IP limit with a readable message (the route's throttle middleware is only a hard backstop).
+        $key = 'kontak:' . $request->ip();
+        if (RateLimiter::tooManyAttempts($key, self::CONTACT_MAX_ATTEMPTS)) {
+            $minutes = max(1, (int) ceil(RateLimiter::availableIn($key) / 60));
+
+            return $backToForm()->withInput()->withErrors(['form' => __('public.contact.too_many', ['minutes' => $minutes])]);
+        }
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string|max:5000',
+            'name' => ['required', 'string', 'max:100', "regex:/^[\\pL\\pM\\s.,'\\-]+$/u"],
+            'email' => 'required|email:rfc,dns|max:255',
+            'message' => [
+                'required', 'string', 'min:10', 'max:5000',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (preg_match_all('~(https?://|www\.)~i', (string) $value) > self::CONTACT_MAX_LINKS) {
+                        $fail(__('public.validation.message_links', ['max' => self::CONTACT_MAX_LINKS]));
+                    }
+                },
+            ],
         ], [
             'name.required' => __('public.validation.name_required'),
             'name.max' => __('public.validation.name_max'),
+            'name.regex' => __('public.validation.name_invalid'),
             'email.required' => __('public.validation.email_required'),
             'email.email' => __('public.validation.email_invalid'),
             'email.max' => __('public.validation.email_max'),
             'message.required' => __('public.validation.message_required'),
+            'message.min' => __('public.validation.message_min'),
             'message.max' => __('public.validation.message_max'),
         ]);
+
+        RateLimiter::hit($key, self::CONTACT_DECAY_SECONDS);
 
         ContactMessage::create($validated);
 

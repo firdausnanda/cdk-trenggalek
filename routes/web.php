@@ -60,7 +60,8 @@ Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 Route::get('/aksesibilitas', [HomeController::class, 'aksesibilitas'])->name('aksesibilitas');
 Route::get('/kebijakan-privasi', [HomeController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
 Route::post('/cookie-consent', [CookieConsentController::class, 'store'])->name('cookie-consent.store');
-Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_store');
+// Hard backstop against floods; the friendlier per-IP limit lives in HomeController::kontak_store.
+Route::post('/kontak', [HomeController::class, 'kontak_store'])->middleware('throttle:10,1')->name('kontak_store');
 
 
 /**

@@ -16,12 +16,14 @@ return [
     'nama' => 'Cabang Dinas Kehutanan Wilayah Trenggalek',
     'nama_singkat' => 'CDK Wilayah Trenggalek',
     'instansi_induk' => 'Dinas Kehutanan Provinsi Jawa Timur',
+    // Main address (structured data, mailto links); all addresses are listed on the Kontak and Tentang Kami pages and in the footer.
     'email' => 'cdkwilayahtrenggalek@jatimprov.go.id',
+    'emails' => ['cdkwilayahtrenggalek@jatimprov.go.id', 'cdk.wil.trenggalek@gmail.com'],
     'wilayah' => ['Kabupaten Trenggalek', 'Kabupaten Tulungagung', 'Kabupaten Kediri', 'Kota Kediri'],
     'sosial' => [
         'https://www.facebook.com/cdktrenggalekprogram',
         'https://www.instagram.com/cdktrenggalek/',
-        'https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg',
+        'https://www.youtube.com/@cdktrenggalek',
     ],
     // Service hours on the Kontak page, Monday to Friday.
     'jam_layanan' => ['buka' => '08:00', 'tutup' => '16:00'],

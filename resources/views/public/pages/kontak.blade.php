@@ -13,13 +13,12 @@
 @endpush
 
 @php
-    $email = config('cdk.email');
-    $bagianEmail = explode('@', $email, 2);
+    $daftarEmail = config('cdk.emails');
     $field = 'w-full rounded-xl border-0 bg-white px-4 py-3 text-ink ring-1 ring-forest-900/15 placeholder:text-ink/50 focus:ring-[3px] focus:ring-forest-700 focus:outline-none';
     $sosial = [
         ['icon' => 'bi-facebook', 'label' => 'Facebook', 'href' => 'https://www.facebook.com/cdktrenggalekprogram'],
         ['icon' => 'bi-instagram', 'label' => 'Instagram', 'href' => 'https://www.instagram.com/cdktrenggalek/'],
-        ['icon' => 'bi-youtube', 'label' => 'YouTube', 'href' => 'https://www.youtube.com/channel/UCzVEqqMfVnTHqbAKe-ememg'],
+        ['icon' => 'bi-youtube', 'label' => 'YouTube', 'href' => 'https://www.youtube.com/@cdktrenggalek'],
     ];
 @endphp
 
@@ -65,9 +64,22 @@
                 <form method="POST" action="{{ route('kontak_store') }}" class="mt-8 grid gap-5 sm:grid-cols-2" novalidate>
                     @csrf
 
+                    {{-- Anti-spam: honeypot field (hidden from people and screen readers) + encrypted render time --}}
+                    <div aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
+                        <label for="kontak-website">Website</label>
+                        <input id="kontak-website" type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="_ts" value="{{ encrypt(now()->timestamp) }}">
+
+                    @error('form')
+                        <p role="alert" class="flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800 ring-1 ring-red-200 sm:col-span-2">
+                            <i aria-hidden="true" class="bi bi-exclamation-triangle-fill mt-0.5"></i> {{ $message }}
+                        </p>
+                    @enderror
+
                     <div>
                         <label for="kontak-nama" class="text-sm font-semibold">{{ __('public.form.full_name') }} <span aria-hidden="true" class="text-clay">*</span></label>
-                        <input id="kontak-nama" type="text" name="name" value="{{ old('name') }}" required maxlength="255" autocomplete="name"
+                        <input id="kontak-nama" type="text" name="name" value="{{ old('name') }}" required maxlength="100" autocomplete="name"
                             @error('name') aria-invalid="true" aria-describedby="galat-nama" @enderror class="mt-2 {{ $field }}">
                         @error('name')<p id="galat-nama" class="mt-1.5 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
                     </div>
@@ -81,7 +93,7 @@
 
                     <div class="sm:col-span-2">
                         <label for="kontak-pesan" class="text-sm font-semibold">{{ __('public.form.message') }} <span aria-hidden="true" class="text-clay">*</span></label>
-                        <textarea id="kontak-pesan" name="message" rows="6" required maxlength="5000"
+                        <textarea id="kontak-pesan" name="message" rows="6" required minlength="10" maxlength="5000"
                             @error('message') aria-invalid="true" aria-describedby="galat-pesan" @enderror
                             class="mt-2 {{ $field }}">{{ old('message') }}</textarea>
                         @error('message')<p id="galat-pesan" class="mt-1.5 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
@@ -124,7 +136,12 @@
                     </h2>
                     <div class="mt-5">
                         <p class="text-xs font-semibold tracking-[0.12em] text-ink/65 uppercase">{{ __('public.contact.email_address') }}</p>
-                        <a href="mailto:{{ $email }}" class="mt-2 inline-block max-w-full font-semibold leading-relaxed text-forest-800 underline decoration-forest-700/40 underline-offset-4 transition hover:decoration-forest-700">{{ $bagianEmail[0] }}<wbr>&#64;{{ $bagianEmail[1] }}</a>
+                        <ul class="mt-2 space-y-1">
+                            @foreach ($daftarEmail as $email)
+                                @php($bagianEmail = explode('@', $email, 2))
+                                <li><a href="mailto:{{ $email }}" class="inline-block max-w-full font-semibold leading-relaxed text-forest-800 underline decoration-forest-700/40 underline-offset-4 transition hover:decoration-forest-700">{{ $bagianEmail[0] }}<wbr>&#64;{{ $bagianEmail[1] }}</a></li>
+                            @endforeach
+                        </ul>
                     </div>
                     <p class="mt-6 border-t border-forest-900/10 pt-5 text-xs font-semibold tracking-[0.12em] text-ink/65 uppercase">{{ __('public.contact.social_media') }}</p>
                     <ul class="mt-3 flex flex-wrap gap-2">
