@@ -121,7 +121,7 @@ class AdminMenuService
             'id' => 'comment',
             'priority' => 90,
             'permissions' => 'comment.view',
-            'badge' => Comment::where('is_approved', false)->count(),
+            'badge' => Comment::needsReview()->count(),
         ], 'Content');
 
         $this->addMenuItem([

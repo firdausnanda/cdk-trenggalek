@@ -59,6 +59,7 @@
         ['nama' => config('eloquent-viewable.visitor_cookie_key'), 'jenis' => __('public.privacy.cookie_counter_type'), 'fungsi' => __('public.privacy.cookie_counter'), 'masa' => trans_choice('public.privacy.years', 5)],
         ['nama' => \App\Support\StatisticsConsent::COOKIE_NAME, 'jenis' => __('public.cookie.title'), 'fungsi' => __('public.privacy.cookie_choice'), 'masa' => trans_choice('public.privacy.years', 1)],
         ['nama' => 'cdk-aksesibilitas', 'jenis' => __('public.privacy.cookie_pref_type'), 'fungsi' => __('public.privacy.cookie_pref'), 'masa' => __('public.privacy.until_deleted')],
+        ['nama' => Auth::guard('commenter')->getRecallerName(), 'jenis' => __('public.privacy.cookie_login_type'), 'fungsi' => __('public.privacy.cookie_login'), 'masa' => __('public.privacy.until_signout')],
     ];
 
     $hak = [
@@ -205,6 +206,8 @@
                 <ul class="mt-4 space-y-3">
                     <li class="flex gap-3"><i aria-hidden="true" class="bi bi-dot mt-1 text-2xl leading-none text-forest-600"></i>
                         <span>{{ __('public.privacy.s5_assets') }}</span></li>
+                    <li class="flex gap-3"><i aria-hidden="true" class="bi bi-dot mt-1 text-2xl leading-none text-forest-600"></i>
+                        <span>{{ __('public.privacy.s5_google') }}</span></li>
                     <li class="flex gap-3"><i aria-hidden="true" class="bi bi-dot mt-1 text-2xl leading-none text-forest-600"></i>
                         <span>{{ __('public.privacy.s5_links') }}</span></li>
                 </ul>

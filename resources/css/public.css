@@ -364,3 +364,25 @@ html.a11y-font-baca {
         animation: none;
     }
 }
+
+/* A comment the visitor just sent slides into the chat thread. */
+@keyframes komentar-masuk {
+    from {
+        opacity: 0;
+        transform: translateY(0.5rem) scale(0.98);
+    }
+}
+
+.komentar-baru {
+    animation: komentar-masuk 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .komentar-baru {
+        animation: none;
+    }
+}
+
+html.a11y-tanpa-animasi .komentar-baru {
+    animation: none;
+}

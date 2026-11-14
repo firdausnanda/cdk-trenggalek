@@ -16,7 +16,10 @@ use App\Http\Controllers\Backend\TermsController;
 use App\Http\Controllers\Backend\TranslationController;
 use App\Http\Controllers\Backend\UserLoginAsController;
 use App\Http\Controllers\Backend\UsersController;
+use App\Http\Controllers\CommenterAuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PublicCommentController;
+use App\Http\Middleware\EnsureCommenter;
 use App\Http\Controllers\CookieConsentController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +45,17 @@ Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
 Route::get('/berita/kategori/{slug}', [HomeController::class, 'beritaKategori'])->name('berita.kategori');
 Route::get('/berita/tag/{slug}', [HomeController::class, 'beritaTag'])->name('berita.tag');
 Route::get('/berita/{slug}', [HomeController::class, 'beritaDetail'])->name('berita.show');
-Route::post('/berita/comments', [HomeController::class, 'commentStore'])->name('comments.store');
+
+// News comments: visitors sign in with Google (commenter guard, separate from admin login).
+Route::get('/auth/google', [CommenterAuthController::class, 'redirect'])->name('komentar.google');
+Route::get('/auth/google/callback', [CommenterAuthController::class, 'callback'])->name('komentar.google.callback');
+Route::post('/auth/google/keluar', [CommenterAuthController::class, 'logout'])->name('komentar.logout');
+Route::middleware([EnsureCommenter::class, 'throttle:30,1'])->group(function () {
+    Route::post('/berita/{post}/komentar', [PublicCommentController::class, 'store'])->whereNumber('post')->name('komentar.store');
+    Route::delete('/komentar/{comment}', [PublicCommentController::class, 'destroy'])->name('komentar.destroy');
+    Route::post('/komentar/{comment}/laporkan', [PublicCommentController::class, 'report'])->name('komentar.report');
+});
+
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 Route::get('/aksesibilitas', [HomeController::class, 'aksesibilitas'])->name('aksesibilitas');
 Route::get('/kebijakan-privasi', [HomeController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
@@ -53,7 +66,7 @@ Route::post('/kontak', [HomeController::class, 'kontak_store'])->name('kontak_st
 /**
  * Admin routes.
  */
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:web']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('roles', RolesController::class);
     Route::delete('roles/delete/bulk-delete', [RolesController::class, 'bulkDelete'])->name('roles.bulk-delete');
@@ -110,16 +123,20 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
     Route::post('/editor/upload', [App\Http\Controllers\Backend\EditorController::class, 'upload'])->name('editor.upload');
 
     // Comments Route
-    Route::resource('comment', CommentController::class);
-    Route::post('comment/{comment}/approve', [CommentController::class, 'approve'])->name('comment.approve');
-    Route::post('comment/{comment}/unapprove', [CommentController::class, 'unapprove'])->name('comment.unapprove');
+    Route::resource('comment', CommentController::class)->only(['index', 'destroy']);
+    Route::post('comment/{comment}/publish', [CommentController::class, 'publish'])->name('comment.publish');
+    Route::post('comment/{comment}/hide', [CommentController::class, 'hide'])->name('comment.hide');
+    Route::post('comment/{comment}/reply', [CommentController::class, 'reply'])->name('comment.reply');
     Route::delete('comment/delete/bulk-delete', [CommentController::class, 'bulkDelete'])->name('comment.bulk-delete');
+    Route::put('comment-settings', [CommentController::class, 'updateSettings'])->name('comment.settings');
+    Route::post('commenters/{commenter}/block', [CommentController::class, 'block'])->name('commenters.block');
+    Route::post('commenters/{commenter}/unblock', [CommentController::class, 'unblock'])->name('commenters.unblock');
 });
 
 /**
  * Profile routes.
  */
-Route::group(['prefix' => 'profile', 'as' => 'profile.', 'middleware' => ['auth']], function () {
+Route::group(['prefix' => 'profile', 'as' => 'profile.', 'middleware' => ['auth:web']], function () {
     Route::get('/edit', [ProfilesController::class, 'edit'])->name('edit');
     Route::put('/update', [ProfilesController::class, 'update'])->name('update');
 });

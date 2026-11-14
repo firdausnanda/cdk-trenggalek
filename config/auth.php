@@ -41,6 +41,13 @@ return [
             'provider' => 'users',
         ],
 
+        // News commenters signed in with Google. Kept apart from 'web' so a visitor account can
+        // never reach the admin panel.
+        'commenter' => [
+            'driver' => 'session',
+            'provider' => 'commenters',
+        ],
+
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -69,6 +76,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'commenters' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Commenter::class,
         ],
     ],
 

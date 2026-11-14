@@ -44,7 +44,7 @@
         'twitter' => ['label' => 'X', 'icon' => 'bi-twitter-x'],
         'telegram' => ['label' => 'Telegram', 'icon' => 'bi-telegram'],
     ];
-    $field = 'w-full rounded-lg border border-forest-900/20 bg-white px-4 py-3 text-ink placeholder:text-ink/50 focus:border-forest-700 focus:ring-[3px] focus:ring-forest-700/20 focus:outline-none';
+    $jumlahKomentar = $comments->where('status', 'published')->count();
 @endphp
 
 @section('content')
@@ -119,7 +119,7 @@
                     <i aria-hidden="true" class="bi bi-share"></i> {{ __('public.news.share_short') }}
                 </a>
                 <a href="#komentar" class="mt-1 inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">
-                    <i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $comment->count() }})
+                    <i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $jumlahKomentar }})
                 </a>
             </div>
         </aside>
@@ -166,82 +166,7 @@
             </ul>
         </div>
 
-        <section id="komentar" class="mt-16 scroll-mt-24" aria-labelledby="judul-komentar">
-            <div class="border-b border-forest-900/20 pb-5">
-                <h2 id="judul-komentar" class="font-display text-2xl font-semibold sm:text-3xl">{{ __('public.news.comments') }} <span class="text-forest-700">{{ $comment->count() }}</span></h2>
-                <p class="mt-2 text-sm text-ink/70">{{ __('public.news.comments_text') }}</p>
-            </div>
-
-            @if ($comment->isEmpty())
-                <p class="mt-4 text-ink/70">{{ __('public.news.no_comments') }}</p>
-            @else
-                <ul class="divide-y divide-forest-900/15">
-                    @foreach ($comment as $c)
-                        <li class="flex gap-4 py-6">
-                            <span aria-hidden="true" class="grid size-11 shrink-0 place-items-center rounded-lg bg-forest-900 font-semibold text-leaf">
-                                {{ Str::upper(Str::substr(trim($c->name), 0, 1)) }}
-                            </span>
-                            <div class="min-w-0">
-                                <p class="font-semibold">{{ Str::ucfirst($c->name) }}</p>
-                                <p class="text-xs text-ink/70">
-                                    <time datetime="{{ $c->created_at->toIso8601String() }}">{{ $c->created_at->translatedFormat('d F Y, H:i') }}</time>
-                                </p>
-                                <p class="mt-2 leading-relaxed text-ink/85">{!! komentar_teks($c->content) !!}</p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-
-            <div id="comment-form" class="mt-10 scroll-mt-24 rounded-lg border border-forest-900/15 bg-white/70 p-6 sm:p-8">
-                <h3 class="font-display text-2xl font-semibold">{{ __('public.news.write_comment') }}</h3>
-
-                @if (session('success'))
-                    <p role="status" class="mt-4 flex items-start gap-3 rounded-xl bg-forest-900 px-4 py-3 text-sm text-white">
-                        <i aria-hidden="true" class="bi bi-check-circle-fill mt-0.5 text-leaf"></i> {{ session('success') }}
-                    </p>
-                @endif
-
-                <form method="POST" action="{{ route('comments.store') }}" class="mt-6 grid gap-5 sm:grid-cols-2" novalidate>
-                    @csrf
-                    <input type="hidden" name="post_id" value="{{ $post->id }}">
-
-                    <div>
-                        <label for="komentar-nama" class="text-sm font-semibold">{{ __('public.form.name') }} <span aria-hidden="true" class="text-clay">*</span></label>
-                        <input id="komentar-nama" type="text" name="name" value="{{ old('name') }}" required autocomplete="name"
-                            @error('name') aria-invalid="true" aria-describedby="galat-nama" @enderror class="mt-2 {{ $field }}">
-                        @error('name')<p id="galat-nama" class="mt-1.5 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div>
-                        <label for="komentar-email" class="text-sm font-semibold">{{ __('public.form.email') }} <span aria-hidden="true" class="text-clay">*</span></label>
-                        <input id="komentar-email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
-                            aria-describedby="catatan-email @error('email') galat-email @enderror" @error('email') aria-invalid="true" @enderror
-                            class="mt-2 {{ $field }}">
-                        <p id="catatan-email" class="mt-1.5 text-xs text-ink/70">{{ __('public.form.email_hidden') }}</p>
-                        @error('email')<p id="galat-email" class="mt-1 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label for="komentar-isi" class="text-sm font-semibold">{{ __('public.news.comment_field') }} <span aria-hidden="true" class="text-clay">*</span></label>
-                        <textarea id="komentar-isi" name="comment" rows="5" maxlength="1000" required
-                            @error('comment') aria-invalid="true" aria-describedby="galat-komentar" @enderror
-                            class="mt-2 {{ $field }}">{{ old('comment') }}</textarea>
-                        @error('comment')<p id="galat-komentar" class="mt-1.5 text-sm font-medium text-red-700">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div class="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p class="text-sm text-ink/70">
-                            {{ __('public.news.comment_notice') }}
-                            <a href="{{ route('kebijakan-privasi') }}" class="font-semibold text-forest-800 underline underline-offset-4">{{ __('public.form.privacy_link') }}</a>
-                        </p>
-                        <button type="submit" class="btn-primary shrink-0 !bg-forest-900 !text-white hover:!bg-forest-700">
-                            {{ __('public.news.send_comment') }} <i aria-hidden="true" class="bi bi-send"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
+        @include('public.partials.comment-thread')
         </div>
     </article>
 

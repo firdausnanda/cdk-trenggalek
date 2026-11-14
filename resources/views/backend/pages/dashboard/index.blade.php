@@ -78,10 +78,10 @@
             @include('backend.pages.dashboard.partials.card', [
                 'icon' => 'bi bi-chat-left-text',
                 'tone' => 'clay',
-                'label' => __('Comments awaiting approval'),
+                'label' => __('Comments needing review'),
                 'value' => number_format($content_stats['pending_comments']),
                 'hint' => __('of :count comments', ['count' => number_format($content_stats['total_comments'])]),
-                'url' => route('admin.comment.index'),
+                'url' => route('admin.comment.index', ['status' => 'needs_review']),
             ])
             @include('backend.pages.dashboard.partials.card', [
                 'icon' => 'bi bi-envelope',

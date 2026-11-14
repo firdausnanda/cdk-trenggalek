@@ -37,4 +37,11 @@ return [
         'timeout' => (int) env('SMART_HUT_TIMEOUT', 20),
     ],
 
+    // Google sign-in for visitors who comment on news (Laravel Socialite). Not used for admin login.
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
+    ],
+
 ];

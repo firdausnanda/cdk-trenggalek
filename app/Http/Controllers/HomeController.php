@@ -6,15 +6,15 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactFormMail;
 use App\Models\Comment;
+use App\Models\Commenter;
 use App\Models\ContactMessage;
 use App\Models\Post;
 use App\Models\Term;
-use App\Rules\NotEmptyHtml;
 use App\Support\StatisticsConsent;
 use App\Services\SmartHutService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 use Jorenvh\Share\ShareFacade as Share;
 
 class HomeController extends Controller
@@ -144,8 +144,11 @@ class HomeController extends Controller
             ->telegram()
             ->getRawLinks();
 
-        $comment = Comment::where('is_approved', true)
-            ->where('post_id', $post->id)
+        $viewer = Auth::guard('commenter')->user();
+        $viewer = $viewer instanceof Commenter ? $viewer : null;
+        $comments = Comment::where('post_id', $post->id)
+            ->visibleTo($viewer)
+            ->with(['commenter:id,name,avatar,blocked_at', 'parent.commenter:id,name'])
             ->oldest()
             ->get();
 
@@ -153,7 +156,7 @@ class HomeController extends Controller
             views($post)->cooldown(5)->record();
         }
 
-        return view('public.pages.berita-show', compact('post', 'posts', 'share', 'comment'));
+        return view('public.pages.berita-show', compact('post', 'posts', 'share', 'comments', 'viewer'));
     }
 
     public function kontak()
@@ -184,43 +187,5 @@ class HomeController extends Controller
 
         return redirect()->to(route('kontak') . '#form-kontak')
             ->with('success', __('public.contact.sent'));
-    }
-
-    public function commentStore(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'comment' => ['required', 'string', 'max:1000', new NotEmptyHtml()],
-            'post_id' => 'required|exists:posts,id',
-        ], [
-            'name.required' => __('public.validation.name_required'),
-            'email.required' => __('public.validation.email_required'),
-            'email.email' => __('public.validation.email_invalid'),
-            'comment.required' => __('public.validation.comment_required'),
-            'post_id.exists' => __('public.validation.post_missing'),
-        ]);
-
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput()
-                ->withFragment('comment-form');
-        }
-
-        $validated = $validator->validated();
-
-        Comment::create([
-            'post_id' => $validated['post_id'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            // Comments are plain text; drop any markup so it can never run in the site or the admin panel.
-            'content' => trim(strip_tags($validated['comment'])),
-            'is_approved' => false,
-        ]);
-
-        return back()
-            ->with('success', __('public.news.comment_sent'))
-            ->withFragment('comment-form');
     }
 }

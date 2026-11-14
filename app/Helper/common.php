@@ -185,6 +185,22 @@ if (! function_exists('komentar_teks')) {
     }
 }
 
+if (! function_exists('komentar_tanggal')) {
+    /**
+     * Day divider in the comment thread: "Hari ini", "Kemarin", or the full date.
+     */
+    function komentar_tanggal(\DateTimeInterface $date): string
+    {
+        $date = \Illuminate\Support\Carbon::instance($date);
+
+        return match (true) {
+            $date->isToday() => __('public.comments.today'),
+            $date->isYesterday() => __('public.comments.yesterday'),
+            default => $date->translatedFormat('d F Y'),
+        };
+    }
+}
+
 if (! function_exists('judul_halaman')) {
     /**
      * A public page's <title>: the page name plus the short site name, when that still fits the

@@ -1,5 +1,6 @@
 import Alpine from "alpinejs";
 import focus from "@alpinejs/focus";
+import komentarChat from "./components/komentar-chat";
 
 // Motion is off when the OS asks for it or the visitor turns it off in the accessibility panel.
 const reduceMotion = () =>
@@ -156,6 +157,7 @@ Alpine.data("aksesibilitas", () => ({
     },
 }));
 
+Alpine.data("komentarChat", komentarChat);
 Alpine.plugin(focus);
 window.Alpine = Alpine;
 Alpine.start();

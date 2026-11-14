@@ -22,6 +22,7 @@
         "jorenvanhocht/laravel-share": "^4.2",
         "laravel/framework": "^13.30",
         "laravel/pulse": "^1.4",
+        "laravel/socialite": "^5.32",
         "laravel/tinker": "^3.0",
         "laravel/ui": "^4.5",
         "nwidart/laravel-modules": "^13.0",

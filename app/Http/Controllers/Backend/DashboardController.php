@@ -79,7 +79,7 @@ class DashboardController extends Controller
             'posts_this_month' => (clone $publishedPosts)->where('created_at', '>=', $monthStart)->count(),
             'total_views' => (clone $postViews)->count(),
             'views_this_month' => (clone $postViews)->where('viewed_at', '>=', $monthStart)->count(),
-            'pending_comments' => Comment::where('is_approved', false)->count(),
+            'pending_comments' => Comment::needsReview()->count(),
             'total_comments' => Comment::count(),
             'contact_messages' => ContactMessage::count(),
             'messages_this_month' => ContactMessage::where('created_at', '>=', $monthStart)->count(),
