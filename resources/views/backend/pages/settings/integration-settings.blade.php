@@ -11,18 +11,10 @@
                 {{ __('Google Analytics') }}
             </label>
             <textarea name="google_analytics_script" rows="6" placeholder="{{ __('Paste your Google Analytics script here') }}"
-                @if (config('app.demo_mode', false)) disabled @endif
-                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
-                data-tooltip-target="tooltip-google-analytics">{{ config('settings.google_analytics_script') ?? '' }}</textarea>
-
-            @if (config('app.demo_mode', false))
-            <div id="tooltip-google-analytics" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                {{ __('Editing this script is disabled in demo mode.') }}
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-            @endif
+                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30">{{ config('settings.google_analytics_script') ?? '' }}</textarea>
 
             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                {{ __('Script ini disisipkan di <head> seluruh halaman situs publik.') }}
                 {{ __('Learn more about Google Analytics and how to set it up:') }}
                 <a href="https://analytics.google.com/" target="_blank" class="text-blue-500 hover:underline">
                     {{ __('Google Analytics') }}

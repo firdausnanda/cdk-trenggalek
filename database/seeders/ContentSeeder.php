@@ -34,7 +34,6 @@ class ContentSeeder extends Seeder
         $this->createSampleCategories();
         $this->createSampleTags();
         $this->createSamplePosts();
-        $this->createSamplePages();
 
         $this->command->info('Content seeded successfully!');
     }
@@ -53,17 +52,6 @@ class ContentSeeder extends Seeder
             'taxonomies' => ['category', 'tag'],
         ]);
 
-        // Register page type.
-        $this->contentService->registerPostType([
-            'name' => 'page',
-            'label' => 'Pages',
-            'label_singular' => 'Page',
-            'description' => 'Default post type for static pages',
-            'has_archive' => false,
-            'hierarchical' => true,
-            'supports_excerpt' => false,
-            'taxonomies' => [],
-        ]);
 
         // Register category taxonomy.
         $this->contentService->registerTaxonomy([
@@ -283,30 +271,6 @@ class ContentSeeder extends Seeder
 
                 $post->terms()->syncWithoutDetaching($tagIds);
             }
-        }
-    }
-
-    protected function createSamplePages(): void
-    {
-        $pages = [
-            [
-                'title' => 'Sample Page',
-                'content' => '<p>This is a sample page created to demonstrate the page functionality.</p><p>Feel free to edit this content in the admin panel.</p>',
-                'status' => 'publish',
-            ],
-        ];
-
-        foreach ($pages as $pageData) {
-            Post::firstOrCreate([
-                'title' => $pageData['title'],
-                'post_type' => 'page',
-            ], [
-                'slug' => \Illuminate\Support\Str::slug($pageData['title']),
-                'content' => $pageData['content'],
-                'status' => $pageData['status'],
-                'user_id' => 1, // Assuming user ID 1 exists
-                'published_at' => now(),
-            ]);
         }
     }
 }

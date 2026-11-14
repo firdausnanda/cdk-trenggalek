@@ -60,17 +60,6 @@ class ContentServiceProvider extends ServiceProvider
             'taxonomies' => ['category', 'tag'],
         ]);
 
-        // Register page type.
-        $contentService->registerPostType([
-            'name' => 'page',
-            'label' => 'Pages',
-            'label_singular' => 'Page',
-            'description' => 'Default post type for static pages',
-            'has_archive' => false,
-            'hierarchical' => true,
-            'supports_excerpt' => false,
-            'taxonomies' => [],
-        ]);
 
         // Allow other plugins/modules to register post types.
         if (function_exists('ld_do_action')) {
@@ -112,7 +101,6 @@ class ContentServiceProvider extends ServiceProvider
     {
         return match ($postType) {
             'post' => 'bi bi-file-post-fill',
-            'page' => 'bi bi-file-earmark-post',
             default => 'bi bi-collection'
         };
     }

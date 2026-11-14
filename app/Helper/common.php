@@ -403,7 +403,6 @@ if (! function_exists('get_post_type_icon')) {
     {
         return match ($postType) {
             'post' => 'bi bi-file-earmark-text',
-            'page' => 'bi bi-file-earmark',
             default => 'bi bi-collection'
         };
     }

@@ -17,8 +17,6 @@
     @stack('styles')
     @yield('before_head')
 
-    @include('backend.layouts.partials.integration-scripts')
-
     @php echo ld_apply_filters('admin_head', ''); @endphp
 </head>
 

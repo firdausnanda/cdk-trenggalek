@@ -24,9 +24,9 @@
         class="sidebar-header relative flex h-[76px] shrink-0 items-center gap-3 px-6 transition-all duration-300"
     >
         <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 items-center gap-3">
-            <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+            <span class="flex size-10 shrink-0 items-center justify-center">
                 <img
-                    class="size-7 object-contain"
+                    class="size-9 object-contain"
                     src="{{ config('settings.site_icon') ?: asset('images/logo/icon.png') }}"
                     alt=""
                 />

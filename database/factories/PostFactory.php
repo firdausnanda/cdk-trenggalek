@@ -28,7 +28,7 @@ class PostFactory extends Factory
             'content' => fake()->paragraph(),
             'excerpt' => fake()->sentence(10),
             'status' => fake()->randomElement(['draft', 'publish']),
-            'post_type' => fake()->randomElement(['post', 'page']),
+            'post_type' => 'post',
             'slug' => fake()->unique()->slug(),
             'featured_image' => null,
             'user_id' => fake()->numberBetween(1, 100),

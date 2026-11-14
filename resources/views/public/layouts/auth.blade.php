@@ -11,6 +11,7 @@
 
     @include('public.partials.head-script')
     @vite(['resources/css/public.css', 'resources/js/public.js'])
+    @include('public.partials.analytics')
 </head>
 
 <body class="bg-cream font-sans text-ink antialiased">

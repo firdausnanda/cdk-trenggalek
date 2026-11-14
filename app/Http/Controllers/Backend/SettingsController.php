@@ -37,44 +37,57 @@ class SettingsController extends Controller
             ]);
     }
 
+    /**
+     * Setting teks yang boleh diubah dari halaman Pengaturan.
+     */
+    private const TEXT_FIELDS = ['app_name', 'default_pagination', 'google_analytics_script'];
+
+    /**
+     * Setting gambar yang boleh diunggah dari halaman Pengaturan.
+     */
+    private const IMAGE_FIELDS = ['site_icon', 'site_favicon'];
+
+    private const UPLOAD_PATH = 'uploads/settings';
+
     public function store(Request $request)
     {
-        // Build validation rules for all uploaded files (only images allowed)
-        $rules = [];
-        $messages = [];
-
-        foreach ($request->allFiles() as $fieldName => $file) {
-            $rules[$fieldName] = 'image|mimes:jpg,jpeg,png,gif,webp,svg|max:2048';
-            $label = ucwords(str_replace('_', ' ', $fieldName));
-            $messages["{$fieldName}.image"] = "{$label} harus berupa file gambar.";
-            $messages["{$fieldName}.mimes"] = "{$label} harus berformat: jpg, jpeg, png, gif, webp, atau svg.";
-            $messages["{$fieldName}.max"] = "Ukuran {$label} maksimal 2MB.";
-        }
-
-        if (! empty($rules)) {
-            $request->validate($rules, $messages);
-        }
-
-        // Restrict specific fields in demo mode.
-        if (config('app.demo_mode', false)) {
-            $restrictedFields = ld_apply_filters('settings_restricted_fields', ['app_name', 'google_analytics_script']);
-            $fields = $request->except($restrictedFields);
-        } else {
-            $fields = $request->all();
-        }
-
         $this->checkAuthorization(Auth::user(), ['settings.edit']);
 
-        $uploadPath = 'uploads/settings';
+        $imageRule = 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg|max:2048';
 
-        foreach ($fields as $fieldName => $fieldValue) {
-            if ($request->hasFile($fieldName)) {
-                deleteImageFromPublic((string) config($fieldName));
-                $fileUrl = storeImageAndGetUrl($request, $fieldName, $uploadPath);
-                $this->settingService->addSetting($fieldName, $fileUrl);
-            } else {
-                $this->settingService->addSetting($fieldName, $fieldValue);
+        $validated = $request->validate([
+            'app_name' => 'required|string|max:100',
+            'default_pagination' => 'required|integer|min:1|max:100',
+            'google_analytics_script' => 'nullable|string|max:10000',
+            'site_icon' => $imageRule,
+            'site_favicon' => $imageRule,
+        ], [
+            '*.image' => ':attribute harus berupa file gambar.',
+            '*.mimes' => ':attribute harus berformat: jpg, jpeg, png, gif, webp, atau svg.',
+            '*.max' => 'Ukuran :attribute maksimal 2MB.',
+        ], [
+            'app_name' => 'Site Name',
+            'default_pagination' => 'Default Pagination',
+            'google_analytics_script' => 'Google Analytics',
+            'site_icon' => 'Site Icon',
+            'site_favicon' => 'Site Favicon',
+        ]);
+
+        $fields = [];
+
+        foreach (self::TEXT_FIELDS as $fieldName) {
+            $fields[$fieldName] = $validated[$fieldName] ?? '';
+            $this->settingService->addSetting($fieldName, $fields[$fieldName]);
+        }
+
+        foreach (self::IMAGE_FIELDS as $fieldName) {
+            if (! $request->hasFile($fieldName)) {
+                continue;
             }
+
+            $this->deleteOldUpload((string) config('settings.'.$fieldName));
+            $fields[$fieldName] = storeImageAndGetUrl($request, $fieldName, self::UPLOAD_PATH);
+            $this->settingService->addSetting($fieldName, $fields[$fieldName]);
         }
 
         $this->envWriter->batchWriteKeysToEnvFile($fields);
@@ -84,5 +97,18 @@ class SettingsController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Settings saved successfully.');
+    }
+
+    /**
+     * Hapus file lama hanya jika berasal dari folder upload pengaturan,
+     * supaya aset bawaan (mis. /images/logo/...) tidak ikut terhapus.
+     */
+    private function deleteOldUpload(string $url): void
+    {
+        $path = ltrim((string) parse_url($url, PHP_URL_PATH), '/');
+
+        if (str_starts_with($path, self::UPLOAD_PATH.'/')) {
+            deleteImageFromPublic($url);
+        }
     }
 }

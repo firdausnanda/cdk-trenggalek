@@ -21,14 +21,6 @@
                                     'title' => __('General Settings'),
                                     'view' => 'backend.pages.settings.general-tab',
                                 ],
-                                'appearance' => [
-                                    'title' => __('Site Appearance'),
-                                    'view' => 'backend.pages.settings.appearance-tab',
-                                ],
-                                'content' => [
-                                    'title' => __('Content Settings'),
-                                    'view' => 'backend.pages.settings.content-settings',
-                                ],
                                 'integrations' => [
                                     'title' => __('Integrations'),
                                     'view' => 'backend.pages.settings.integration-settings',

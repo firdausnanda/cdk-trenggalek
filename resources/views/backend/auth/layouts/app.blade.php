@@ -13,8 +13,6 @@
 
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 
-    @include('backend.layouts.partials.integration-scripts')
-
     @yield('styles')
 </head>
 
