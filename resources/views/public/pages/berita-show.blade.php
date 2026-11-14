@@ -1,6 +1,5 @@
 @extends('public.layouts.app')
 
-@section('nav-overlay', true)
 @section('title', judul_halaman($post->seo('title') ?: $post->title))
 @section('description', $post->seo('description') ?: deskripsi_meta($post->excerpt ?: $post->content))
 @if ($post->seo('noindex'))
@@ -38,6 +37,8 @@
             $ringkasan = $kalimat[1];
         }
     }
+    // Keep the lead under the title short; long excerpts are cut at a word boundary.
+    $ringkasan = Str::limit($ringkasan, 160, '…', preserveWords: true);
     $bagikan = [
         'whatsapp' => ['label' => 'WhatsApp', 'icon' => 'bi-whatsapp'],
         'facebook' => ['label' => 'Facebook', 'icon' => 'bi-facebook'],
@@ -48,61 +49,62 @@
 @endphp
 
 @section('content')
-    <header class="bg-forest-950 text-white">
-        <div class="mx-auto max-w-7xl px-5 pt-32 pb-14 sm:px-8 sm:pt-36 sm:pb-16 lg:pt-24 lg:pb-10">
+    <header class="relative overflow-hidden bg-gradient-to-b from-forest-50 via-forest-50/60 to-cream">
+        <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(ellipse_at_top,rgb(181_216_106/0.22),transparent_60%)]"></div>
+        <div class="relative mx-auto max-w-4xl px-5 pt-28 pb-12 text-center sm:px-8 sm:pt-32 sm:pb-16">
             <nav aria-label="Breadcrumb">
-                <ol class="flex flex-wrap items-center gap-2 text-sm text-white/70">
-                    <li><a href="{{ route('home') }}" class="inline-flex min-h-11 items-center hover:text-white">{{ __('public.nav.home') }}</a></li>
+                <ol class="flex flex-wrap items-center justify-center gap-x-2 text-sm text-ink/60">
+                    <li><a href="{{ route('home') }}" class="inline-flex min-h-11 items-center hover:text-forest-800">{{ __('public.nav.home') }}</a></li>
                     <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-white">{{ __('public.nav.news') }}</a></li>
-                    <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li aria-current="page" class="text-white">{{ Str::limit($post->title, 60) }}</li>
+                    <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-forest-800">{{ __('public.nav.news') }}</a></li>
+                    <li aria-hidden="true" class="hidden sm:block"><i class="bi bi-chevron-right text-xs"></i></li>
+                    <li aria-current="page" class="hidden max-w-xs truncate text-ink/80 sm:block">{{ Str::limit($post->title, 50) }}</li>
                 </ol>
             </nav>
 
-            <div class="mt-6 lg:mt-4 lg:grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:items-center lg:gap-10 xl:gap-12">
-                <div class="min-w-0">
-                    @if ($post->categories->isNotEmpty())
-                        <ul class="flex flex-wrap gap-x-3 gap-y-1 text-sm font-semibold text-leaf">
-                            @foreach ($post->categories as $item)
-                                <li><a href="{{ route('berita.kategori', $item->slug) }}" class="inline-flex min-h-11 items-center underline-offset-4 hover:underline">{{ $item->name }}</a></li>
-                            @endforeach
-                        </ul>
-                    @endif
+            @if ($post->categories->isNotEmpty())
+                <ul class="mt-4 flex flex-wrap justify-center gap-2">
+                    @foreach ($post->categories as $item)
+                        <li><a href="{{ route('berita.kategori', $item->slug) }}" class="inline-flex min-h-9 items-center rounded-full bg-forest-700/10 px-4 text-sm font-semibold text-forest-800 transition hover:bg-forest-700 hover:text-white">{{ $item->name }}</a></li>
+                    @endforeach
+                </ul>
+            @endif
 
-                    <h1 class="mt-3 font-display text-[clamp(2.35rem,5vw,4.75rem)] leading-[1.08] font-bold tracking-[-0.035em] text-balance lg:text-[clamp(2.6rem,3.4vw,3.3rem)]">{{ $post->title }}</h1>
-                    @if ($ringkasan !== '')
-                        <p class="mt-5 max-w-2xl text-base leading-relaxed text-white/80 lg:text-lg">{{ $ringkasan }}</p>
-                    @endif
+            <h1 class="mt-5 font-display text-[clamp(2.1rem,4.6vw,3.6rem)] leading-[1.1] font-extrabold tracking-[-0.03em] text-balance text-ink">{{ $post->title }}</h1>
 
-                    <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-white/20 pt-5 text-sm">
-                        <div class="flex items-center gap-3">
-                            <img src="{{ config('settings.site_icon') }}" alt="" width="44" height="44" class="size-11 rounded-full bg-white object-contain p-1">
-                            <div class="leading-snug">
-                                <p class="font-semibold text-white">{{ __('public.common.org_line1') }}</p>
-                                <p class="text-white/70">{{ __('public.common.org_line2') }}</p>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-white/75">
+            <div class="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm">
+                <div class="flex items-center gap-3 text-left">
+                    <img src="{{ config('settings.site_icon') }}" alt="" width="44" height="44" class="size-11 rounded-full bg-white object-contain p-1 shadow-sm ring-1 ring-forest-900/10">
+                    <div class="leading-snug">
+                        <p class="font-semibold text-ink">{{ __('public.common.org_line1') }}</p>
+                        <p class="text-ink/65">
                             <time datetime="{{ $post->published_at?->toDateString() }}">{{ $post->published_at?->translatedFormat('d F Y') }}</time>
-                            <span aria-hidden="true" class="hidden size-1 rounded-full bg-leaf sm:block"></span>
-                            <span>{{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</span>
-                            <span aria-hidden="true" class="hidden size-1 rounded-full bg-leaf sm:block"></span>
-                            <span>{{ trans_choice('public.news.views', $dilihat, ['count' => angka($dilihat)]) }}</span>
-                        </div>
+                        </p>
                     </div>
                 </div>
-
-                <figure class="relative -mb-28 mt-9 lg:mb-0 lg:mt-0">
-                    <div class="overflow-hidden rounded-lg border border-white/15 bg-forest-900 shadow-[0_16px_45px_rgb(0_0_0/0.12)] lg:rounded-none lg:border-0 lg:bg-cream lg:p-2 lg:shadow-[0_20px_45px_rgb(0_0_0/0.22)]">
-                        <img src="{{ $post->featured_image ?? $placeholder }}" fetchpriority="high" width="1280" height="720"
-                            @if ($srcset = image_srcset($post->featured_image)) srcset="{{ $srcset }}" sizes="(min-width: 1280px) 480px, (min-width: 1024px) 40vw, 100vw" @endif
-                            alt="{{ $post->title }}" class="mx-auto aspect-[2/1] w-full object-contain lg:aspect-[13/6] lg:bg-cream">
-                    </div>
-                </figure>
+                <span aria-hidden="true" class="hidden h-8 w-px bg-forest-900/15 sm:block"></span>
+                <ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-ink/70">
+                    <li class="inline-flex items-center gap-1.5"><i aria-hidden="true" class="bi bi-clock"></i> {{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</li>
+                    <li class="inline-flex items-center gap-1.5"><i aria-hidden="true" class="bi bi-eye"></i> {{ trans_choice('public.news.views', $dilihat, ['count' => angka($dilihat)]) }}</li>
+                    <li><a href="#komentar" class="inline-flex min-h-11 items-center gap-1.5 hover:text-forest-800 hover:underline hover:underline-offset-4"><i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $jumlahKomentar }})</a></li>
+                </ul>
             </div>
+
+            @if ($ringkasan !== '')
+                <p class="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-ink/75 sm:text-xl">{{ $ringkasan }}</p>
+            @endif
         </div>
     </header>
+
+    <figure class="mx-auto max-w-5xl px-5 sm:px-8">
+        {{-- Uploaded images vary in size, so the image keeps its own aspect ratio (no letterbox);
+             tall portraits are capped to the viewport height and centred. --}}
+        <img src="{{ $post->featured_image ?? $placeholder }}" fetchpriority="high"
+            @if ($srcset = image_srcset($post->featured_image)) srcset="{{ $srcset }}" sizes="(min-width: 1024px) 960px, 100vw" @endif
+            alt="{{ $post->title }}"
+            class="mx-auto block h-auto max-h-[80vh] w-auto max-w-full rounded-2xl shadow-[0_20px_50px_rgb(22_32_26/0.14)] ring-1 ring-forest-900/10">
+
+    </figure>
 
     <div x-data="{ persen: 0, tampil: false }" aria-hidden="true"
         x-init="const update = () => { const r = document.getElementById('isi-berita').getBoundingClientRect(); const total = r.height - innerHeight * 0.6; persen = Math.round(Math.min(100, Math.max(0, (innerHeight * 0.4 - r.top) / Math.max(total, 1) * 100))); tampil = r.top < innerHeight * 0.5 && r.bottom > innerHeight * 0.5; }; update(); addEventListener('scroll', update, { passive: true }); addEventListener('resize', update)"
@@ -110,21 +112,7 @@
         <span class="block h-full bg-forest-700" :style="`width: ${persen}%`"></span>
     </div>
 
-    <article class="mx-auto grid max-w-7xl gap-10 px-5 pt-14 pb-20 sm:px-8 sm:pt-20 lg:grid-cols-[11rem_minmax(0,45rem)_1fr] lg:gap-14">
-        <aside class="hidden lg:block">
-            <div class="sticky top-28 border-t-2 border-forest-700 pt-4 text-sm">
-                <p class="font-semibold text-forest-800">{{ __('public.news.about_article') }}</p>
-                <p class="mt-3 text-ink/70">{{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</p>
-                <a href="#bagikan" class="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">
-                    <i aria-hidden="true" class="bi bi-share"></i> {{ __('public.news.share_short') }}
-                </a>
-                <a href="#komentar" class="mt-1 inline-flex min-h-11 items-center gap-2 font-semibold text-forest-800 hover:underline hover:underline-offset-4">
-                    <i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $jumlahKomentar }})
-                </a>
-            </div>
-        </aside>
-
-        <div class="mx-auto w-full min-w-0 max-w-[45rem]">
+    <article class="mx-auto max-w-5xl px-5 pt-12 pb-20 sm:px-8 sm:pt-16">
             <div id="isi-berita" class="konten-berita">
                 {!! lazy_images($post->content, __('public.news.image_alt', ['title' => $post->title])) !!}
             </div>
@@ -167,7 +155,6 @@
         </div>
 
         @include('public.partials.comment-thread')
-        </div>
     </article>
 
     @if ($posts->isNotEmpty())

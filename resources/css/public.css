@@ -177,7 +177,8 @@
         }
 
         & h2 {
-            font-size: 1.6em;
+            font-size: 1.55em;
+            letter-spacing: -0.02em;
         }
 
         & h3 {
@@ -191,8 +192,60 @@
 
         & a {
             color: var(--color-forest-700);
+            font-weight: 500;
             text-decoration: underline;
-            text-underline-offset: 0.2em;
+            text-decoration-color: color-mix(in oklab, var(--color-leaf) 90%, transparent);
+            text-decoration-thickness: 0.18em;
+            text-underline-offset: 0.18em;
+            transition: background-color 0.2s;
+        }
+
+        & a:hover {
+            background-color: color-mix(in oklab, var(--color-leaf) 35%, transparent);
+        }
+
+        & :where(code) {
+            padding: 0.15em 0.4em;
+            border-radius: 0.375rem;
+            background-color: var(--color-forest-50);
+            font-size: 0.875em;
+            color: var(--color-forest-800);
+        }
+
+        & pre {
+            overflow-x: auto;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            background-color: var(--color-forest-950);
+            font-size: 0.875em;
+            line-height: 1.7;
+            color: #e8efe9;
+
+            & code {
+                padding: 0;
+                background: none;
+                color: inherit;
+            }
+        }
+
+        & table {
+            display: block;
+            overflow-x: auto;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        & :where(th, td) {
+            padding: 0.6em 0.9em;
+            border: 1px solid color-mix(in oklab, var(--color-forest-900) 15%, transparent);
+            text-align: left;
+        }
+
+        & th {
+            background-color: var(--color-forest-50);
+            font-weight: 700;
+            color: var(--color-ink);
         }
 
         & img {
