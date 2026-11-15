@@ -79,14 +79,16 @@
                 </div>
 
                 <form data-reveal style="--reveal-delay: 160ms" action="{{ $dasar() }}" method="get" role="search"
-                    class="lg:col-span-5">
+                    class="w-full min-w-0 lg:col-span-5">
                     <label for="cari-berita" class="text-sm font-semibold">{{ __('public.news.search_label') }}</label>
-                    <div class="mt-2 flex rounded-full bg-white p-1.5 shadow-xl shadow-black/20 focus-within:ring-[3px] focus-within:ring-leaf">
+                    <div class="mt-2 flex w-full items-center gap-1 rounded-full bg-white p-1.5 shadow-xl shadow-black/20 focus-within:ring-[3px] focus-within:ring-leaf">
 
+                        {{-- w-0 + flex-1: drop the input's intrinsic width so it can't push the form past the screen edge. text-base stops iOS zooming in on focus. --}}
                         <input id="cari-berita" type="search" name="search" value="{{ $cari }}" placeholder="{{ __('public.news.search_placeholder') }}"
-                            class="min-w-0 flex-1 rounded-full bg-transparent px-4 text-ink placeholder:text-ink/50 focus:outline-none">
-                        <button type="submit" class="btn-primary !px-5 !py-2.5">
-                            <i aria-hidden="true" class="bi bi-search"></i> {{ __('public.news.search_button') }}
+                            class="h-11 w-0 min-w-0 flex-1 truncate rounded-full bg-transparent px-3 text-base text-ink placeholder:text-ink/50 focus:outline-none sm:px-4">
+                        <button type="submit" class="btn-primary shrink-0 justify-center !px-4 !py-2.5 sm:!px-5">
+                            <i aria-hidden="true" class="bi bi-search"></i>
+                            <span class="max-[360px]:sr-only">{{ __('public.news.search_button') }}</span>
                         </button>
                     </div>
                 </form>
