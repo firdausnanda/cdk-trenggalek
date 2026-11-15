@@ -38,7 +38,9 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        if (env('REDIRECT_HTTPS')) {
+        // Generate https URLs when the site runs on https. env() returns null once
+        // `php artisan config:cache` has run, so read APP_URL from config instead.
+        if (str_starts_with((string) config('app.url'), 'https://') || env('REDIRECT_HTTPS')) {
             URL::forceScheme('https');
         }
 

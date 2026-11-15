@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust the reverse proxy / load balancer (e.g. Cloudflare, Nginx) so Laravel
+        // sees the original https scheme from X-Forwarded-Proto.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             SetlocaleMiddleware::class,
             ModuleTranslationMiddleware::class,
