@@ -37,9 +37,12 @@ class SitemapController extends Controller
                 ->all(),
         ]);
 
-        return response()
-            ->view('public.sitemap', compact('posts', 'kategori'))
-            ->header('Content-Type', 'application/xml; charset=UTF-8');
+        // The XML declaration is prepended here, not written in the Blade view: on servers with
+        // short_open_tag=On, PHP parses a literal "<?xml" as a PHP open tag and the page fails.
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . view('public.sitemap', compact('posts', 'kategori'))->render();
+
+        return response($xml)->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 
     public function robots(): Response
