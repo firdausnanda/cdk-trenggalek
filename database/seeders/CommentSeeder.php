@@ -196,6 +196,7 @@ class CommentSeeder extends Seeder
         $comment = new Comment([
             'post_id' => $post->id,
             'user_id' => $admin->id,
+            'is_official' => true,
             'parent_id' => $parentId,
             'name' => $admin->name,
             'email' => $admin->email,

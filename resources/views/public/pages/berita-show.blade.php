@@ -30,15 +30,6 @@
     $placeholder = asset('images/not-found/image.jpeg');
     $menitBaca = max(1, (int) ceil(str_word_count(strip_tags($post->content ?? '')) / 200));
     $dilihat = $post->views()->count();
-    $ringkasan = trim(strip_tags($post->excerpt ?? ''));
-    if ($ringkasan === '' || Str::endsWith($ringkasan, ['...', '…'])) {
-        $teksAwal = trim(preg_replace('/\s+/u', ' ', strip_tags($post->content ?? '')));
-        if (preg_match('/^(.+?[.!?])(?:\s|$)/u', $teksAwal, $kalimat)) {
-            $ringkasan = $kalimat[1];
-        }
-    }
-    // Keep the lead under the title short; long excerpts are cut at a word boundary.
-    $ringkasan = Str::limit($ringkasan, 160, '…', preserveWords: true);
     $bagikan = [
         'whatsapp' => ['label' => 'WhatsApp', 'icon' => 'bi-whatsapp'],
         'facebook' => ['label' => 'Facebook', 'icon' => 'bi-facebook'],
@@ -49,54 +40,53 @@
 @endphp
 
 @section('content')
-    <header class="relative overflow-hidden bg-gradient-to-b from-forest-50 via-forest-50/60 to-cream">
-        <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(ellipse_at_top,rgb(181_216_106/0.22),transparent_60%)]"></div>
-        <div class="relative mx-auto max-w-4xl px-5 pt-28 pb-12 text-center sm:px-8 sm:pt-32 sm:pb-16">
+    <header class="mx-auto max-w-5xl px-5 pt-28 sm:px-8 sm:pt-32">
+        <div class="mx-auto max-w-4xl text-center">
             <nav aria-label="Breadcrumb">
                 <ol class="flex flex-wrap items-center justify-center gap-x-2 text-sm text-ink/60">
                     <li><a href="{{ route('home') }}" class="inline-flex min-h-11 items-center hover:text-forest-800">{{ __('public.nav.home') }}</a></li>
-                    <li aria-hidden="true"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-forest-800">{{ __('public.nav.news') }}</a></li>
-                    <li aria-hidden="true" class="hidden sm:block"><i class="bi bi-chevron-right text-xs"></i></li>
-                    <li aria-current="page" class="hidden max-w-xs truncate text-ink/80 sm:block">{{ Str::limit($post->title, 50) }}</li>
+                    <li class="inline-flex items-center gap-2"><i aria-hidden="true" class="bi bi-chevron-right text-xs"></i><a href="{{ route('berita') }}" class="inline-flex min-h-11 items-center hover:text-forest-800">{{ __('public.nav.news') }}</a></li>
+                    @foreach ($post->categories->take(1) as $item)
+                        <li class="inline-flex items-center gap-2"><i aria-hidden="true" class="bi bi-chevron-right text-xs"></i><a href="{{ route('berita.kategori', $item->slug) }}" class="inline-flex min-h-11 items-center font-semibold text-forest-700 hover:text-forest-800">{{ $item->name }}</a></li>
+                    @endforeach
                 </ol>
             </nav>
 
-            @if ($post->categories->isNotEmpty())
-                <ul class="mt-4 flex flex-wrap justify-center gap-2">
-                    @foreach ($post->categories as $item)
-                        <li><a href="{{ route('berita.kategori', $item->slug) }}" class="inline-flex min-h-9 items-center rounded-full bg-forest-700/10 px-4 text-sm font-semibold text-forest-800 transition hover:bg-forest-700 hover:text-white">{{ $item->name }}</a></li>
-                    @endforeach
-                </ul>
-            @endif
+            <h1 class="mt-3 font-display text-[1.75rem] leading-[1.25] font-bold tracking-[-0.02em] text-balance text-ink sm:text-3xl lg:text-[2.25rem] lg:leading-[1.2]">{{ $post->title }}</h1>
+        </div>
 
-            <h1 class="mt-5 font-display text-[clamp(2.1rem,4.6vw,3.6rem)] leading-[1.1] font-extrabold tracking-[-0.03em] text-balance text-ink">{{ $post->title }}</h1>
-
-            <div class="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm">
-                <div class="flex items-center gap-3 text-left">
-                    <img src="{{ config('settings.site_icon') }}" alt="" width="44" height="44" class="size-11 rounded-full bg-white object-contain p-1 shadow-sm ring-1 ring-forest-900/10">
-                    <div class="leading-snug">
-                        <p class="font-semibold text-ink">{{ __('public.common.org_line1') }}</p>
-                        <p class="text-ink/65">
-                            <time datetime="{{ $post->published_at?->toDateString() }}">{{ $post->published_at?->translatedFormat('d F Y') }}</time>
-                        </p>
-                    </div>
+        <div class="mt-8 flex flex-col gap-4 border-y border-forest-900/10 py-4 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <img src="{{ config('settings.site_icon') }}" alt="" width="40" height="40" class="size-10 shrink-0 rounded-full bg-white object-contain p-1 ring-1 ring-forest-900/10">
+                <div class="leading-snug">
+                    <p class="text-sm font-semibold text-ink">{{ config('cdk.nama_singkat') ?: __('public.common.org_line1') }}</p>
+                    <p class="text-xs text-ink/60">
+                        <time datetime="{{ $post->published_at?->toDateString() }}">{{ $post->published_at?->translatedFormat('l, d F Y') }}</time>
+                    </p>
                 </div>
-                <span aria-hidden="true" class="hidden h-8 w-px bg-forest-900/15 sm:block"></span>
-                <ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-ink/70">
-                    <li class="inline-flex items-center gap-1.5"><i aria-hidden="true" class="bi bi-clock"></i> {{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}</li>
-                    <li class="inline-flex items-center gap-1.5"><i aria-hidden="true" class="bi bi-eye"></i> {{ trans_choice('public.news.views', $dilihat, ['count' => angka($dilihat)]) }}</li>
-                    <li><a href="#komentar" class="inline-flex min-h-11 items-center gap-1.5 hover:text-forest-800 hover:underline hover:underline-offset-4"><i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ __('public.news.comments') }} ({{ $jumlahKomentar }})</a></li>
-                </ul>
             </div>
-
-            @if ($ringkasan !== '')
-                <p class="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-ink/75 sm:text-xl">{{ $ringkasan }}</p>
-            @endif
+            <ul class="flex flex-wrap items-center gap-1.5 text-xs font-medium text-ink/70 sm:gap-2">
+                <li class="inline-flex h-8 items-center gap-1.5 rounded-full bg-white px-2.5 ring-1 sm:h-9 sm:px-3.5 ring-forest-900/10" title="{{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}">
+                    <i aria-hidden="true" class="bi bi-clock"></i> {{ __('public.news.reading_time', ['minutes' => $menitBaca]) }}
+                </li>
+                <li class="inline-flex h-8 items-center gap-1.5 rounded-full bg-white px-2.5 ring-1 sm:h-9 sm:px-3.5 ring-forest-900/10">
+                    <i aria-hidden="true" class="bi bi-eye"></i> {{ trans_choice('public.news.views', $dilihat, ['count' => angka($dilihat)]) }}
+                </li>
+                <li>
+                    <a href="#komentar" class="inline-flex h-8 items-center gap-1.5 rounded-full bg-white px-2.5 ring-1 sm:h-9 sm:px-3.5 ring-forest-900/10 transition hover:text-forest-800 hover:ring-forest-700/40">
+                        <i aria-hidden="true" class="bi bi-chat-left-text"></i> {{ $jumlahKomentar }}<span class="sr-only"> {{ __('public.news.comments') }}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#bagikan" class="grid size-8 place-items-center rounded-full bg-white ring-1 sm:size-9 ring-forest-900/10 transition hover:text-forest-800 hover:ring-forest-700/40">
+                        <i aria-hidden="true" class="bi bi-share"></i><span class="sr-only">{{ __('public.news.share_short') }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </header>
 
-    <figure class="mx-auto max-w-5xl px-5 sm:px-8">
+    <figure class="mx-auto mt-6 max-w-5xl px-5 sm:mt-8 sm:px-8">
         {{-- Uploaded images vary in size, so the image keeps its own aspect ratio (no letterbox);
              tall portraits are capped to the viewport height and centred. --}}
         <img src="{{ $post->featured_image ?? $placeholder }}" fetchpriority="high"

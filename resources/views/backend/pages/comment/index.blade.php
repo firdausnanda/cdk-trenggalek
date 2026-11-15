@@ -151,7 +151,7 @@
                                                 <p class="truncate text-xs text-gray-500">{{ $comment->authorEmail() }}</p>
                                                 <p class="mt-1 flex flex-wrap gap-1 text-[0.7rem]">
                                                     @if ($comment->isFromAdmin())
-                                                        <span class="rounded bg-blue-100 px-1.5 py-0.5 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">{{ __('Admin reply') }} · {{ $comment->user?->name }}</span>
+                                                        <span class="rounded bg-blue-100 px-1.5 py-0.5 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">{{ __('Admin reply') }} · {{ $comment->user?->name ?? __('Deleted account') }}</span>
                                                     @elseif ($comment->commenter)
                                                         <span class="rounded bg-gray-100 px-1.5 py-0.5 text-gray-700 dark:bg-gray-800 dark:text-gray-300"><i class="bi bi-google"></i> Google</span>
                                                     @else

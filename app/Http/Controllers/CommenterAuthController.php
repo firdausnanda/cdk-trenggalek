@@ -28,11 +28,22 @@ class CommenterAuthController extends Controller
 
     public function redirect(Request $request): RedirectResponse|SymfonyRedirect
     {
+        $path = $this->safePath($request->query('kembali'));
+
         if (! Commenter::signInAvailable()) {
-            return redirect()->to($this->safeReturn($request->query('kembali')));
+            return redirect()->to(url($path));
         }
 
-        $request->session()->put(self::RETURN_KEY, $this->safeReturn($request->query('kembali')));
+        // Google sends the visitor back to the callback on the site's main address (APP_URL). Start there too,
+        // otherwise the session holding the return path and the OAuth state lives on another host (www, IP, …)
+        // and is missing when Google comes back.
+        $callbackHost = $this->callbackHost();
+        if ($callbackHost !== null && strcasecmp($callbackHost['host'], $request->getHttpHost()) !== 0) {
+            return redirect()->away($callbackHost['root'].route('komentar.google', ['kembali' => $path], false));
+        }
+
+        // Store the path only: the callback turns it back into a URL on its own host.
+        $request->session()->put(self::RETURN_KEY, $path);
 
         // Google's driver already asks for the openid, profile and email scopes.
         $driver = Socialite::driver('google');
@@ -46,7 +57,7 @@ class CommenterAuthController extends Controller
 
     public function callback(Request $request): RedirectResponse
     {
-        $returnTo = $this->safeReturn($request->session()->pull(self::RETURN_KEY));
+        $returnTo = url($this->safePath($request->session()->pull(self::RETURN_KEY)));
 
         if ($request->filled('error')) {
             // The visitor pressed cancel on Google's screen.
@@ -88,7 +99,7 @@ class CommenterAuthController extends Controller
         Auth::guard('commenter')->logout();
         $request->session()->regenerateToken();
 
-        return redirect()->to($this->safeReturn($request->input('kembali')));
+        return redirect()->to(url($this->safePath($request->input('kembali'))));
     }
 
     /**
@@ -130,15 +141,39 @@ class CommenterAuthController extends Controller
         }
     }
 
-    /** Only paths on this site, so the sign-in flow cannot be used as an open redirect. */
-    private function safeReturn(mixed $path): string
+    /**
+     * A path on this site (never a full URL), so the sign-in flow cannot be used as an open redirect.
+     * Falls back to the news index.
+     */
+    private function safePath(mixed $path): string
     {
         $path = is_string($path) ? $path : '';
 
         if ($path === '' || ! str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '\\')) {
-            return route('berita');
+            return route('berita', [], false);
         }
 
-        return url($path);
+        return $path;
+    }
+
+    /**
+     * Scheme + host of the URL Google returns to, or null when it cannot be told.
+     *
+     * @return array{root: string, host: string}|null
+     */
+    private function callbackHost(): ?array
+    {
+        $redirect = (string) config('services.google.redirect');
+        // Socialite resolves a relative redirect against APP_URL.
+        $url = str_starts_with($redirect, '/') ? (string) config('app.url') : $redirect;
+        $parts = parse_url($url);
+
+        if (empty($parts['host'])) {
+            return null;
+        }
+
+        $host = $parts['host'].(isset($parts['port']) ? ':'.$parts['port'] : '');
+
+        return ['root' => ($parts['scheme'] ?? 'https').'://'.$host, 'host' => $host];
     }
 }

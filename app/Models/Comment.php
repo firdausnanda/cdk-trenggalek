@@ -35,6 +35,7 @@ class Comment extends Model
         'post_id',
         'commenter_id',
         'user_id',
+        'is_official',
         'parent_id',
         'name',
         'email',
@@ -49,6 +50,7 @@ class Comment extends Model
     {
         return [
             'reports_count' => 'integer',
+            'is_official' => 'boolean',
         ];
     }
 
@@ -117,9 +119,13 @@ class Comment extends Model
         return $this->status === self::STATUS_PUBLISHED;
     }
 
+    /**
+     * An official reply from the office. Stored on its own (not derived from user_id) so the reply stays official
+     * after the admin account that wrote it is deleted.
+     */
     public function isFromAdmin(): bool
     {
-        return $this->user_id !== null;
+        return (bool) $this->is_official;
     }
 
     public function isOwnedBy(?Commenter $commenter): bool

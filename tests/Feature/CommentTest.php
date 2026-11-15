@@ -258,7 +258,39 @@ class CommentTest extends TestCase
 
         $this->get(route('komentar.google', ['kembali' => '//evil.example/x']))
             ->assertRedirect('https://accounts.google.com/o/oauth2/auth')
-            ->assertSessionHas('commenter.return_to', route('berita'));
+            ->assertSessionHas('commenter.return_to', '/berita');
+    }
+
+    #[Test]
+    public function full_sign_in_flow_returns_to_the_article_not_the_news_index(): void
+    {
+        Http::fake(['*' => Http::response('', 404)]);
+        Socialite::shouldReceive('driver->redirect')->andReturn(redirect('https://accounts.google.com/o/oauth2/auth'));
+        Socialite::shouldReceive('driver->user')->andReturn((new GoogleUser())->map([
+            'id' => '987', 'name' => 'Pembaca', 'email' => 'pembaca@example.test', 'avatar' => null,
+        ]));
+
+        $path = '/berita/'.$this->post->slug.'#komentar-tulis';
+
+        // Step 1: the button on the article sends the visitor to Google.
+        $this->get(route('komentar.google', ['kembali' => $path]))
+            ->assertRedirect('https://accounts.google.com/o/oauth2/auth');
+
+        // Step 2: Google sends them back; the same session carries the return path.
+        $this->get(route('komentar.google.callback', ['code' => 'abc', 'state' => 'x']))
+            ->assertRedirect(url($path));
+        $this->assertAuthenticated('commenter');
+    }
+
+    #[Test]
+    public function sign_in_starts_on_the_main_address_so_the_session_survives_the_google_round_trip(): void
+    {
+        config(['app.url' => 'https://cdk.example.test', 'services.google.redirect' => '/auth/google/callback']);
+        $path = '/berita/'.$this->post->slug.'#komentar-tulis';
+
+        $this->get('http://www.cdk.example.test'.route('komentar.google', ['kembali' => $path], false))
+            ->assertRedirect('https://cdk.example.test'.route('komentar.google', ['kembali' => $path], false))
+            ->assertSessionMissing('commenter.return_to');
     }
 
     #[Test]
@@ -305,5 +337,45 @@ class CommentTest extends TestCase
             'report_threshold' => 5,
         ])->assertRedirect();
         $this->assertDatabaseHas('settings', ['option_name' => CommentModeration::SETTING_BLOCKED_WORDS, 'option_value' => "satu\ndua"]);
+    }
+
+    #[Test]
+    public function admin_reply_stays_official_after_the_admin_account_is_deleted(): void
+    {
+        foreach (['comment.view', 'comment.create'] as $name) {
+            Permission::create(['name' => $name]);
+        }
+        $first = User::factory()->create(['name' => 'Admin Pertama']);
+        $second = User::factory()->create(['name' => 'Admin Kedua']);
+        $first->givePermissionTo(['comment.view', 'comment.create']);
+        $second->givePermissionTo(['comment.view', 'comment.create']);
+
+        $visitor = $this->commenter();
+        $this->send($visitor, 'Pertanyaan untuk admin')->assertCreated();
+        $comment = Comment::sole();
+
+        $this->actingAs($second, 'web')->post(route('admin.comment.reply', $comment), ['content' => 'Jawaban resmi'])->assertRedirect();
+        $reply = Comment::where('parent_id', $comment->id)->sole();
+        $this->assertTrue($reply->is_official);
+        $this->assertSame($second->id, $reply->user_id);
+
+        // The admin panel shows which account replied.
+        $this->actingAs($first, 'web')->get(route('admin.comment.index'))->assertOk()->assertSee('Admin Kedua');
+
+        $second->delete();
+        $reply->refresh();
+        $this->assertNull($reply->user_id);
+        $this->assertTrue($reply->isFromAdmin());
+
+        $this->actingAs($first, 'web')->get(route('admin.comment.index'))->assertOk()->assertSee(__('Deleted account'));
+        $this->get(route('berita.show', $this->post->slug))
+            ->assertSee('Jawaban resmi')
+            ->assertSee(__('public.comments.admin_badge'));
+
+        // Still cannot be reported by visitors.
+        $this->actingAs($visitor, 'commenter')
+            ->postJson(route('komentar.report', $reply), ['reason' => 'spam'])
+            ->assertStatus(422);
+        $this->assertSame(0, $reply->fresh()->reports_count);
     }
 }

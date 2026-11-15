@@ -38,8 +38,8 @@ class CommentController extends Controller
             ->with([
                 'post:id,title,slug',
                 'commenter:id,name,email,avatar,blocked_at',
-                'user:id,name',
-                'parent:id,content,name,commenter_id,user_id',
+                'user:id,name,email',
+                'parent:id,content,name,commenter_id,user_id,is_official',
                 'parent.commenter:id,name',
                 'reports:id,comment_id,reason',
             ]);
@@ -146,6 +146,7 @@ class CommentController extends Controller
         Comment::create([
             'post_id' => $comment->post_id,
             'user_id' => Auth::id(),
+            'is_official' => true,
             'parent_id' => $comment->id,
             'name' => (string) config('cdk.nama_singkat', 'Admin'),
             'content' => $content,
