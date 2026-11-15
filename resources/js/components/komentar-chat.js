@@ -93,14 +93,6 @@ export default (opts) => ({
 
     tambah(data) {
         const thread = this.$refs.thread;
-        const terakhir = [...thread.querySelectorAll("[data-tanggal]")].pop();
-
-        if (!terakhir || terakhir.dataset.tanggal !== data.date) {
-            const pemisah = this.$refs.pemisah.content.firstElementChild.cloneNode(true);
-            pemisah.querySelector("span").textContent = data.date_label;
-            thread.append(pemisah);
-        }
-
         thread.insertAdjacentHTML("beforeend", data.html);
         const baru = thread.lastElementChild;
         if (data.status === "published") this.jumlah++;
@@ -123,17 +115,12 @@ export default (opts) => ({
         }
     },
 
-    // Remove a message, and its day divider when it was the last message of that day.
+    // Remove a comment from the list.
     buang(item) {
         if (!item) return;
         if (item.dataset.status === "published") this.jumlah = Math.max(0, this.jumlah - 1);
 
-        const sebelum = item.previousElementSibling;
-        const sesudah = item.nextElementSibling;
         item.remove();
-        if (sebelum?.classList.contains("komentar-pemisah") && (!sesudah || sesudah.classList.contains("komentar-pemisah"))) {
-            sebelum.remove();
-        }
         this.kosong = !this.$refs.thread.querySelector("[data-komentar]");
     },
 

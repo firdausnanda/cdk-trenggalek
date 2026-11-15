@@ -5,7 +5,6 @@
 --}}
 @php
     $visibleIds = $comments->pluck('id')->flip()->map(fn () => true)->all();
-    $perHari = $comments->groupBy(fn ($c) => $c->created_at->toDateString());
     $halamanIni = '/'.ltrim(request()->path(), '/');
     $loginAktif = \App\Models\Commenter::signInAvailable();
     $alasan = [
@@ -66,30 +65,20 @@
     @endif
 
     {{-- Thread --}}
-    <div class="mt-6 rounded-2xl bg-sand/45 px-3 py-5 sm:px-6 sm:py-6">
-        <div x-show="kosong" @if ($comments->isNotEmpty()) x-cloak @endif class="flex flex-col items-center py-10 text-center">
-            <span aria-hidden="true" class="grid size-14 place-items-center rounded-full bg-white text-2xl text-forest-700 shadow-sm">
-                <i class="bi bi-chat-heart"></i>
+    <div class="mt-6">
+        <div x-show="kosong" @if ($comments->isNotEmpty()) x-cloak @endif class="flex flex-col items-center rounded-xl border border-dashed border-forest-900/20 py-10 text-center">
+            <span aria-hidden="true" class="grid size-12 place-items-center rounded-full bg-forest-50 text-xl text-forest-700">
+                <i class="bi bi-chat-square-text"></i>
             </span>
             <p class="mt-4 font-semibold">{{ __('public.comments.empty') }}</p>
             <p class="mt-1 text-sm text-ink/70">{{ __('public.comments.empty_hint') }}</p>
         </div>
 
-        <ol x-ref="thread" class="space-y-4" aria-label="{{ __('public.news.comments') }}">
-            @foreach ($perHari as $tanggal => $isiHari)
-                <li class="komentar-pemisah flex justify-center" role="presentation">
-                    <span class="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink/70 shadow-sm">{{ komentar_tanggal($isiHari->first()->created_at) }}</span>
-                </li>
-                @foreach ($isiHari as $c)
-                    @include('public.partials.comment-bubble', ['c' => $c, 'viewer' => $viewer, 'visibleIds' => $visibleIds])
-                @endforeach
+        <ol x-ref="thread" class="divide-y divide-forest-900/10" aria-label="{{ __('public.news.comments') }}">
+            @foreach ($comments as $c)
+                @include('public.partials.comment-bubble', ['c' => $c, 'viewer' => $viewer, 'visibleIds' => $visibleIds])
             @endforeach
         </ol>
-        <template x-ref="pemisah">
-            <li class="komentar-pemisah flex justify-center" role="presentation">
-                <span class="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink/70 shadow-sm"></span>
-            </li>
-        </template>
     </div>
 
     {{-- Status for screen readers and a short visible confirmation --}}
@@ -98,7 +87,7 @@
     {{-- Composer --}}
     {{-- Only the message box sticks to the screen bottom, like a chat; the sign-in card stays in place. --}}
     <div id="komentar-tulis" @class([
-        'relative z-10 mt-4 scroll-mt-24',
+        'relative z-10 mt-8 scroll-mt-24',
         'sticky bottom-3' => $viewer && ! $viewer->isBlocked(),
     ])>
         @if (! $viewer)
