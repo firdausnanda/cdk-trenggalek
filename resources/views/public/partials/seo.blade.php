@@ -11,6 +11,8 @@
 <meta name="description" content="@yield('description', $deskripsiDefault)">
 <meta name="robots" content="@yield('robots', 'index, follow')">
 <link rel="canonical" href="@yield('canonical', url()->current())">
+{{-- Google Search Console ownership; keep it, Google re-checks it periodically. --}}
+<meta name="google-site-verification" content="tGUnEmU7_KC13ZyV8-xBMAxssMeOC5GTHc7j4gyWIDg">
 
 <meta property="og:site_name" content="{{ config('settings.app_name') }}">
 <meta property="og:locale" content="{{ $ogLocale }}">
