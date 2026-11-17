@@ -36,6 +36,7 @@ return [
             'kota' => 'Trenggalek',
             'kode_pos' => '66319',
             'maps' => 'https://maps.app.goo.gl/V2qh53qk7ZeLXtmr8',
+            'foto' => 'images/background/gedung-cdk.webp',
         ],
         [
             'nama' => 'Kantor Wilayah Kerja Tulungagung',
@@ -44,6 +45,7 @@ return [
             'kota' => 'Tulungagung',
             'kode_pos' => '66229',
             'maps' => 'https://maps.app.goo.gl/VncRLckeJxeqCj4UA',
+            'foto' => 'images/background/kantor-tulungagung.webp',
         ],
         [
             'nama' => 'Kantor Wilayah Kerja Kediri',
@@ -52,6 +54,7 @@ return [
             'kota' => 'Kediri',
             'kode_pos' => '64129',
             'maps' => 'https://maps.app.goo.gl/XpNgpHwgcfRAP3YN6',
+            'foto' => 'images/background/kantor-kediri.webp',
         ],
     ],
 ];

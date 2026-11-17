@@ -229,8 +229,8 @@
                 @foreach ($kantor as $item)
                     <li data-reveal style="--reveal-delay: {{ $loop->index * 80 }}ms"
                         class="flex flex-col overflow-hidden rounded-2xl bg-cream shadow-sm ring-1 ring-forest-900/10">
-                        @if ($loop->first)
-                            <img src="{{ asset('images/background/gedung-cdk.webp') }}" loading="lazy"
+                        @if (! empty($item['foto']))
+                            <img src="{{ asset($item['foto']) }}" loading="lazy"
                                 alt="{{ __('public.about.building_alt', ['name' => $item['nama']]) }}" class="aspect-[16/9] w-full object-cover">
                         @else
                             <div aria-hidden="true"
